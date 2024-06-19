@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:jellyone/screens/home.dart';
+import 'package:jellyone/screens/info.dart';
 import 'package:jellyone/screens/movies.dart';
 import 'package:jellyone/screens/settings.dart';
 import 'package:jellyone/screens/shows.dart';
+import 'package:jellyone/theme/app_styles.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +18,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'JellyOne',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue.shade800),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppTheme.accent,
+          brightness: Brightness.dark,
+        ),
+        scaffoldBackgroundColor: AppTheme.dark,
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -33,6 +39,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
+  int id = 843527;
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +129,8 @@ class _MyHomePageState extends State<MyHomePage> {
         return const ShowsScreen();
       case 3:
         return const SettingsScreen();
+      case 4:
+        return MediaInfoScreen(id: id);
       default:
         return const HomeScreen();
     }
