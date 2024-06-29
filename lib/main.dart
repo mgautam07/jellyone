@@ -1,13 +1,32 @@
+import 'dart:isolate';
+
+import 'package:jellyone/db/db.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:jellyone/screens/home.dart';
 import 'package:jellyone/screens/info.dart';
 import 'package:jellyone/screens/movies.dart';
 import 'package:jellyone/screens/settings.dart';
 import 'package:jellyone/screens/shows.dart';
 import 'package:jellyone/theme/app_styles.dart';
+import 'package:jellyone/utils/udpate_media.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
+
+  final envVars = {
+    'MOVIES_DIR': dotenv.get('MOVIES_DIR'),
+    'SHOWS_DIR': dotenv.get('SHOWS_DIR'),
+    'ACCESS_TOKEN': dotenv.get('ACCESS_TOKEN'),
+    'API_KEY': dotenv.get('API_KEY'),
+  };
+
   runApp(const MyApp());
+
+  final isolate = await createDBIsolate();
+  Isolate.spawn(updateMedia, [envVars, isolate]);
 }
 
 class MyApp extends StatelessWidget {
