@@ -1,24 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:jellyone/screens/info.dart';
 import 'package:jellyone/theme/app_styles.dart';
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 
 class CastCard extends StatelessWidget {
-  const CastCard({super.key, required this.id});
-  final int id;
+  const CastCard({super.key, required this.actor});
+  final Map<String, String> actor;
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => MediaInfoScreen(id: id)),
-            );
-          },
-          // hoverColor: Colors.transparent,
-          // splashColor: Colors.transparent,
-          child: const Card(
+    return Padding(
+      padding: const EdgeInsetsDirectional.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          Card(
             elevation: 0,
             // margin: EdgeInsets.only(right: 8),
             color: Colors.transparent,
@@ -28,33 +21,39 @@ class CastCard extends StatelessWidget {
               child: Column(
                 children: [
                   Image(
-                    image: AssetImage('assets/images/anne.jpg'),
-                    // width: 195,
+                    image: FastCachedImageProvider(
+                        'https://image.tmdb.org/t/p/original${actor['profilePath']}'),
                     height: 280,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 5),
+                    padding: const EdgeInsets.only(top: 5),
                     child: Text(
-                      'Anne Hathaway',
+                      actor['name'] as String,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: AppTheme.text, fontSize: 15),
+                      style: const TextStyle(
+                          color: AppTheme.text,
+                          fontSize: 15,
+                          overflow: TextOverflow.ellipsis),
                     ),
                   ),
                   Text(
-                    'as Solène Marchand',
+                    'as ${actor['as']}',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: AppTheme.subText, fontSize: 13),
+                    style: const TextStyle(
+                        color: AppTheme.subText,
+                        fontSize: 14,
+                        overflow: TextOverflow.ellipsis),
                   )
                 ],
               ),
             ),
           ),
-        ),
-        const SizedBox(
-          height: 340,
-          width: 8,
-        )
-      ],
+          const SizedBox(
+            height: 340,
+            width: 8,
+          )
+        ],
+      ),
     );
   }
 }

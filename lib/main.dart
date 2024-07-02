@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:jellyone/db/db.dart';
@@ -6,14 +7,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:jellyone/screens/home.dart';
-import 'package:jellyone/screens/info.dart';
 import 'package:jellyone/screens/movies.dart';
 import 'package:jellyone/screens/settings.dart';
 import 'package:jellyone/screens/shows.dart';
 import 'package:jellyone/theme/app_styles.dart';
 import 'package:jellyone/utils/udpate_media.dart';
 
+import 'package:drift/drift.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
+
 void main() async {
+  driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   await dotenv.load(fileName: ".env");
 
   final envVars = {
@@ -22,6 +28,11 @@ void main() async {
     'ACCESS_TOKEN': dotenv.get('ACCESS_TOKEN'),
     'API_KEY': dotenv.get('API_KEY'),
   };
+
+  Directory dir = await getApplicationSupportDirectory();
+  String imageStorageLocation = p.join(dir.path, 'cache', 'images');
+  await FastCachedImageConfig.init(
+      subDir: imageStorageLocation, clearCacheAfter: const Duration(days: 60));
 
   runApp(const MyApp());
 
@@ -58,7 +69,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
-  int id = 843527;
 
   @override
   Widget build(BuildContext context) {
@@ -148,8 +158,6 @@ class _MyHomePageState extends State<MyHomePage> {
         return const ShowsScreen();
       case 3:
         return const SettingsScreen();
-      case 4:
-        return MediaInfoScreen(id: id);
       default:
         return const HomeScreen();
     }

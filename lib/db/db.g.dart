@@ -28,11 +28,16 @@ class $MoviesTableTable extends MoviesTable
   late final GeneratedColumn<String> backdropPath = GeneratedColumn<String>(
       'backdrop_path', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _originalTitleMeta =
-      const VerificationMeta('originalTitle');
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
-  late final GeneratedColumn<String> originalTitle = GeneratedColumn<String>(
-      'original_title', aliasedName, false,
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _tagLineMeta =
+      const VerificationMeta('tagLine');
+  @override
+  late final GeneratedColumn<String> tagLine = GeneratedColumn<String>(
+      'tag_line', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _overviewMeta =
       const VerificationMeta('overview');
@@ -46,6 +51,12 @@ class $MoviesTableTable extends MoviesTable
   late final GeneratedColumn<String> posterPath = GeneratedColumn<String>(
       'poster_path', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _logoPathMeta =
+      const VerificationMeta('logoPath');
+  @override
+  late final GeneratedColumn<String> logoPath = GeneratedColumn<String>(
+      'logo_path', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _videoFileMeta =
       const VerificationMeta('videoFile');
   @override
@@ -57,6 +68,23 @@ class $MoviesTableTable extends MoviesTable
   @override
   late final GeneratedColumn<String> resolution = GeneratedColumn<String>(
       'resolution', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _homePageMeta =
+      const VerificationMeta('homePage');
+  @override
+  late final GeneratedColumn<String> homePage = GeneratedColumn<String>(
+      'home_page', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _releaseDateMeta =
+      const VerificationMeta('releaseDate');
+  @override
+  late final GeneratedColumn<DateTime> releaseDate = GeneratedColumn<DateTime>(
+      'release_date', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _imdbMeta = const VerificationMeta('imdb');
+  @override
+  late final GeneratedColumn<String> imdb = GeneratedColumn<String>(
+      'imdb', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _voteMeta = const VerificationMeta('vote');
   @override
@@ -79,19 +107,31 @@ class $MoviesTableTable extends MoviesTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
+  static const VerificationMeta _runTimeMeta =
+      const VerificationMeta('runTime');
+  @override
+  late final GeneratedColumn<int> runTime = GeneratedColumn<int>(
+      'run_time', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [
         id,
         adult,
         backdropPath,
-        originalTitle,
+        name,
+        tagLine,
         overview,
         posterPath,
+        logoPath,
         videoFile,
         resolution,
+        homePage,
+        releaseDate,
+        imdb,
         vote,
         watchedTime,
-        watchStatus
+        watchStatus,
+        runTime
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -122,13 +162,17 @@ class $MoviesTableTable extends MoviesTable
     } else if (isInserting) {
       context.missing(_backdropPathMeta);
     }
-    if (data.containsKey('original_title')) {
+    if (data.containsKey('name')) {
       context.handle(
-          _originalTitleMeta,
-          originalTitle.isAcceptableOrUnknown(
-              data['original_title']!, _originalTitleMeta));
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     } else if (isInserting) {
-      context.missing(_originalTitleMeta);
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('tag_line')) {
+      context.handle(_tagLineMeta,
+          tagLine.isAcceptableOrUnknown(data['tag_line']!, _tagLineMeta));
+    } else if (isInserting) {
+      context.missing(_tagLineMeta);
     }
     if (data.containsKey('overview')) {
       context.handle(_overviewMeta,
@@ -144,6 +188,12 @@ class $MoviesTableTable extends MoviesTable
     } else if (isInserting) {
       context.missing(_posterPathMeta);
     }
+    if (data.containsKey('logo_path')) {
+      context.handle(_logoPathMeta,
+          logoPath.isAcceptableOrUnknown(data['logo_path']!, _logoPathMeta));
+    } else if (isInserting) {
+      context.missing(_logoPathMeta);
+    }
     if (data.containsKey('video_file')) {
       context.handle(_videoFileMeta,
           videoFile.isAcceptableOrUnknown(data['video_file']!, _videoFileMeta));
@@ -157,6 +207,26 @@ class $MoviesTableTable extends MoviesTable
               data['resolution']!, _resolutionMeta));
     } else if (isInserting) {
       context.missing(_resolutionMeta);
+    }
+    if (data.containsKey('home_page')) {
+      context.handle(_homePageMeta,
+          homePage.isAcceptableOrUnknown(data['home_page']!, _homePageMeta));
+    } else if (isInserting) {
+      context.missing(_homePageMeta);
+    }
+    if (data.containsKey('release_date')) {
+      context.handle(
+          _releaseDateMeta,
+          releaseDate.isAcceptableOrUnknown(
+              data['release_date']!, _releaseDateMeta));
+    } else if (isInserting) {
+      context.missing(_releaseDateMeta);
+    }
+    if (data.containsKey('imdb')) {
+      context.handle(
+          _imdbMeta, imdb.isAcceptableOrUnknown(data['imdb']!, _imdbMeta));
+    } else if (isInserting) {
+      context.missing(_imdbMeta);
     }
     if (data.containsKey('vote')) {
       context.handle(
@@ -176,6 +246,12 @@ class $MoviesTableTable extends MoviesTable
           watchStatus.isAcceptableOrUnknown(
               data['watch_status']!, _watchStatusMeta));
     }
+    if (data.containsKey('run_time')) {
+      context.handle(_runTimeMeta,
+          runTime.isAcceptableOrUnknown(data['run_time']!, _runTimeMeta));
+    } else if (isInserting) {
+      context.missing(_runTimeMeta);
+    }
     return context;
   }
 
@@ -191,22 +267,34 @@ class $MoviesTableTable extends MoviesTable
           .read(DriftSqlType.bool, data['${effectivePrefix}adult'])!,
       backdropPath: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}backdrop_path'])!,
-      originalTitle: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}original_title'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      tagLine: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}tag_line'])!,
       overview: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}overview'])!,
       posterPath: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}poster_path'])!,
+      logoPath: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}logo_path'])!,
       videoFile: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}video_file'])!,
       resolution: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}resolution'])!,
+      homePage: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}home_page'])!,
+      releaseDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}release_date'])!,
+      imdb: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}imdb'])!,
       vote: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}vote'])!,
       watchedTime: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}watched_time'])!,
       watchStatus: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}watch_status'])!,
+      runTime: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}run_time'])!,
     );
   }
 
@@ -220,40 +308,58 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
   final int id;
   final bool adult;
   final String backdropPath;
-  final String originalTitle;
+  final String name;
+  final String tagLine;
   final String overview;
   final String posterPath;
+  final String logoPath;
   final String videoFile;
   final String resolution;
+  final String homePage;
+  final DateTime releaseDate;
+  final String imdb;
   final double vote;
   final int watchedTime;
   final int watchStatus;
+  final int runTime;
   const MoviesTableData(
       {required this.id,
       required this.adult,
       required this.backdropPath,
-      required this.originalTitle,
+      required this.name,
+      required this.tagLine,
       required this.overview,
       required this.posterPath,
+      required this.logoPath,
       required this.videoFile,
       required this.resolution,
+      required this.homePage,
+      required this.releaseDate,
+      required this.imdb,
       required this.vote,
       required this.watchedTime,
-      required this.watchStatus});
+      required this.watchStatus,
+      required this.runTime});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['adult'] = Variable<bool>(adult);
     map['backdrop_path'] = Variable<String>(backdropPath);
-    map['original_title'] = Variable<String>(originalTitle);
+    map['name'] = Variable<String>(name);
+    map['tag_line'] = Variable<String>(tagLine);
     map['overview'] = Variable<String>(overview);
     map['poster_path'] = Variable<String>(posterPath);
+    map['logo_path'] = Variable<String>(logoPath);
     map['video_file'] = Variable<String>(videoFile);
     map['resolution'] = Variable<String>(resolution);
+    map['home_page'] = Variable<String>(homePage);
+    map['release_date'] = Variable<DateTime>(releaseDate);
+    map['imdb'] = Variable<String>(imdb);
     map['vote'] = Variable<double>(vote);
     map['watched_time'] = Variable<int>(watchedTime);
     map['watch_status'] = Variable<int>(watchStatus);
+    map['run_time'] = Variable<int>(runTime);
     return map;
   }
 
@@ -262,14 +368,20 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
       id: Value(id),
       adult: Value(adult),
       backdropPath: Value(backdropPath),
-      originalTitle: Value(originalTitle),
+      name: Value(name),
+      tagLine: Value(tagLine),
       overview: Value(overview),
       posterPath: Value(posterPath),
+      logoPath: Value(logoPath),
       videoFile: Value(videoFile),
       resolution: Value(resolution),
+      homePage: Value(homePage),
+      releaseDate: Value(releaseDate),
+      imdb: Value(imdb),
       vote: Value(vote),
       watchedTime: Value(watchedTime),
       watchStatus: Value(watchStatus),
+      runTime: Value(runTime),
     );
   }
 
@@ -280,14 +392,20 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
       id: serializer.fromJson<int>(json['id']),
       adult: serializer.fromJson<bool>(json['adult']),
       backdropPath: serializer.fromJson<String>(json['backdropPath']),
-      originalTitle: serializer.fromJson<String>(json['originalTitle']),
+      name: serializer.fromJson<String>(json['name']),
+      tagLine: serializer.fromJson<String>(json['tagLine']),
       overview: serializer.fromJson<String>(json['overview']),
       posterPath: serializer.fromJson<String>(json['posterPath']),
+      logoPath: serializer.fromJson<String>(json['logoPath']),
       videoFile: serializer.fromJson<String>(json['videoFile']),
       resolution: serializer.fromJson<String>(json['resolution']),
+      homePage: serializer.fromJson<String>(json['homePage']),
+      releaseDate: serializer.fromJson<DateTime>(json['releaseDate']),
+      imdb: serializer.fromJson<String>(json['imdb']),
       vote: serializer.fromJson<double>(json['vote']),
       watchedTime: serializer.fromJson<int>(json['watchedTime']),
       watchStatus: serializer.fromJson<int>(json['watchStatus']),
+      runTime: serializer.fromJson<int>(json['runTime']),
     );
   }
   @override
@@ -297,14 +415,20 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
       'id': serializer.toJson<int>(id),
       'adult': serializer.toJson<bool>(adult),
       'backdropPath': serializer.toJson<String>(backdropPath),
-      'originalTitle': serializer.toJson<String>(originalTitle),
+      'name': serializer.toJson<String>(name),
+      'tagLine': serializer.toJson<String>(tagLine),
       'overview': serializer.toJson<String>(overview),
       'posterPath': serializer.toJson<String>(posterPath),
+      'logoPath': serializer.toJson<String>(logoPath),
       'videoFile': serializer.toJson<String>(videoFile),
       'resolution': serializer.toJson<String>(resolution),
+      'homePage': serializer.toJson<String>(homePage),
+      'releaseDate': serializer.toJson<DateTime>(releaseDate),
+      'imdb': serializer.toJson<String>(imdb),
       'vote': serializer.toJson<double>(vote),
       'watchedTime': serializer.toJson<int>(watchedTime),
       'watchStatus': serializer.toJson<int>(watchStatus),
+      'runTime': serializer.toJson<int>(runTime),
     };
   }
 
@@ -312,26 +436,38 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
           {int? id,
           bool? adult,
           String? backdropPath,
-          String? originalTitle,
+          String? name,
+          String? tagLine,
           String? overview,
           String? posterPath,
+          String? logoPath,
           String? videoFile,
           String? resolution,
+          String? homePage,
+          DateTime? releaseDate,
+          String? imdb,
           double? vote,
           int? watchedTime,
-          int? watchStatus}) =>
+          int? watchStatus,
+          int? runTime}) =>
       MoviesTableData(
         id: id ?? this.id,
         adult: adult ?? this.adult,
         backdropPath: backdropPath ?? this.backdropPath,
-        originalTitle: originalTitle ?? this.originalTitle,
+        name: name ?? this.name,
+        tagLine: tagLine ?? this.tagLine,
         overview: overview ?? this.overview,
         posterPath: posterPath ?? this.posterPath,
+        logoPath: logoPath ?? this.logoPath,
         videoFile: videoFile ?? this.videoFile,
         resolution: resolution ?? this.resolution,
+        homePage: homePage ?? this.homePage,
+        releaseDate: releaseDate ?? this.releaseDate,
+        imdb: imdb ?? this.imdb,
         vote: vote ?? this.vote,
         watchedTime: watchedTime ?? this.watchedTime,
         watchStatus: watchStatus ?? this.watchStatus,
+        runTime: runTime ?? this.runTime,
       );
   @override
   String toString() {
@@ -339,14 +475,20 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
           ..write('id: $id, ')
           ..write('adult: $adult, ')
           ..write('backdropPath: $backdropPath, ')
-          ..write('originalTitle: $originalTitle, ')
+          ..write('name: $name, ')
+          ..write('tagLine: $tagLine, ')
           ..write('overview: $overview, ')
           ..write('posterPath: $posterPath, ')
+          ..write('logoPath: $logoPath, ')
           ..write('videoFile: $videoFile, ')
           ..write('resolution: $resolution, ')
+          ..write('homePage: $homePage, ')
+          ..write('releaseDate: $releaseDate, ')
+          ..write('imdb: $imdb, ')
           ..write('vote: $vote, ')
           ..write('watchedTime: $watchedTime, ')
-          ..write('watchStatus: $watchStatus')
+          ..write('watchStatus: $watchStatus, ')
+          ..write('runTime: $runTime')
           ..write(')'))
         .toString();
   }
@@ -356,14 +498,20 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
       id,
       adult,
       backdropPath,
-      originalTitle,
+      name,
+      tagLine,
       overview,
       posterPath,
+      logoPath,
       videoFile,
       resolution,
+      homePage,
+      releaseDate,
+      imdb,
       vote,
       watchedTime,
-      watchStatus);
+      watchStatus,
+      runTime);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -371,91 +519,133 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
           other.id == this.id &&
           other.adult == this.adult &&
           other.backdropPath == this.backdropPath &&
-          other.originalTitle == this.originalTitle &&
+          other.name == this.name &&
+          other.tagLine == this.tagLine &&
           other.overview == this.overview &&
           other.posterPath == this.posterPath &&
+          other.logoPath == this.logoPath &&
           other.videoFile == this.videoFile &&
           other.resolution == this.resolution &&
+          other.homePage == this.homePage &&
+          other.releaseDate == this.releaseDate &&
+          other.imdb == this.imdb &&
           other.vote == this.vote &&
           other.watchedTime == this.watchedTime &&
-          other.watchStatus == this.watchStatus);
+          other.watchStatus == this.watchStatus &&
+          other.runTime == this.runTime);
 }
 
 class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
   final Value<int> id;
   final Value<bool> adult;
   final Value<String> backdropPath;
-  final Value<String> originalTitle;
+  final Value<String> name;
+  final Value<String> tagLine;
   final Value<String> overview;
   final Value<String> posterPath;
+  final Value<String> logoPath;
   final Value<String> videoFile;
   final Value<String> resolution;
+  final Value<String> homePage;
+  final Value<DateTime> releaseDate;
+  final Value<String> imdb;
   final Value<double> vote;
   final Value<int> watchedTime;
   final Value<int> watchStatus;
+  final Value<int> runTime;
   final Value<int> rowid;
   const MoviesTableCompanion({
     this.id = const Value.absent(),
     this.adult = const Value.absent(),
     this.backdropPath = const Value.absent(),
-    this.originalTitle = const Value.absent(),
+    this.name = const Value.absent(),
+    this.tagLine = const Value.absent(),
     this.overview = const Value.absent(),
     this.posterPath = const Value.absent(),
+    this.logoPath = const Value.absent(),
     this.videoFile = const Value.absent(),
     this.resolution = const Value.absent(),
+    this.homePage = const Value.absent(),
+    this.releaseDate = const Value.absent(),
+    this.imdb = const Value.absent(),
     this.vote = const Value.absent(),
     this.watchedTime = const Value.absent(),
     this.watchStatus = const Value.absent(),
+    this.runTime = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   MoviesTableCompanion.insert({
     required int id,
     required bool adult,
     required String backdropPath,
-    required String originalTitle,
+    required String name,
+    required String tagLine,
     required String overview,
     required String posterPath,
+    required String logoPath,
     required String videoFile,
     required String resolution,
+    required String homePage,
+    required DateTime releaseDate,
+    required String imdb,
     required double vote,
     this.watchedTime = const Value.absent(),
     this.watchStatus = const Value.absent(),
+    required int runTime,
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         adult = Value(adult),
         backdropPath = Value(backdropPath),
-        originalTitle = Value(originalTitle),
+        name = Value(name),
+        tagLine = Value(tagLine),
         overview = Value(overview),
         posterPath = Value(posterPath),
+        logoPath = Value(logoPath),
         videoFile = Value(videoFile),
         resolution = Value(resolution),
-        vote = Value(vote);
+        homePage = Value(homePage),
+        releaseDate = Value(releaseDate),
+        imdb = Value(imdb),
+        vote = Value(vote),
+        runTime = Value(runTime);
   static Insertable<MoviesTableData> custom({
     Expression<int>? id,
     Expression<bool>? adult,
     Expression<String>? backdropPath,
-    Expression<String>? originalTitle,
+    Expression<String>? name,
+    Expression<String>? tagLine,
     Expression<String>? overview,
     Expression<String>? posterPath,
+    Expression<String>? logoPath,
     Expression<String>? videoFile,
     Expression<String>? resolution,
+    Expression<String>? homePage,
+    Expression<DateTime>? releaseDate,
+    Expression<String>? imdb,
     Expression<double>? vote,
     Expression<int>? watchedTime,
     Expression<int>? watchStatus,
+    Expression<int>? runTime,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (adult != null) 'adult': adult,
       if (backdropPath != null) 'backdrop_path': backdropPath,
-      if (originalTitle != null) 'original_title': originalTitle,
+      if (name != null) 'name': name,
+      if (tagLine != null) 'tag_line': tagLine,
       if (overview != null) 'overview': overview,
       if (posterPath != null) 'poster_path': posterPath,
+      if (logoPath != null) 'logo_path': logoPath,
       if (videoFile != null) 'video_file': videoFile,
       if (resolution != null) 'resolution': resolution,
+      if (homePage != null) 'home_page': homePage,
+      if (releaseDate != null) 'release_date': releaseDate,
+      if (imdb != null) 'imdb': imdb,
       if (vote != null) 'vote': vote,
       if (watchedTime != null) 'watched_time': watchedTime,
       if (watchStatus != null) 'watch_status': watchStatus,
+      if (runTime != null) 'run_time': runTime,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -464,27 +654,39 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
       {Value<int>? id,
       Value<bool>? adult,
       Value<String>? backdropPath,
-      Value<String>? originalTitle,
+      Value<String>? name,
+      Value<String>? tagLine,
       Value<String>? overview,
       Value<String>? posterPath,
+      Value<String>? logoPath,
       Value<String>? videoFile,
       Value<String>? resolution,
+      Value<String>? homePage,
+      Value<DateTime>? releaseDate,
+      Value<String>? imdb,
       Value<double>? vote,
       Value<int>? watchedTime,
       Value<int>? watchStatus,
+      Value<int>? runTime,
       Value<int>? rowid}) {
     return MoviesTableCompanion(
       id: id ?? this.id,
       adult: adult ?? this.adult,
       backdropPath: backdropPath ?? this.backdropPath,
-      originalTitle: originalTitle ?? this.originalTitle,
+      name: name ?? this.name,
+      tagLine: tagLine ?? this.tagLine,
       overview: overview ?? this.overview,
       posterPath: posterPath ?? this.posterPath,
+      logoPath: logoPath ?? this.logoPath,
       videoFile: videoFile ?? this.videoFile,
       resolution: resolution ?? this.resolution,
+      homePage: homePage ?? this.homePage,
+      releaseDate: releaseDate ?? this.releaseDate,
+      imdb: imdb ?? this.imdb,
       vote: vote ?? this.vote,
       watchedTime: watchedTime ?? this.watchedTime,
       watchStatus: watchStatus ?? this.watchStatus,
+      runTime: runTime ?? this.runTime,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -501,8 +703,11 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
     if (backdropPath.present) {
       map['backdrop_path'] = Variable<String>(backdropPath.value);
     }
-    if (originalTitle.present) {
-      map['original_title'] = Variable<String>(originalTitle.value);
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (tagLine.present) {
+      map['tag_line'] = Variable<String>(tagLine.value);
     }
     if (overview.present) {
       map['overview'] = Variable<String>(overview.value);
@@ -510,11 +715,23 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
     if (posterPath.present) {
       map['poster_path'] = Variable<String>(posterPath.value);
     }
+    if (logoPath.present) {
+      map['logo_path'] = Variable<String>(logoPath.value);
+    }
     if (videoFile.present) {
       map['video_file'] = Variable<String>(videoFile.value);
     }
     if (resolution.present) {
       map['resolution'] = Variable<String>(resolution.value);
+    }
+    if (homePage.present) {
+      map['home_page'] = Variable<String>(homePage.value);
+    }
+    if (releaseDate.present) {
+      map['release_date'] = Variable<DateTime>(releaseDate.value);
+    }
+    if (imdb.present) {
+      map['imdb'] = Variable<String>(imdb.value);
     }
     if (vote.present) {
       map['vote'] = Variable<double>(vote.value);
@@ -524,6 +741,9 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
     }
     if (watchStatus.present) {
       map['watch_status'] = Variable<int>(watchStatus.value);
+    }
+    if (runTime.present) {
+      map['run_time'] = Variable<int>(runTime.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -537,14 +757,20 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
           ..write('id: $id, ')
           ..write('adult: $adult, ')
           ..write('backdropPath: $backdropPath, ')
-          ..write('originalTitle: $originalTitle, ')
+          ..write('name: $name, ')
+          ..write('tagLine: $tagLine, ')
           ..write('overview: $overview, ')
           ..write('posterPath: $posterPath, ')
+          ..write('logoPath: $logoPath, ')
           ..write('videoFile: $videoFile, ')
           ..write('resolution: $resolution, ')
+          ..write('homePage: $homePage, ')
+          ..write('releaseDate: $releaseDate, ')
+          ..write('imdb: $imdb, ')
           ..write('vote: $vote, ')
           ..write('watchedTime: $watchedTime, ')
           ..write('watchStatus: $watchStatus, ')
+          ..write('runTime: $runTime, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -989,6 +1215,844 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
   }
 }
 
+class $ActorsTable extends Actors with TableInfo<$ActorsTable, Actor> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ActorsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _profilePathMeta =
+      const VerificationMeta('profilePath');
+  @override
+  late final GeneratedColumn<String> profilePath = GeneratedColumn<String>(
+      'profile_path', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, name, profilePath];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'actors';
+  @override
+  VerificationContext validateIntegrity(Insertable<Actor> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('profile_path')) {
+      context.handle(
+          _profilePathMeta,
+          profilePath.isAcceptableOrUnknown(
+              data['profile_path']!, _profilePathMeta));
+    } else if (isInserting) {
+      context.missing(_profilePathMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Actor map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Actor(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      profilePath: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}profile_path'])!,
+    );
+  }
+
+  @override
+  $ActorsTable createAlias(String alias) {
+    return $ActorsTable(attachedDatabase, alias);
+  }
+}
+
+class Actor extends DataClass implements Insertable<Actor> {
+  final int id;
+  final String name;
+  final String profilePath;
+  const Actor(
+      {required this.id, required this.name, required this.profilePath});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['profile_path'] = Variable<String>(profilePath);
+    return map;
+  }
+
+  ActorsCompanion toCompanion(bool nullToAbsent) {
+    return ActorsCompanion(
+      id: Value(id),
+      name: Value(name),
+      profilePath: Value(profilePath),
+    );
+  }
+
+  factory Actor.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Actor(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      profilePath: serializer.fromJson<String>(json['profilePath']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'profilePath': serializer.toJson<String>(profilePath),
+    };
+  }
+
+  Actor copyWith({int? id, String? name, String? profilePath}) => Actor(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        profilePath: profilePath ?? this.profilePath,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Actor(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('profilePath: $profilePath')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name, profilePath);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Actor &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.profilePath == this.profilePath);
+}
+
+class ActorsCompanion extends UpdateCompanion<Actor> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<String> profilePath;
+  const ActorsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.profilePath = const Value.absent(),
+  });
+  ActorsCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    required String profilePath,
+  })  : name = Value(name),
+        profilePath = Value(profilePath);
+  static Insertable<Actor> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? profilePath,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (profilePath != null) 'profile_path': profilePath,
+    });
+  }
+
+  ActorsCompanion copyWith(
+      {Value<int>? id, Value<String>? name, Value<String>? profilePath}) {
+    return ActorsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      profilePath: profilePath ?? this.profilePath,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (profilePath.present) {
+      map['profile_path'] = Variable<String>(profilePath.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ActorsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('profilePath: $profilePath')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MovieCastTable extends MovieCast
+    with TableInfo<$MovieCastTable, MovieCastData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MovieCastTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _actorIdMeta =
+      const VerificationMeta('actorId');
+  @override
+  late final GeneratedColumn<int> actorId = GeneratedColumn<int>(
+      'actor_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES actors (id)'));
+  static const VerificationMeta _movieIdMeta =
+      const VerificationMeta('movieId');
+  @override
+  late final GeneratedColumn<int> movieId = GeneratedColumn<int>(
+      'movie_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES movies_table (id)'));
+  static const VerificationMeta _roleMeta = const VerificationMeta('role');
+  @override
+  late final GeneratedColumn<String> role = GeneratedColumn<String>(
+      'role', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _asMeta = const VerificationMeta('as');
+  @override
+  late final GeneratedColumn<String> as = GeneratedColumn<String>(
+      'as', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [actorId, movieId, role, as];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'movie_cast';
+  @override
+  VerificationContext validateIntegrity(Insertable<MovieCastData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('actor_id')) {
+      context.handle(_actorIdMeta,
+          actorId.isAcceptableOrUnknown(data['actor_id']!, _actorIdMeta));
+    } else if (isInserting) {
+      context.missing(_actorIdMeta);
+    }
+    if (data.containsKey('movie_id')) {
+      context.handle(_movieIdMeta,
+          movieId.isAcceptableOrUnknown(data['movie_id']!, _movieIdMeta));
+    } else if (isInserting) {
+      context.missing(_movieIdMeta);
+    }
+    if (data.containsKey('role')) {
+      context.handle(
+          _roleMeta, role.isAcceptableOrUnknown(data['role']!, _roleMeta));
+    } else if (isInserting) {
+      context.missing(_roleMeta);
+    }
+    if (data.containsKey('as')) {
+      context.handle(_asMeta, as.isAcceptableOrUnknown(data['as']!, _asMeta));
+    } else if (isInserting) {
+      context.missing(_asMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {actorId, movieId, role};
+  @override
+  MovieCastData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MovieCastData(
+      actorId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}actor_id'])!,
+      movieId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}movie_id'])!,
+      role: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}role'])!,
+      as: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}as'])!,
+    );
+  }
+
+  @override
+  $MovieCastTable createAlias(String alias) {
+    return $MovieCastTable(attachedDatabase, alias);
+  }
+}
+
+class MovieCastData extends DataClass implements Insertable<MovieCastData> {
+  final int actorId;
+  final int movieId;
+  final String role;
+  final String as;
+  const MovieCastData(
+      {required this.actorId,
+      required this.movieId,
+      required this.role,
+      required this.as});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['actor_id'] = Variable<int>(actorId);
+    map['movie_id'] = Variable<int>(movieId);
+    map['role'] = Variable<String>(role);
+    map['as'] = Variable<String>(as);
+    return map;
+  }
+
+  MovieCastCompanion toCompanion(bool nullToAbsent) {
+    return MovieCastCompanion(
+      actorId: Value(actorId),
+      movieId: Value(movieId),
+      role: Value(role),
+      as: Value(as),
+    );
+  }
+
+  factory MovieCastData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MovieCastData(
+      actorId: serializer.fromJson<int>(json['actorId']),
+      movieId: serializer.fromJson<int>(json['movieId']),
+      role: serializer.fromJson<String>(json['role']),
+      as: serializer.fromJson<String>(json['as']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'actorId': serializer.toJson<int>(actorId),
+      'movieId': serializer.toJson<int>(movieId),
+      'role': serializer.toJson<String>(role),
+      'as': serializer.toJson<String>(as),
+    };
+  }
+
+  MovieCastData copyWith(
+          {int? actorId, int? movieId, String? role, String? as}) =>
+      MovieCastData(
+        actorId: actorId ?? this.actorId,
+        movieId: movieId ?? this.movieId,
+        role: role ?? this.role,
+        as: as ?? this.as,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('MovieCastData(')
+          ..write('actorId: $actorId, ')
+          ..write('movieId: $movieId, ')
+          ..write('role: $role, ')
+          ..write('as: $as')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(actorId, movieId, role, as);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MovieCastData &&
+          other.actorId == this.actorId &&
+          other.movieId == this.movieId &&
+          other.role == this.role &&
+          other.as == this.as);
+}
+
+class MovieCastCompanion extends UpdateCompanion<MovieCastData> {
+  final Value<int> actorId;
+  final Value<int> movieId;
+  final Value<String> role;
+  final Value<String> as;
+  final Value<int> rowid;
+  const MovieCastCompanion({
+    this.actorId = const Value.absent(),
+    this.movieId = const Value.absent(),
+    this.role = const Value.absent(),
+    this.as = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MovieCastCompanion.insert({
+    required int actorId,
+    required int movieId,
+    required String role,
+    required String as,
+    this.rowid = const Value.absent(),
+  })  : actorId = Value(actorId),
+        movieId = Value(movieId),
+        role = Value(role),
+        as = Value(as);
+  static Insertable<MovieCastData> custom({
+    Expression<int>? actorId,
+    Expression<int>? movieId,
+    Expression<String>? role,
+    Expression<String>? as,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (actorId != null) 'actor_id': actorId,
+      if (movieId != null) 'movie_id': movieId,
+      if (role != null) 'role': role,
+      if (as != null) 'as': as,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MovieCastCompanion copyWith(
+      {Value<int>? actorId,
+      Value<int>? movieId,
+      Value<String>? role,
+      Value<String>? as,
+      Value<int>? rowid}) {
+    return MovieCastCompanion(
+      actorId: actorId ?? this.actorId,
+      movieId: movieId ?? this.movieId,
+      role: role ?? this.role,
+      as: as ?? this.as,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (actorId.present) {
+      map['actor_id'] = Variable<int>(actorId.value);
+    }
+    if (movieId.present) {
+      map['movie_id'] = Variable<int>(movieId.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<String>(role.value);
+    }
+    if (as.present) {
+      map['as'] = Variable<String>(as.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MovieCastCompanion(')
+          ..write('actorId: $actorId, ')
+          ..write('movieId: $movieId, ')
+          ..write('role: $role, ')
+          ..write('as: $as, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $GenresTable extends Genres with TableInfo<$GenresTable, Genre> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GenresTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, name];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'genres';
+  @override
+  VerificationContext validateIntegrity(Insertable<Genre> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  Genre map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Genre(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+    );
+  }
+
+  @override
+  $GenresTable createAlias(String alias) {
+    return $GenresTable(attachedDatabase, alias);
+  }
+}
+
+class Genre extends DataClass implements Insertable<Genre> {
+  final int id;
+  final String name;
+  const Genre({required this.id, required this.name});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    return map;
+  }
+
+  GenresCompanion toCompanion(bool nullToAbsent) {
+    return GenresCompanion(
+      id: Value(id),
+      name: Value(name),
+    );
+  }
+
+  factory Genre.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Genre(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+    };
+  }
+
+  Genre copyWith({int? id, String? name}) => Genre(
+        id: id ?? this.id,
+        name: name ?? this.name,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Genre(')
+          ..write('id: $id, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, name);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Genre && other.id == this.id && other.name == this.name);
+}
+
+class GenresCompanion extends UpdateCompanion<Genre> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<int> rowid;
+  const GenresCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  GenresCompanion.insert({
+    required int id,
+    required String name,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        name = Value(name);
+  static Insertable<Genre> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  GenresCompanion copyWith(
+      {Value<int>? id, Value<String>? name, Value<int>? rowid}) {
+    return GenresCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GenresCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MovieGenresTable extends MovieGenres
+    with TableInfo<$MovieGenresTable, MovieGenre> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MovieGenresTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _movieIdMeta =
+      const VerificationMeta('movieId');
+  @override
+  late final GeneratedColumn<int> movieId = GeneratedColumn<int>(
+      'movie_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES movies_table (id)'));
+  static const VerificationMeta _genreIdMeta =
+      const VerificationMeta('genreId');
+  @override
+  late final GeneratedColumn<int> genreId = GeneratedColumn<int>(
+      'genre_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES genres (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [movieId, genreId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'movie_genres';
+  @override
+  VerificationContext validateIntegrity(Insertable<MovieGenre> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('movie_id')) {
+      context.handle(_movieIdMeta,
+          movieId.isAcceptableOrUnknown(data['movie_id']!, _movieIdMeta));
+    } else if (isInserting) {
+      context.missing(_movieIdMeta);
+    }
+    if (data.containsKey('genre_id')) {
+      context.handle(_genreIdMeta,
+          genreId.isAcceptableOrUnknown(data['genre_id']!, _genreIdMeta));
+    } else if (isInserting) {
+      context.missing(_genreIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {movieId, genreId};
+  @override
+  MovieGenre map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MovieGenre(
+      movieId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}movie_id'])!,
+      genreId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}genre_id'])!,
+    );
+  }
+
+  @override
+  $MovieGenresTable createAlias(String alias) {
+    return $MovieGenresTable(attachedDatabase, alias);
+  }
+}
+
+class MovieGenre extends DataClass implements Insertable<MovieGenre> {
+  final int movieId;
+  final int genreId;
+  const MovieGenre({required this.movieId, required this.genreId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['movie_id'] = Variable<int>(movieId);
+    map['genre_id'] = Variable<int>(genreId);
+    return map;
+  }
+
+  MovieGenresCompanion toCompanion(bool nullToAbsent) {
+    return MovieGenresCompanion(
+      movieId: Value(movieId),
+      genreId: Value(genreId),
+    );
+  }
+
+  factory MovieGenre.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MovieGenre(
+      movieId: serializer.fromJson<int>(json['movieId']),
+      genreId: serializer.fromJson<int>(json['genreId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'movieId': serializer.toJson<int>(movieId),
+      'genreId': serializer.toJson<int>(genreId),
+    };
+  }
+
+  MovieGenre copyWith({int? movieId, int? genreId}) => MovieGenre(
+        movieId: movieId ?? this.movieId,
+        genreId: genreId ?? this.genreId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('MovieGenre(')
+          ..write('movieId: $movieId, ')
+          ..write('genreId: $genreId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(movieId, genreId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MovieGenre &&
+          other.movieId == this.movieId &&
+          other.genreId == this.genreId);
+}
+
+class MovieGenresCompanion extends UpdateCompanion<MovieGenre> {
+  final Value<int> movieId;
+  final Value<int> genreId;
+  final Value<int> rowid;
+  const MovieGenresCompanion({
+    this.movieId = const Value.absent(),
+    this.genreId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MovieGenresCompanion.insert({
+    required int movieId,
+    required int genreId,
+    this.rowid = const Value.absent(),
+  })  : movieId = Value(movieId),
+        genreId = Value(genreId);
+  static Insertable<MovieGenre> custom({
+    Expression<int>? movieId,
+    Expression<int>? genreId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (movieId != null) 'movie_id': movieId,
+      if (genreId != null) 'genre_id': genreId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MovieGenresCompanion copyWith(
+      {Value<int>? movieId, Value<int>? genreId, Value<int>? rowid}) {
+    return MovieGenresCompanion(
+      movieId: movieId ?? this.movieId,
+      genreId: genreId ?? this.genreId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (movieId.present) {
+      map['movie_id'] = Variable<int>(movieId.value);
+    }
+    if (genreId.present) {
+      map['genre_id'] = Variable<int>(genreId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MovieGenresCompanion(')
+          ..write('movieId: $movieId, ')
+          ..write('genreId: $genreId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
@@ -996,12 +2060,24 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SeriesTable series = $SeriesTable(this);
   late final $SeasonsTable seasons = $SeasonsTable(this);
   late final $EpisodesTable episodes = $EpisodesTable(this);
+  late final $ActorsTable actors = $ActorsTable(this);
+  late final $MovieCastTable movieCast = $MovieCastTable(this);
+  late final $GenresTable genres = $GenresTable(this);
+  late final $MovieGenresTable movieGenres = $MovieGenresTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [moviesTable, series, seasons, episodes];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        moviesTable,
+        series,
+        seasons,
+        episodes,
+        actors,
+        movieCast,
+        genres,
+        movieGenres
+      ];
 }
 
 typedef $$MoviesTableTableInsertCompanionBuilder = MoviesTableCompanion
@@ -1009,14 +2085,20 @@ typedef $$MoviesTableTableInsertCompanionBuilder = MoviesTableCompanion
   required int id,
   required bool adult,
   required String backdropPath,
-  required String originalTitle,
+  required String name,
+  required String tagLine,
   required String overview,
   required String posterPath,
+  required String logoPath,
   required String videoFile,
   required String resolution,
+  required String homePage,
+  required DateTime releaseDate,
+  required String imdb,
   required double vote,
   Value<int> watchedTime,
   Value<int> watchStatus,
+  required int runTime,
   Value<int> rowid,
 });
 typedef $$MoviesTableTableUpdateCompanionBuilder = MoviesTableCompanion
@@ -1024,14 +2106,20 @@ typedef $$MoviesTableTableUpdateCompanionBuilder = MoviesTableCompanion
   Value<int> id,
   Value<bool> adult,
   Value<String> backdropPath,
-  Value<String> originalTitle,
+  Value<String> name,
+  Value<String> tagLine,
   Value<String> overview,
   Value<String> posterPath,
+  Value<String> logoPath,
   Value<String> videoFile,
   Value<String> resolution,
+  Value<String> homePage,
+  Value<DateTime> releaseDate,
+  Value<String> imdb,
   Value<double> vote,
   Value<int> watchedTime,
   Value<int> watchStatus,
+  Value<int> runTime,
   Value<int> rowid,
 });
 
@@ -1058,56 +2146,80 @@ class $$MoviesTableTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<bool> adult = const Value.absent(),
             Value<String> backdropPath = const Value.absent(),
-            Value<String> originalTitle = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> tagLine = const Value.absent(),
             Value<String> overview = const Value.absent(),
             Value<String> posterPath = const Value.absent(),
+            Value<String> logoPath = const Value.absent(),
             Value<String> videoFile = const Value.absent(),
             Value<String> resolution = const Value.absent(),
+            Value<String> homePage = const Value.absent(),
+            Value<DateTime> releaseDate = const Value.absent(),
+            Value<String> imdb = const Value.absent(),
             Value<double> vote = const Value.absent(),
             Value<int> watchedTime = const Value.absent(),
             Value<int> watchStatus = const Value.absent(),
+            Value<int> runTime = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               MoviesTableCompanion(
             id: id,
             adult: adult,
             backdropPath: backdropPath,
-            originalTitle: originalTitle,
+            name: name,
+            tagLine: tagLine,
             overview: overview,
             posterPath: posterPath,
+            logoPath: logoPath,
             videoFile: videoFile,
             resolution: resolution,
+            homePage: homePage,
+            releaseDate: releaseDate,
+            imdb: imdb,
             vote: vote,
             watchedTime: watchedTime,
             watchStatus: watchStatus,
+            runTime: runTime,
             rowid: rowid,
           ),
           getInsertCompanionBuilder: ({
             required int id,
             required bool adult,
             required String backdropPath,
-            required String originalTitle,
+            required String name,
+            required String tagLine,
             required String overview,
             required String posterPath,
+            required String logoPath,
             required String videoFile,
             required String resolution,
+            required String homePage,
+            required DateTime releaseDate,
+            required String imdb,
             required double vote,
             Value<int> watchedTime = const Value.absent(),
             Value<int> watchStatus = const Value.absent(),
+            required int runTime,
             Value<int> rowid = const Value.absent(),
           }) =>
               MoviesTableCompanion.insert(
             id: id,
             adult: adult,
             backdropPath: backdropPath,
-            originalTitle: originalTitle,
+            name: name,
+            tagLine: tagLine,
             overview: overview,
             posterPath: posterPath,
+            logoPath: logoPath,
             videoFile: videoFile,
             resolution: resolution,
+            homePage: homePage,
+            releaseDate: releaseDate,
+            imdb: imdb,
             vote: vote,
             watchedTime: watchedTime,
             watchStatus: watchStatus,
+            runTime: runTime,
             rowid: rowid,
           ),
         ));
@@ -1143,8 +2255,13 @@ class $$MoviesTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get originalTitle => $state.composableBuilder(
-      column: $state.table.originalTitle,
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get tagLine => $state.composableBuilder(
+      column: $state.table.tagLine,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -1158,6 +2275,11 @@ class $$MoviesTableTableFilterComposer
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
+  ColumnFilters<String> get logoPath => $state.composableBuilder(
+      column: $state.table.logoPath,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
   ColumnFilters<String> get videoFile => $state.composableBuilder(
       column: $state.table.videoFile,
       builder: (column, joinBuilders) =>
@@ -1165,6 +2287,21 @@ class $$MoviesTableTableFilterComposer
 
   ColumnFilters<String> get resolution => $state.composableBuilder(
       column: $state.table.resolution,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get homePage => $state.composableBuilder(
+      column: $state.table.homePage,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get releaseDate => $state.composableBuilder(
+      column: $state.table.releaseDate,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get imdb => $state.composableBuilder(
+      column: $state.table.imdb,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -1182,6 +2319,37 @@ class $$MoviesTableTableFilterComposer
       column: $state.table.watchStatus,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get runTime => $state.composableBuilder(
+      column: $state.table.runTime,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter movieCastRefs(
+      ComposableFilter Function($$MovieCastTableFilterComposer f) f) {
+    final $$MovieCastTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.movieCast,
+        getReferencedColumn: (t) => t.movieId,
+        builder: (joinBuilder, parentComposers) =>
+            $$MovieCastTableFilterComposer(ComposerState(
+                $state.db, $state.db.movieCast, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter movieGenresRefs(
+      ComposableFilter Function($$MovieGenresTableFilterComposer f) f) {
+    final $$MovieGenresTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.movieGenres,
+        getReferencedColumn: (t) => t.movieId,
+        builder: (joinBuilder, parentComposers) =>
+            $$MovieGenresTableFilterComposer(ComposerState($state.db,
+                $state.db.movieGenres, joinBuilder, parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$MoviesTableTableOrderingComposer
@@ -1202,8 +2370,13 @@ class $$MoviesTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get originalTitle => $state.composableBuilder(
-      column: $state.table.originalTitle,
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get tagLine => $state.composableBuilder(
+      column: $state.table.tagLine,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -1217,6 +2390,11 @@ class $$MoviesTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
+  ColumnOrderings<String> get logoPath => $state.composableBuilder(
+      column: $state.table.logoPath,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
   ColumnOrderings<String> get videoFile => $state.composableBuilder(
       column: $state.table.videoFile,
       builder: (column, joinBuilders) =>
@@ -1224,6 +2402,21 @@ class $$MoviesTableTableOrderingComposer
 
   ColumnOrderings<String> get resolution => $state.composableBuilder(
       column: $state.table.resolution,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get homePage => $state.composableBuilder(
+      column: $state.table.homePage,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get releaseDate => $state.composableBuilder(
+      column: $state.table.releaseDate,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get imdb => $state.composableBuilder(
+      column: $state.table.imdb,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -1239,6 +2432,11 @@ class $$MoviesTableTableOrderingComposer
 
   ColumnOrderings<int> get watchStatus => $state.composableBuilder(
       column: $state.table.watchStatus,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get runTime => $state.composableBuilder(
+      column: $state.table.runTime,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
@@ -1472,6 +2670,502 @@ class $$EpisodesTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
+typedef $$ActorsTableInsertCompanionBuilder = ActorsCompanion Function({
+  Value<int> id,
+  required String name,
+  required String profilePath,
+});
+typedef $$ActorsTableUpdateCompanionBuilder = ActorsCompanion Function({
+  Value<int> id,
+  Value<String> name,
+  Value<String> profilePath,
+});
+
+class $$ActorsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ActorsTable,
+    Actor,
+    $$ActorsTableFilterComposer,
+    $$ActorsTableOrderingComposer,
+    $$ActorsTableProcessedTableManager,
+    $$ActorsTableInsertCompanionBuilder,
+    $$ActorsTableUpdateCompanionBuilder> {
+  $$ActorsTableTableManager(_$AppDatabase db, $ActorsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$ActorsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$ActorsTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$ActorsTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> profilePath = const Value.absent(),
+          }) =>
+              ActorsCompanion(
+            id: id,
+            name: name,
+            profilePath: profilePath,
+          ),
+          getInsertCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            required String name,
+            required String profilePath,
+          }) =>
+              ActorsCompanion.insert(
+            id: id,
+            name: name,
+            profilePath: profilePath,
+          ),
+        ));
+}
+
+class $$ActorsTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $ActorsTable,
+    Actor,
+    $$ActorsTableFilterComposer,
+    $$ActorsTableOrderingComposer,
+    $$ActorsTableProcessedTableManager,
+    $$ActorsTableInsertCompanionBuilder,
+    $$ActorsTableUpdateCompanionBuilder> {
+  $$ActorsTableProcessedTableManager(super.$state);
+}
+
+class $$ActorsTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $ActorsTable> {
+  $$ActorsTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get profilePath => $state.composableBuilder(
+      column: $state.table.profilePath,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter movieCastRefs(
+      ComposableFilter Function($$MovieCastTableFilterComposer f) f) {
+    final $$MovieCastTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.movieCast,
+        getReferencedColumn: (t) => t.actorId,
+        builder: (joinBuilder, parentComposers) =>
+            $$MovieCastTableFilterComposer(ComposerState(
+                $state.db, $state.db.movieCast, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$ActorsTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $ActorsTable> {
+  $$ActorsTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get profilePath => $state.composableBuilder(
+      column: $state.table.profilePath,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$MovieCastTableInsertCompanionBuilder = MovieCastCompanion Function({
+  required int actorId,
+  required int movieId,
+  required String role,
+  required String as,
+  Value<int> rowid,
+});
+typedef $$MovieCastTableUpdateCompanionBuilder = MovieCastCompanion Function({
+  Value<int> actorId,
+  Value<int> movieId,
+  Value<String> role,
+  Value<String> as,
+  Value<int> rowid,
+});
+
+class $$MovieCastTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $MovieCastTable,
+    MovieCastData,
+    $$MovieCastTableFilterComposer,
+    $$MovieCastTableOrderingComposer,
+    $$MovieCastTableProcessedTableManager,
+    $$MovieCastTableInsertCompanionBuilder,
+    $$MovieCastTableUpdateCompanionBuilder> {
+  $$MovieCastTableTableManager(_$AppDatabase db, $MovieCastTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$MovieCastTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$MovieCastTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$MovieCastTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> actorId = const Value.absent(),
+            Value<int> movieId = const Value.absent(),
+            Value<String> role = const Value.absent(),
+            Value<String> as = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MovieCastCompanion(
+            actorId: actorId,
+            movieId: movieId,
+            role: role,
+            as: as,
+            rowid: rowid,
+          ),
+          getInsertCompanionBuilder: ({
+            required int actorId,
+            required int movieId,
+            required String role,
+            required String as,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MovieCastCompanion.insert(
+            actorId: actorId,
+            movieId: movieId,
+            role: role,
+            as: as,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$MovieCastTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $MovieCastTable,
+    MovieCastData,
+    $$MovieCastTableFilterComposer,
+    $$MovieCastTableOrderingComposer,
+    $$MovieCastTableProcessedTableManager,
+    $$MovieCastTableInsertCompanionBuilder,
+    $$MovieCastTableUpdateCompanionBuilder> {
+  $$MovieCastTableProcessedTableManager(super.$state);
+}
+
+class $$MovieCastTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $MovieCastTable> {
+  $$MovieCastTableFilterComposer(super.$state);
+  ColumnFilters<String> get role => $state.composableBuilder(
+      column: $state.table.role,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get as => $state.composableBuilder(
+      column: $state.table.as,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$ActorsTableFilterComposer get actorId {
+    final $$ActorsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.actorId,
+        referencedTable: $state.db.actors,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$ActorsTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.actors, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$MoviesTableTableFilterComposer get movieId {
+    final $$MoviesTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.movieId,
+        referencedTable: $state.db.moviesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$MoviesTableTableFilterComposer(ComposerState($state.db,
+                $state.db.moviesTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$MovieCastTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $MovieCastTable> {
+  $$MovieCastTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get role => $state.composableBuilder(
+      column: $state.table.role,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get as => $state.composableBuilder(
+      column: $state.table.as,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$ActorsTableOrderingComposer get actorId {
+    final $$ActorsTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.actorId,
+        referencedTable: $state.db.actors,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ActorsTableOrderingComposer(ComposerState(
+                $state.db, $state.db.actors, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$MoviesTableTableOrderingComposer get movieId {
+    final $$MoviesTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.movieId,
+        referencedTable: $state.db.moviesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$MoviesTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.moviesTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$GenresTableInsertCompanionBuilder = GenresCompanion Function({
+  required int id,
+  required String name,
+  Value<int> rowid,
+});
+typedef $$GenresTableUpdateCompanionBuilder = GenresCompanion Function({
+  Value<int> id,
+  Value<String> name,
+  Value<int> rowid,
+});
+
+class $$GenresTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $GenresTable,
+    Genre,
+    $$GenresTableFilterComposer,
+    $$GenresTableOrderingComposer,
+    $$GenresTableProcessedTableManager,
+    $$GenresTableInsertCompanionBuilder,
+    $$GenresTableUpdateCompanionBuilder> {
+  $$GenresTableTableManager(_$AppDatabase db, $GenresTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$GenresTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$GenresTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$GenresTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              GenresCompanion(
+            id: id,
+            name: name,
+            rowid: rowid,
+          ),
+          getInsertCompanionBuilder: ({
+            required int id,
+            required String name,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              GenresCompanion.insert(
+            id: id,
+            name: name,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$GenresTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $GenresTable,
+    Genre,
+    $$GenresTableFilterComposer,
+    $$GenresTableOrderingComposer,
+    $$GenresTableProcessedTableManager,
+    $$GenresTableInsertCompanionBuilder,
+    $$GenresTableUpdateCompanionBuilder> {
+  $$GenresTableProcessedTableManager(super.$state);
+}
+
+class $$GenresTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $GenresTable> {
+  $$GenresTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter movieGenresRefs(
+      ComposableFilter Function($$MovieGenresTableFilterComposer f) f) {
+    final $$MovieGenresTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.movieGenres,
+        getReferencedColumn: (t) => t.genreId,
+        builder: (joinBuilder, parentComposers) =>
+            $$MovieGenresTableFilterComposer(ComposerState($state.db,
+                $state.db.movieGenres, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+}
+
+class $$GenresTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $GenresTable> {
+  $$GenresTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$MovieGenresTableInsertCompanionBuilder = MovieGenresCompanion
+    Function({
+  required int movieId,
+  required int genreId,
+  Value<int> rowid,
+});
+typedef $$MovieGenresTableUpdateCompanionBuilder = MovieGenresCompanion
+    Function({
+  Value<int> movieId,
+  Value<int> genreId,
+  Value<int> rowid,
+});
+
+class $$MovieGenresTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $MovieGenresTable,
+    MovieGenre,
+    $$MovieGenresTableFilterComposer,
+    $$MovieGenresTableOrderingComposer,
+    $$MovieGenresTableProcessedTableManager,
+    $$MovieGenresTableInsertCompanionBuilder,
+    $$MovieGenresTableUpdateCompanionBuilder> {
+  $$MovieGenresTableTableManager(_$AppDatabase db, $MovieGenresTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$MovieGenresTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$MovieGenresTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$MovieGenresTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> movieId = const Value.absent(),
+            Value<int> genreId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MovieGenresCompanion(
+            movieId: movieId,
+            genreId: genreId,
+            rowid: rowid,
+          ),
+          getInsertCompanionBuilder: ({
+            required int movieId,
+            required int genreId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MovieGenresCompanion.insert(
+            movieId: movieId,
+            genreId: genreId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$MovieGenresTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $MovieGenresTable,
+    MovieGenre,
+    $$MovieGenresTableFilterComposer,
+    $$MovieGenresTableOrderingComposer,
+    $$MovieGenresTableProcessedTableManager,
+    $$MovieGenresTableInsertCompanionBuilder,
+    $$MovieGenresTableUpdateCompanionBuilder> {
+  $$MovieGenresTableProcessedTableManager(super.$state);
+}
+
+class $$MovieGenresTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $MovieGenresTable> {
+  $$MovieGenresTableFilterComposer(super.$state);
+  $$MoviesTableTableFilterComposer get movieId {
+    final $$MoviesTableTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.movieId,
+        referencedTable: $state.db.moviesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$MoviesTableTableFilterComposer(ComposerState($state.db,
+                $state.db.moviesTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$GenresTableFilterComposer get genreId {
+    final $$GenresTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.genreId,
+        referencedTable: $state.db.genres,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$GenresTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.genres, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$MovieGenresTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $MovieGenresTable> {
+  $$MovieGenresTableOrderingComposer(super.$state);
+  $$MoviesTableTableOrderingComposer get movieId {
+    final $$MoviesTableTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.movieId,
+        referencedTable: $state.db.moviesTable,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$MoviesTableTableOrderingComposer(ComposerState($state.db,
+                $state.db.moviesTable, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$GenresTableOrderingComposer get genreId {
+    final $$GenresTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.genreId,
+        referencedTable: $state.db.genres,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$GenresTableOrderingComposer(ComposerState(
+                $state.db, $state.db.genres, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
 class _$AppDatabaseManager {
   final _$AppDatabase _db;
   _$AppDatabaseManager(this._db);
@@ -1483,4 +3177,12 @@ class _$AppDatabaseManager {
       $$SeasonsTableTableManager(_db, _db.seasons);
   $$EpisodesTableTableManager get episodes =>
       $$EpisodesTableTableManager(_db, _db.episodes);
+  $$ActorsTableTableManager get actors =>
+      $$ActorsTableTableManager(_db, _db.actors);
+  $$MovieCastTableTableManager get movieCast =>
+      $$MovieCastTableTableManager(_db, _db.movieCast);
+  $$GenresTableTableManager get genres =>
+      $$GenresTableTableManager(_db, _db.genres);
+  $$MovieGenresTableTableManager get movieGenres =>
+      $$MovieGenresTableTableManager(_db, _db.movieGenres);
 }

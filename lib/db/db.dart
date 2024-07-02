@@ -4,6 +4,7 @@ import 'package:drift/isolate.dart';
 import 'dart:io';
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
@@ -13,21 +14,34 @@ import 'package:jellyone/db/tables/movies.dart';
 import 'package:jellyone/db/tables/series.dart';
 import 'package:jellyone/db/tables/seasons.dart';
 import 'package:jellyone/db/tables/episodes.dart';
+import 'package:jellyone/db/tables/actors.dart';
+import 'package:jellyone/db/tables/genres.dart';
+import 'package:jellyone/db/tables/movie_cast.dart';
+import 'package:jellyone/db/tables/movie_genres.dart';
 
 part 'db.g.dart';
 
-@DriftDatabase(tables: [MoviesTable, Series, Seasons, Episodes])
+@DriftDatabase(tables: [
+  MoviesTable,
+  Series,
+  Seasons,
+  Episodes,
+  Actors,
+  MovieCast,
+  Genres,
+  MovieGenres
+])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase(QueryExecutor e) : super(e);
+  // AppDatabase(QueryExecutor e) : super(e);
+  AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
   int get schemaVersion => 1;
 
   Future<List<MoviesTableData>> getMovieFromName(String name) async {
     try {
-      final result = await (select(moviesTable)
-            ..where((r) => r.originalTitle.equals(name)))
-          .get();
+      final result =
+          await (select(moviesTable)..where((r) => r.name.equals(name))).get();
       return result;
     } catch (e) {
       print('Error: $e');
@@ -39,8 +53,18 @@ class AppDatabase extends _$AppDatabase {
     return (select(moviesTable)).get();
   }
 
+  Future<List<MovieCastData>> getCompleteCast(int id) {
+    return (select(movieCast)..where((tbl) => tbl.movieId.equals(id))).get();
+  }
+
+  Future<dynamic> getCast(int id) {
+    return (select(actors)..where((tbl) => tbl.id.equals(id))).get();
+  }
+
   void clearTable() async {
     await delete(moviesTable).go();
+    await delete(actors).go();
+    await delete(movieCast).go();
   }
 }
 
@@ -68,7 +92,7 @@ Future<DriftIsolate> createDBIsolate() async {
     }
 
     return LazyDatabase(() async {
-      final dbFolder = await getApplicationDocumentsDirectory();
+      final dbFolder = await getApplicationSupportDirectory();
       final path = p.join(dbFolder.path, 'db.sqlite');
 
       return NativeDatabase(File(path));

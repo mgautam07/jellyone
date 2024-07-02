@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:drift/drift.dart';
 import 'package:drift/isolate.dart';
@@ -19,9 +21,12 @@ Future<void> updateMedia(List<dynamic> args) async {
   var moviesDirectory = Directory(movieFolderPath!);
   var showsDirectory = Directory(showsFolderPath!);
 
-//iterating movies over directories
+  // database.clearTable();
+
+  //iterating movies over directories
   await for (var folder in moviesDirectory.list()) {
     await FileSystemEntity.isDirectory(folder.path).then((isDir) async {
+      await Future.delayed(const Duration(seconds: 5));
       if (isDir) {
         //getting contents of the directory
         var movieDir = Directory(folder.path);
@@ -66,7 +71,7 @@ Future<void> updateMedia(List<dynamic> args) async {
 
 Future addMovieToDB(AppDatabase database, String name, String apiKey,
     String accessToken, String filePath) async {
-  final info = parseName(name);
+  var info = parseName(name);
   final movieExists = await database.getMovieFromName(info['name']!);
   if (movieExists.isNotEmpty || info.isEmpty) {
     return;
@@ -76,9 +81,16 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
 
   final tmdb = TMDB(
     ApiKeys(apiKey, accessToken),
+    logConfig: const ConfigLogger(
+      showLogs: true,
+      showErrorLogs: true,
+    ),
   );
 
+  // search for movie from file name
   if (info['year'] != null) {
+    print(info['name']);
+    print(info['year']);
     final res = await tmdb.v3.search.queryMovies(info['name']!,
         includeAdult: true, year: int.parse(info['year']!));
     result = res['results'][0];
@@ -88,22 +100,108 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
     result = res['results'][0];
   }
 
-  String nonNullMovieName = info['name'] ?? 'Blah Blah';
+  // get movie details from id
+  final id = result['id'];
+  if (id != null) {
+    final imdbInfo = await tmdb.v3.movies.getDetails(id);
 
-  if (result != null) {
-    await database
-        .into($MoviesTableTable(database))
-        .insert(MoviesTableCompanion(
-          id: Value(result['id']),
-          adult: Value(result['adult']),
-          backdropPath: Value(result['backdrop_path']),
-          originalTitle: Value(nonNullMovieName),
-          overview: Value(result['overview']),
-          posterPath: Value(result['poster_path']),
-          resolution: Value(info['resolution'] ?? 'unavailable'),
-          videoFile: Value(filePath),
-          vote: Value(double.parse(result['vote_average'].toStringAsFixed(1))),
-        ));
-    print(result['original_title'] + ' inserted');
+    if (imdbInfo.isNotEmpty) {
+      final imgs = await tmdb.v3.movies.getImages(id, language: 'en');
+      if (imgs.isNotEmpty && imgs['logos'].length > 0) {
+        final logoPath = imgs['logos'][0]['file_path'];
+        DateTime releaseDate = DateTime.parse(imdbInfo['release_date']);
+        String nonNullMovieName = info['name'] ?? 'Blah Blah';
+        await database
+            .into($MoviesTableTable(database))
+            .insert(MoviesTableCompanion(
+              id: Value(imdbInfo['id']),
+              adult: Value(imdbInfo['adult']),
+              backdropPath: Value(imdbInfo['backdrop_path']),
+              name: Value(nonNullMovieName),
+              tagLine: Value(imdbInfo['tagline']),
+              overview: Value(imdbInfo['overview']),
+              posterPath: Value(imdbInfo['poster_path']),
+              logoPath: Value(logoPath ?? '/fcIKzqbhtlUeWOvYjFdkR8rZOAC.png'),
+              resolution: Value(info['resolution'] ?? 'unavailable'),
+              homePage: Value(imdbInfo['homepage']),
+              releaseDate: Value(releaseDate),
+              imdb: Value(imdbInfo['imdb_id']),
+              videoFile: Value(filePath),
+              vote: Value(
+                  double.parse(imdbInfo['vote_average'].toStringAsFixed(1))),
+              runTime: Value(imdbInfo['runtime']),
+            ));
+        print('Movie: ${result['original_title']} inserted');
+
+        print('------------------- adding genre --------------');
+        for (var genre in imdbInfo['genres']) {
+          await database.into(database.genres).insertOnConflictUpdate(
+              GenresCompanion(
+                  id: Value(genre['id']), name: Value(genre['name'])));
+
+          await database.into(database.movieGenres).insertOnConflictUpdate(
+              MovieGenresCompanion(
+                  movieId: Value(imdbInfo['id']), genreId: Value(genre['id'])));
+        }
+
+        print('------------------- getting cast --------------');
+        final castInfo = await tmdb.v3.movies.getCredits(id);
+        if (castInfo.isNotEmpty) {
+          final cast = castInfo['cast'];
+          for (var i = 0; i < min(cast.length, 15); i++) {
+            // await Future.delayed(const Duration(seconds: 1));
+
+            if (cast[i]['profile_path'] == null) continue;
+            if (cast[i]['known_for_department'] == 'Acting') {
+              await database.into(database.actors).insertOnConflictUpdate(
+                  ActorsCompanion.insert(
+                      id: Value(cast[i]['id']),
+                      name: cast[i]['name'],
+                      profilePath: cast[i]['profile_path']));
+              await database.into(database.movieCast).insertOnConflictUpdate(
+                  MovieCastCompanion(
+                      actorId: Value(cast[i]['id']),
+                      movieId: Value(id),
+                      role: const Value('Actor'),
+                      as: Value(cast[i]['character'])));
+              print('Cast: ${cast[i]['name']} inserted');
+            }
+          }
+
+          final crew = castInfo['crew'];
+          for (var i = 0; i < crew.length; i++) {
+            if (crew[i]['profile_path'] == null) continue;
+
+            // await Future.delayed(const Duration(seconds: 1));
+
+            String role = crew[i]['job'];
+            if (role != 'Screenplay' &&
+                role != 'Producer' &&
+                role != 'Director') {
+              continue;
+            }
+            if (role == 'Screenplay') role = 'Writer';
+
+            await database.into(database.actors).insertOnConflictUpdate(
+                ActorsCompanion.insert(
+                    id: Value(crew[i]['id']),
+                    name: crew[i]['name'],
+                    profilePath: crew[i]['profile_path']));
+
+            await database
+                .into(database.movieCast)
+                .insertOnConflictUpdate(MovieCastCompanion(
+                  actorId: Value(crew[i]['id']),
+                  movieId: Value(id),
+                  role: Value(role),
+                  as: Value(role),
+                ));
+            print('Crew: ${crew[i]['name']} ${role} inserted');
+          }
+        }
+      }
+    }
+
+    // await Future.delayed(const Duration(seconds: 5));
   }
 }

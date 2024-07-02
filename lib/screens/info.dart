@@ -1,12 +1,175 @@
 import 'dart:math';
+import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
+
+import 'package:jellyone/db/db.dart';
 import 'package:jellyone/theme/app_styles.dart';
 import 'package:jellyone/widgets/cast_card.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class MediaInfoScreen extends StatelessWidget {
-  final int id;
+Future<List<String>> getGenres(int id) async {
+  final database = AppDatabase();
+  List<String> genreList = [];
 
-  const MediaInfoScreen({super.key, required this.id});
+  final genres = await (database.select(database.movieGenres)
+        ..where((tbl) => tbl.movieId.equals(id)))
+      .get();
+
+  if (genres.isNotEmpty) {
+    for (var g in genres) {
+      final genre = await (database.select(database.genres)
+            ..where((tbl) => tbl.id.equals(g.genreId)))
+          .get();
+      if (genre.isNotEmpty) {
+        genreList.add(genre[0].name);
+      }
+    }
+  }
+  await database.close();
+  return genreList;
+}
+
+Future<List<String>> getProducer(int id) async {
+  final database = AppDatabase();
+  List<String> producerList = [];
+
+  final producers = await (database.select(database.movieCast)
+        ..where((tbl) => tbl.movieId.equals(id))
+        ..where((tbl) => tbl.role.equals('Producer')))
+      .get();
+
+  if (producers.isNotEmpty) {
+    for (var a in producers) {
+      final producer = await (database.select(database.actors)
+            ..where((tbl) => tbl.id.equals(a.actorId)))
+          .get();
+      if (producer.isNotEmpty) {
+        producerList.add(producer[0].name);
+      }
+    }
+  }
+  await database.close();
+  return producerList;
+}
+
+Future<List<String>> getWriter(int id) async {
+  final database = AppDatabase();
+  List<String> writerList = [];
+
+  final writers = await (database.select(database.movieCast)
+        ..where((tbl) => tbl.movieId.equals(id))
+        ..where((tbl) => tbl.role.equals('Writer')))
+      .get();
+
+  if (writers.isNotEmpty) {
+    for (var a in writers) {
+      final writer = await (database.select(database.actors)
+            ..where((tbl) => tbl.id.equals(a.actorId)))
+          .get();
+      if (writer.isNotEmpty) {
+        writerList.add(writer[0].name);
+      }
+    }
+  }
+  await database.close();
+  return writerList;
+}
+
+Future<List<String>> getDirector(int id) async {
+  final database = AppDatabase();
+  List<String> directorList = [];
+
+  print('directors');
+  final directors = await (database.select(database.movieCast)
+        ..where((tbl) => tbl.movieId.equals(id))
+        ..where((tbl) => tbl.role.equals('Director')))
+      .get();
+
+  if (directors.isNotEmpty) {
+    for (var a in directors) {
+      final director = await (database.select(database.actors)
+            ..where((tbl) => tbl.id.equals(a.actorId)))
+          .get();
+      if (director.isNotEmpty) {
+        directorList.add(director[0].name);
+      }
+    }
+  }
+  await database.close();
+  return directorList;
+}
+
+Future<List<Map<String, String>>> getCast(int id) async {
+  final database = AppDatabase();
+  List<Map<String, String>> actorList = [];
+
+  final actors = await (database.select(database.movieCast)
+        ..where((tbl) => tbl.movieId.equals(id))
+        ..where((tbl) => tbl.role.equals('Actor')))
+      .get();
+
+  if (actors.isNotEmpty) {
+    for (var a in actors) {
+      final actor = await (database.select(database.actors)
+            ..where((tbl) => tbl.id.equals(a.actorId)))
+          .get();
+      if (actor.isNotEmpty) {
+        Map<String, String> m = {
+          "name": actor[0].name,
+          "role": a.role,
+          "as": a.as,
+          "profilePath": actor[0].profilePath
+        };
+        actorList.add(m);
+      }
+    }
+  }
+  return actorList;
+}
+
+String getEndTime(int time) {
+  final end = DateTime.now().add(Duration(minutes: time));
+  return 'Ends at ${end.hour}:${end.minute}';
+}
+
+String convertRunTime(int time) {
+  double h = time / 60;
+  return '${h.floor()}h ${time - (h.floor() * 60)}m';
+}
+
+class MediaInfoScreen extends StatefulWidget {
+  final MoviesTableData movie;
+
+  const MediaInfoScreen({super.key, required this.movie});
+
+  @override
+  State<MediaInfoScreen> createState() => _MediaInfoScreenState();
+}
+
+class _MediaInfoScreenState extends State<MediaInfoScreen> {
+  late Future<List<String>> _genreFuture;
+  late Future<List<String>> _producerFuture;
+  late Future<List<String>> _directorFuture;
+  late Future<List<String>> _writerFuture;
+  late Future<List<Map<String, String>>> _castFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _genreFuture = getGenres(widget.movie.id);
+    _producerFuture = getProducer(widget.movie.id);
+    _directorFuture = getDirector(widget.movie.id);
+    _writerFuture = getWriter(widget.movie.id);
+    _castFuture = getCast(widget.movie.id);
+    // getCastAndCrew(widget.movie.id);
+  }
+
+  _launchWebsite(String uri) async {
+    final Uri url = Uri.parse(uri);
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +180,13 @@ class MediaInfoScreen extends StatelessWidget {
       body: Stack(
         children: [
           Transform.translate(
-            offset: const Offset(0, -100),
+            offset: const Offset(0, -60),
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/poster_tiou.jpg'),
+                  image: FastCachedImageProvider(
+                      'https://image.tmdb.org/t/p/original${widget.movie.backdropPath}'),
+                  // image: AssetImage('assets/images/poster_tiou.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -41,18 +206,23 @@ class MediaInfoScreen extends StatelessWidget {
                         width:
                             max(MediaQuery.of(context).size.width * 0.3, 400),
                       ),
-                      const Center(
+                      Center(
                         child: Image(
-                          image: AssetImage('assets/images/logo_tiou.png'),
+                          image: FastCachedImageProvider(
+                              'https://image.tmdb.org/t/p/original${widget.movie.logoPath}'),
                           height: 120,
+                          width: 400,
                         ),
                       ),
                     ],
                   ),
+                  const SizedBox(
+                    height: 15,
+                  ),
                   Container(
                     width: double.infinity,
                     height: 110,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Color.fromRGBO(32, 32, 32, 0.8),
                     ),
                     child: Row(
@@ -67,57 +237,60 @@ class MediaInfoScreen extends StatelessWidget {
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Row(
+                                  Row(
                                     children: [
                                       Text(
-                                        'Anyone But You',
-                                        style: TextStyle(fontSize: 26),
+                                        widget.movie.name,
+                                        style: const TextStyle(fontSize: 26),
                                       ),
                                     ],
                                   ),
                                   Row(
                                     children: [
-                                      const Text(
-                                        '2023',
+                                      Text(
+                                        '${widget.movie.releaseDate.year}',
                                         style: TextStyle(fontSize: 15),
                                       ),
                                       const SizedBox(width: 10),
-                                      const Text(
-                                        '1h 43m',
-                                        style: TextStyle(fontSize: 15),
+                                      Text(
+                                        convertRunTime(widget.movie.runTime),
+                                        style: const TextStyle(fontSize: 15),
                                       ),
                                       const SizedBox(width: 10),
-                                      Container(
-                                        padding: EdgeInsets.only(
-                                            left: 8.5, right: 8.5),
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: AppTheme.text)),
-                                        child: const Text(
-                                          'R',
-                                          style: TextStyle(fontSize: 15),
-                                        ),
-                                      ),
+                                      // Container(
+                                      //   padding: const EdgeInsets.only(
+                                      //       left: 8.5, right: 8.5),
+                                      //   decoration: BoxDecoration(
+                                      //       border: Border.all(
+                                      //           color: AppTheme.text)),
+                                      //   child: const Text(
+                                      //     'R',
+                                      //     style: TextStyle(fontSize: 15),
+                                      //   ),
+                                      // ),
                                       const SizedBox(width: 10),
-                                      const Row(
+                                      Row(
                                         children: [
-                                          Icon(
+                                          const Icon(
                                             Icons.star,
                                             color: Colors.amber,
                                             size: 20,
                                           ),
-                                          Text(
-                                            '7.2',
-                                            style: TextStyle(fontSize: 15),
-                                          )
+                                          Padding(
+                                              padding: EdgeInsets.only(left: 2),
+                                              child: Text(
+                                                widget.movie.vote.toString(),
+                                                style: const TextStyle(
+                                                    fontSize: 15),
+                                              )),
                                         ],
                                       ),
-                                      SizedBox(width: 10),
+                                      const SizedBox(width: 10),
                                       Text(
-                                        'Ends at 12:00 AM',
-                                        style: TextStyle(fontSize: 15),
+                                        getEndTime(widget.movie.runTime),
+                                        style: const TextStyle(fontSize: 15),
                                       ),
-                                      SizedBox(width: 10),
+                                      const SizedBox(width: 10),
                                     ],
                                   )
                                 ]),
@@ -129,14 +302,20 @@ class MediaInfoScreen extends StatelessWidget {
                               children: [
                                 TextButton(
                                     onPressed: () {},
-                                    child: Icon(Icons.play_arrow)),
+                                    style: TextButton.styleFrom(
+                                        shape: const CircleBorder()),
+                                    child: const Icon(Icons.play_arrow)),
                                 TextButton(
                                   onPressed: () {},
-                                  child: Icon(Icons.done),
+                                  style: TextButton.styleFrom(
+                                      shape: const CircleBorder()),
+                                  child: const Icon(Icons.done),
                                 ),
                                 TextButton(
                                     onPressed: () {},
-                                    child: Icon(Icons.delete)),
+                                    style: TextButton.styleFrom(
+                                        shape: const CircleBorder()),
+                                    child: const Icon(Icons.delete)),
                               ],
                             ),
                           ),
@@ -156,11 +335,12 @@ class MediaInfoScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.all(60),
+                                padding: const EdgeInsets.all(60),
                                 child: Transform.translate(
                                   offset: const Offset(0, -150),
                                   child: Image(
-                                    image: AssetImage('assets/images/tiou.jpg'),
+                                    image: FastCachedImageProvider(
+                                        'https://image.tmdb.org/t/p/original${widget.movie.posterPath}'),
                                     width: max(
                                         MediaQuery.of(context).size.width * 0.4,
                                         400),
@@ -179,68 +359,328 @@ class MediaInfoScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 20),
-                                const Text(
-                                  'When the last thing you expect becomes the only thing you want.',
-                                  style: TextStyle(fontSize: 18),
+                                Text(
+                                  widget.movie.tagLine,
+                                  style: const TextStyle(fontSize: 18),
                                 ),
                                 const SizedBox(height: 18),
-                                const Text(
-                                    "Solène, a 40-year-old single mom, begins an unexpected romance with 24-year-old Hayes Campbell, the lead singer of August Moon, the hottest boy band on the planet. When Solène must step in to chaperone her teenage daughter's trip to the Coachella Music Festival after her ex bails at the last minute, she has a chance encounter with Hayes and there is an instant, undeniable spark. As they begin a whirlwind romance, it isn't long before Hayes' superstar status poses unavoidable challenges to their relationship, and Solène soon discovers that life in the glare of his spotlight might be more than she bargained for.",
-                                    style: TextStyle(fontSize: 15)),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 15),
+                                  child: Text(widget.movie.overview,
+                                      style: const TextStyle(fontSize: 15)),
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  children: [
+                                    OutlinedButton(
+                                      onPressed: () =>
+                                          _launchWebsite(widget.movie.homePage),
+                                      style: OutlinedButton.styleFrom(
+                                          // backgroundColor: AppTheme.dark,
+                                          backgroundColor: Colors.transparent,
+                                          shadowColor: Colors.transparent,
+                                          foregroundColor: AppTheme.text,
+                                          shape: const RoundedRectangleBorder(
+                                            side: BorderSide.none,
+                                          )),
+                                      child: const Text('Home'),
+                                    ),
+                                    const SizedBox(width: 15),
+                                    OutlinedButton(
+                                      onPressed: () => _launchWebsite(
+                                          'https://www.imdb.com/title/${widget.movie.imdb}'),
+                                      style: OutlinedButton.styleFrom(
+                                          // backgroundColor: AppTheme.dark,
+                                          foregroundColor: AppTheme.text,
+                                          shape: const RoundedRectangleBorder(
+                                            side: BorderSide.none,
+                                          )),
+                                      child: const Text('IMDb'),
+                                    ),
+                                  ],
+                                ),
                                 const SizedBox(height: 20),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Genre'),
-                                    const SizedBox(width: 40),
-                                    Row(
-                                      children: List.generate(3, (index) {
-                                        return const Text('Drama',
-                                            style: TextStyle(fontSize: 15));
-                                      }),
+                                    const Text('Genre',
+                                        style: TextStyle(fontSize: 15)),
+                                    const SizedBox(width: 50),
+                                    Expanded(
+                                      child: FutureBuilder<List<String>>(
+                                        future: _genreFuture,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child: SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return Center(
+                                                child: Text(
+                                                    'Error: ${snapshot.error}'));
+                                          } else if (!snapshot.hasData ||
+                                              snapshot.data!.isEmpty) {
+                                            return const Text(
+                                                'No data available',
+                                                style: TextStyle(fontSize: 15));
+                                          } else {
+                                            return SizedBox(
+                                              height: 20,
+                                              child: ListView.builder(
+                                                itemCount:
+                                                    snapshot.data?.length ?? 0,
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemBuilder: (context, index) {
+                                                  return Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 4.5),
+                                                    child: Text(
+                                                      snapshot.data![index],
+                                                      style: const TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
                                     ),
                                   ],
                                 ),
+                                const SizedBox(height: 10),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Director'),
-                                    const SizedBox(width: 40),
-                                    Row(
-                                      children: List.generate(1, (index) {
-                                        return const Text('Will Gluck',
-                                            style: TextStyle(fontSize: 15));
-                                      }),
+                                    const Text('Director',
+                                        style: TextStyle(fontSize: 15)),
+                                    const SizedBox(width: 37),
+                                    Expanded(
+                                      child: FutureBuilder<List<String>>(
+                                        future: _directorFuture,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child: SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return Center(
+                                                child: Text(
+                                                    'Error: ${snapshot.error}'));
+                                          } else if (!snapshot.hasData ||
+                                              snapshot.data!.isEmpty) {
+                                            return const Text(
+                                                'No data available',
+                                                style: TextStyle(fontSize: 15));
+                                          } else {
+                                            return SizedBox(
+                                              height: 20,
+                                              child: ListView.builder(
+                                                itemCount:
+                                                    snapshot.data?.length ?? 0,
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemBuilder: (context, index) {
+                                                  return Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 4.5),
+                                                    child: Text(
+                                                      snapshot.data![index],
+                                                      style: const TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
                                     ),
                                   ],
                                 ),
+                                const SizedBox(height: 1),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('Writer'),
-                                    const SizedBox(width: 40),
-                                    Row(
-                                      children: List.generate(3, (index) {
-                                        return const Text('Will Gluck',
-                                            style: TextStyle(fontSize: 15));
-                                      }),
+                                    const Text('Producer',
+                                        style: TextStyle(fontSize: 15)),
+                                    const SizedBox(width: 30),
+                                    Expanded(
+                                      child: FutureBuilder<List<String>>(
+                                        future: _producerFuture,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child: SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return Center(
+                                                child: Text(
+                                                    'Error: ${snapshot.error}'));
+                                          } else if (!snapshot.hasData ||
+                                              snapshot.data!.isEmpty) {
+                                            return const Text(
+                                                'No data available',
+                                                style: TextStyle(fontSize: 15));
+                                          } else {
+                                            return SizedBox(
+                                              height: 20,
+                                              child: ListView.builder(
+                                                itemCount:
+                                                    snapshot.data?.length ?? 0,
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemBuilder: (context, index) {
+                                                  return Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 4.5),
+                                                    child: Text(
+                                                      snapshot.data![index],
+                                                      style: const TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 1),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('Writer',
+                                        style: TextStyle(fontSize: 15)),
+                                    const SizedBox(width: 50),
+                                    Expanded(
+                                      child: FutureBuilder<List<String>>(
+                                        future: _writerFuture,
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                              child: SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                            );
+                                          } else if (snapshot.hasError) {
+                                            return Center(
+                                                child: Text(
+                                                    'Error: ${snapshot.error}'));
+                                          } else if (!snapshot.hasData ||
+                                              snapshot.data!.isEmpty) {
+                                            return const Text(
+                                                'No data available',
+                                                style: TextStyle(fontSize: 15));
+                                          } else {
+                                            return SizedBox(
+                                              height: 20,
+                                              child: ListView.builder(
+                                                itemCount:
+                                                    snapshot.data?.length ?? 0,
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemBuilder: (context, index) {
+                                                  return Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 4.5),
+                                                    child: Text(
+                                                      snapshot.data![index],
+                                                      style: const TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
                                     ),
                                   ],
                                 ),
                                 const SizedBox(height: 23),
-                                const Text('Cast & Crew',
+                                const Text('Cast',
                                     style: TextStyle(fontSize: 22)),
                                 SizedBox(
-                                  height: 340,
+                                  height: 350,
                                   width: double.infinity,
-                                  child: ListView.builder(
-                                      // padding: const EdgeInsets.only(right: 14.0),
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: 3,
-                                      itemBuilder: (context, index) {
-                                        return const CastCard(id: 1);
-                                      }),
+                                  child: FutureBuilder(
+                                    future: _castFuture,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Center(
+                                            child: CircularProgressIndicator());
+                                      } else if (snapshot.hasError) {
+                                        return Center(
+                                            child: Text(
+                                                'Error: ${snapshot.error}'));
+                                      } else if (!snapshot.hasData ||
+                                          snapshot.data!.isEmpty) {
+                                        return const Center(
+                                            child: Text('No data available',
+                                                style:
+                                                    TextStyle(fontSize: 15)));
+                                      } else {
+                                        return ScrollConfiguration(
+                                          behavior: const ScrollBehavior()
+                                              .copyWith(overscroll: false),
+                                          child: ListView.builder(
+                                            itemCount:
+                                                snapshot.data?.length ?? 0,
+                                            scrollDirection: Axis.horizontal,
+                                            itemBuilder: (context, index) {
+                                              return CastCard(
+                                                  actor: snapshot.data![index]);
+                                            },
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
                                 ),
+                                const SizedBox(height: 20)
                               ],
                             ),
                           ),
