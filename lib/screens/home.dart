@@ -17,7 +17,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final database = AppDatabase();
     final allMovies = (database.select(database.moviesTable)
           ..where((tbl) => tbl.watchStatus.equals(0))
-          ..orderBy([(t) => d.OrderingTerm.desc(t.releaseDate)]))
+          ..orderBy([(t) => d.OrderingTerm.desc(t.releaseDate)])
+          ..limit(9))
         .get();
     // print(allMovies);
     database.close();

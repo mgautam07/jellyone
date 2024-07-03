@@ -1,8 +1,10 @@
 import 'dart:math';
+import 'package:drift/drift.dart' as d;
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:jellyone/db/db.dart';
+import 'package:jellyone/screens/video_player.dart';
 import 'package:jellyone/theme/app_styles.dart';
 import 'package:jellyone/widgets/cast_card.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -79,7 +81,6 @@ Future<List<String>> getDirector(int id) async {
   final database = AppDatabase();
   List<String> directorList = [];
 
-  print('directors');
   final directors = await (database.select(database.movieCast)
         ..where((tbl) => tbl.movieId.equals(id))
         ..where((tbl) => tbl.role.equals('Director')))
@@ -127,8 +128,16 @@ Future<List<Map<String, String>>> getCast(int id) async {
   return actorList;
 }
 
-String getEndTime(int time) {
-  final end = DateTime.now().add(Duration(minutes: time));
+String getEndTime(int time, int watchedTime) {
+  final end = DateTime.now()
+      .add(Duration(minutes: (time - (watchedTime / 60).floor())));
+  if (end.minute < 10 && end.hour > 9) {
+    return 'Ends at ${end.hour}: 0${end.minute}';
+  } else if (end.minute > 9 && end.hour < 10) {
+    return 'Ends at 0${end.hour}:${end.minute}';
+  } else if (end.minute < 10 && end.hour < 10) {
+    return 'Ends at 0${end.hour}:0${end.minute}';
+  }
   return 'Ends at ${end.hour}:${end.minute}';
 }
 
@@ -232,94 +241,107 @@ class _MediaInfoScreenState extends State<MediaInfoScreen> {
                               max(MediaQuery.of(context).size.width * 0.3, 350),
                         ),
                         Expanded(
-                          child: Container(
-                            // alignment: Alignment.centerLeft,
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        widget.movie.name,
-                                        style: const TextStyle(fontSize: 26),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        '${widget.movie.releaseDate.year}',
-                                        style: TextStyle(fontSize: 15),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Text(
-                                        convertRunTime(widget.movie.runTime),
-                                        style: const TextStyle(fontSize: 15),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      // Container(
-                                      //   padding: const EdgeInsets.only(
-                                      //       left: 8.5, right: 8.5),
-                                      //   decoration: BoxDecoration(
-                                      //       border: Border.all(
-                                      //           color: AppTheme.text)),
-                                      //   child: const Text(
-                                      //     'R',
-                                      //     style: TextStyle(fontSize: 15),
-                                      //   ),
-                                      // ),
-                                      const SizedBox(width: 10),
-                                      Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.star,
-                                            color: Colors.amber,
-                                            size: 20,
-                                          ),
-                                          Padding(
-                                              padding: EdgeInsets.only(left: 2),
-                                              child: Text(
-                                                widget.movie.vote.toString(),
-                                                style: const TextStyle(
-                                                    fontSize: 15),
-                                              )),
-                                        ],
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Text(
-                                        getEndTime(widget.movie.runTime),
-                                        style: const TextStyle(fontSize: 15),
-                                      ),
-                                      const SizedBox(width: 10),
-                                    ],
-                                  )
-                                ]),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: Row(
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                TextButton(
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                        shape: const CircleBorder()),
-                                    child: const Icon(Icons.play_arrow)),
-                                TextButton(
-                                  onPressed: () {},
-                                  style: TextButton.styleFrom(
-                                      shape: const CircleBorder()),
-                                  child: const Icon(Icons.done),
+                                Row(
+                                  children: [
+                                    Text(
+                                      widget.movie.name,
+                                      style: const TextStyle(fontSize: 26),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
                                 ),
-                                TextButton(
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                        shape: const CircleBorder()),
-                                    child: const Icon(Icons.delete)),
-                              ],
+                                Row(
+                                  children: [
+                                    Text(
+                                      '${widget.movie.releaseDate.year}',
+                                      style: const TextStyle(fontSize: 15),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      convertRunTime(widget.movie.runTime),
+                                      style: const TextStyle(fontSize: 15),
+                                    ),
+                                    // const SizedBox(width: 10),
+                                    // Container(
+                                    //   padding: const EdgeInsets.only(
+                                    //       left: 8.5, right: 8.5),
+                                    //   decoration: BoxDecoration(
+                                    //       border: Border.all(
+                                    //           color: AppTheme.text)),
+                                    //   child: const Text(
+                                    //     'R',
+                                    //     style: TextStyle(fontSize: 15),
+                                    //   ),
+                                    // ),
+                                    const SizedBox(width: 10),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
+                                          size: 20,
+                                        ),
+                                        Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 2),
+                                            child: Text(
+                                              widget.movie.vote.toString(),
+                                              style:
+                                                  const TextStyle(fontSize: 15),
+                                            )),
+                                      ],
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      getEndTime(widget.movie.runTime,
+                                          widget.movie.watchedTime),
+                                      style: const TextStyle(fontSize: 15),
+                                    ),
+                                    const SizedBox(width: 10),
+                                  ],
+                                )
+                              ]),
+                        ),
+                        Row(
+                          children: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => VideoPlayer(
+                                              id: widget.movie.id,
+                                              name: widget.movie.name,
+                                              path: [widget.movie.videoFile],
+                                              time: widget.movie.watchedTime)));
+                                },
+                                style: TextButton.styleFrom(
+                                    shape: const CircleBorder()),
+                                child: const Icon(Icons.play_arrow)),
+                            TextButton(
+                              onPressed: () {
+                                final database = AppDatabase();
+                                (database.update(database.moviesTable)
+                                  ..where(
+                                      (tbl) => tbl.id.equals(widget.movie.id))
+                                  ..write(const MoviesTableCompanion(
+                                      watchStatus: d.Value(2))));
+                                database.close();
+                              },
+                              style: TextButton.styleFrom(
+                                  shape: const CircleBorder()),
+                              child: const Icon(Icons.done),
                             ),
-                          ),
-                        )
+                            TextButton(
+                                onPressed: () {},
+                                style: TextButton.styleFrom(
+                                    shape: const CircleBorder()),
+                                child: const Icon(Icons.delete)),
+                          ],
+                        ),
                       ],
                     ),
                   ),
