@@ -4,6 +4,8 @@ import 'package:drift/isolate.dart';
 import 'dart:io';
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart';
+import 'package:jellyone/db/tables/tv_cast.dart';
+import 'package:jellyone/db/tables/tv_genres.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
@@ -29,7 +31,9 @@ part 'db.g.dart';
   Actors,
   MovieCast,
   Genres,
-  MovieGenres
+  MovieGenres,
+  TvGenres,
+  TvCast
 ])
 class AppDatabase extends _$AppDatabase {
   // AppDatabase(QueryExecutor e) : super(e);
@@ -46,6 +50,43 @@ class AppDatabase extends _$AppDatabase {
     } catch (e) {
       print('Error: $e');
       return [];
+    }
+  }
+
+  Future<List<Sery>> getSeriesFromName(String name) async {
+    try {
+      final result =
+          await (select(series)..where((r) => r.name.equals(name))).get();
+      return result;
+    } catch (e) {
+      print('Error: $e');
+      return [];
+    }
+  }
+
+  Future<List<Season>>? getSeasonFromId(int seasonNumber, int id) {
+    try {
+      final result = (select(seasons)
+            ..where(
+                (r) => (r.number.equals(seasonNumber) & r.seriesid.equals(id))))
+          .get();
+      return result;
+    } catch (e) {
+      print('Error: $e');
+      return null;
+    }
+  }
+
+  Future<List<Episode>>? getEpisodeFromId(int episodeNumber, int id) {
+    try {
+      final result = (select(episodes)
+            ..where((r) =>
+                (r.number.equals(episodeNumber) & r.seasonid.equals(id))))
+          .get();
+      return result;
+    } catch (e) {
+      print('Error: $e');
+      return null;
     }
   }
 

@@ -787,8 +787,80 @@ class $SeriesTable extends Series with TableInfo<$SeriesTable, Sery> {
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
-  List<GeneratedColumn> get $columns => [id];
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _tagLineMeta =
+      const VerificationMeta('tagLine');
+  @override
+  late final GeneratedColumn<String> tagLine = GeneratedColumn<String>(
+      'tag_line', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _overviewMeta =
+      const VerificationMeta('overview');
+  @override
+  late final GeneratedColumn<String> overview = GeneratedColumn<String>(
+      'overview', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _posterPathMeta =
+      const VerificationMeta('posterPath');
+  @override
+  late final GeneratedColumn<String> posterPath = GeneratedColumn<String>(
+      'poster_path', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _backdropPathMeta =
+      const VerificationMeta('backdropPath');
+  @override
+  late final GeneratedColumn<String> backdropPath = GeneratedColumn<String>(
+      'backdrop_path', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _homePageMeta =
+      const VerificationMeta('homePage');
+  @override
+  late final GeneratedColumn<String> homePage = GeneratedColumn<String>(
+      'home_page', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _firstAirDateMeta =
+      const VerificationMeta('firstAirDate');
+  @override
+  late final GeneratedColumn<DateTime> firstAirDate = GeneratedColumn<DateTime>(
+      'first_air_date', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _lastAirDateMeta =
+      const VerificationMeta('lastAirDate');
+  @override
+  late final GeneratedColumn<DateTime> lastAirDate = GeneratedColumn<DateTime>(
+      'last_air_date', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _voteMeta = const VerificationMeta('vote');
+  @override
+  late final GeneratedColumn<double> vote = GeneratedColumn<double>(
+      'vote', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _watchStatusMeta =
+      const VerificationMeta('watchStatus');
+  @override
+  late final GeneratedColumn<int> watchStatus = GeneratedColumn<int>(
+      'watch_status', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        name,
+        tagLine,
+        overview,
+        posterPath,
+        backdropPath,
+        homePage,
+        firstAirDate,
+        lastAirDate,
+        vote,
+        watchStatus
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -804,6 +876,74 @@ class $SeriesTable extends Series with TableInfo<$SeriesTable, Sery> {
     } else if (isInserting) {
       context.missing(_idMeta);
     }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('tag_line')) {
+      context.handle(_tagLineMeta,
+          tagLine.isAcceptableOrUnknown(data['tag_line']!, _tagLineMeta));
+    } else if (isInserting) {
+      context.missing(_tagLineMeta);
+    }
+    if (data.containsKey('overview')) {
+      context.handle(_overviewMeta,
+          overview.isAcceptableOrUnknown(data['overview']!, _overviewMeta));
+    } else if (isInserting) {
+      context.missing(_overviewMeta);
+    }
+    if (data.containsKey('poster_path')) {
+      context.handle(
+          _posterPathMeta,
+          posterPath.isAcceptableOrUnknown(
+              data['poster_path']!, _posterPathMeta));
+    } else if (isInserting) {
+      context.missing(_posterPathMeta);
+    }
+    if (data.containsKey('backdrop_path')) {
+      context.handle(
+          _backdropPathMeta,
+          backdropPath.isAcceptableOrUnknown(
+              data['backdrop_path']!, _backdropPathMeta));
+    } else if (isInserting) {
+      context.missing(_backdropPathMeta);
+    }
+    if (data.containsKey('home_page')) {
+      context.handle(_homePageMeta,
+          homePage.isAcceptableOrUnknown(data['home_page']!, _homePageMeta));
+    } else if (isInserting) {
+      context.missing(_homePageMeta);
+    }
+    if (data.containsKey('first_air_date')) {
+      context.handle(
+          _firstAirDateMeta,
+          firstAirDate.isAcceptableOrUnknown(
+              data['first_air_date']!, _firstAirDateMeta));
+    } else if (isInserting) {
+      context.missing(_firstAirDateMeta);
+    }
+    if (data.containsKey('last_air_date')) {
+      context.handle(
+          _lastAirDateMeta,
+          lastAirDate.isAcceptableOrUnknown(
+              data['last_air_date']!, _lastAirDateMeta));
+    } else if (isInserting) {
+      context.missing(_lastAirDateMeta);
+    }
+    if (data.containsKey('vote')) {
+      context.handle(
+          _voteMeta, vote.isAcceptableOrUnknown(data['vote']!, _voteMeta));
+    } else if (isInserting) {
+      context.missing(_voteMeta);
+    }
+    if (data.containsKey('watch_status')) {
+      context.handle(
+          _watchStatusMeta,
+          watchStatus.isAcceptableOrUnknown(
+              data['watch_status']!, _watchStatusMeta));
+    }
     return context;
   }
 
@@ -815,6 +955,26 @@ class $SeriesTable extends Series with TableInfo<$SeriesTable, Sery> {
     return Sery(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      tagLine: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}tag_line'])!,
+      overview: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}overview'])!,
+      posterPath: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}poster_path'])!,
+      backdropPath: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}backdrop_path'])!,
+      homePage: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}home_page'])!,
+      firstAirDate: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}first_air_date'])!,
+      lastAirDate: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}last_air_date'])!,
+      vote: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}vote'])!,
+      watchStatus: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}watch_status'])!,
     );
   }
 
@@ -826,17 +986,58 @@ class $SeriesTable extends Series with TableInfo<$SeriesTable, Sery> {
 
 class Sery extends DataClass implements Insertable<Sery> {
   final int id;
-  const Sery({required this.id});
+  final String name;
+  final String tagLine;
+  final String overview;
+  final String posterPath;
+  final String backdropPath;
+  final String homePage;
+  final DateTime firstAirDate;
+  final DateTime lastAirDate;
+  final double vote;
+  final int watchStatus;
+  const Sery(
+      {required this.id,
+      required this.name,
+      required this.tagLine,
+      required this.overview,
+      required this.posterPath,
+      required this.backdropPath,
+      required this.homePage,
+      required this.firstAirDate,
+      required this.lastAirDate,
+      required this.vote,
+      required this.watchStatus});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    map['tag_line'] = Variable<String>(tagLine);
+    map['overview'] = Variable<String>(overview);
+    map['poster_path'] = Variable<String>(posterPath);
+    map['backdrop_path'] = Variable<String>(backdropPath);
+    map['home_page'] = Variable<String>(homePage);
+    map['first_air_date'] = Variable<DateTime>(firstAirDate);
+    map['last_air_date'] = Variable<DateTime>(lastAirDate);
+    map['vote'] = Variable<double>(vote);
+    map['watch_status'] = Variable<int>(watchStatus);
     return map;
   }
 
   SeriesCompanion toCompanion(bool nullToAbsent) {
     return SeriesCompanion(
       id: Value(id),
+      name: Value(name),
+      tagLine: Value(tagLine),
+      overview: Value(overview),
+      posterPath: Value(posterPath),
+      backdropPath: Value(backdropPath),
+      homePage: Value(homePage),
+      firstAirDate: Value(firstAirDate),
+      lastAirDate: Value(lastAirDate),
+      vote: Value(vote),
+      watchStatus: Value(watchStatus),
     );
   }
 
@@ -845,6 +1046,16 @@ class Sery extends DataClass implements Insertable<Sery> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Sery(
       id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      tagLine: serializer.fromJson<String>(json['tagLine']),
+      overview: serializer.fromJson<String>(json['overview']),
+      posterPath: serializer.fromJson<String>(json['posterPath']),
+      backdropPath: serializer.fromJson<String>(json['backdropPath']),
+      homePage: serializer.fromJson<String>(json['homePage']),
+      firstAirDate: serializer.fromJson<DateTime>(json['firstAirDate']),
+      lastAirDate: serializer.fromJson<DateTime>(json['lastAirDate']),
+      vote: serializer.fromJson<double>(json['vote']),
+      watchStatus: serializer.fromJson<int>(json['watchStatus']),
     );
   }
   @override
@@ -852,51 +1063,187 @@ class Sery extends DataClass implements Insertable<Sery> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'tagLine': serializer.toJson<String>(tagLine),
+      'overview': serializer.toJson<String>(overview),
+      'posterPath': serializer.toJson<String>(posterPath),
+      'backdropPath': serializer.toJson<String>(backdropPath),
+      'homePage': serializer.toJson<String>(homePage),
+      'firstAirDate': serializer.toJson<DateTime>(firstAirDate),
+      'lastAirDate': serializer.toJson<DateTime>(lastAirDate),
+      'vote': serializer.toJson<double>(vote),
+      'watchStatus': serializer.toJson<int>(watchStatus),
     };
   }
 
-  Sery copyWith({int? id}) => Sery(
+  Sery copyWith(
+          {int? id,
+          String? name,
+          String? tagLine,
+          String? overview,
+          String? posterPath,
+          String? backdropPath,
+          String? homePage,
+          DateTime? firstAirDate,
+          DateTime? lastAirDate,
+          double? vote,
+          int? watchStatus}) =>
+      Sery(
         id: id ?? this.id,
+        name: name ?? this.name,
+        tagLine: tagLine ?? this.tagLine,
+        overview: overview ?? this.overview,
+        posterPath: posterPath ?? this.posterPath,
+        backdropPath: backdropPath ?? this.backdropPath,
+        homePage: homePage ?? this.homePage,
+        firstAirDate: firstAirDate ?? this.firstAirDate,
+        lastAirDate: lastAirDate ?? this.lastAirDate,
+        vote: vote ?? this.vote,
+        watchStatus: watchStatus ?? this.watchStatus,
       );
   @override
   String toString() {
     return (StringBuffer('Sery(')
-          ..write('id: $id')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('tagLine: $tagLine, ')
+          ..write('overview: $overview, ')
+          ..write('posterPath: $posterPath, ')
+          ..write('backdropPath: $backdropPath, ')
+          ..write('homePage: $homePage, ')
+          ..write('firstAirDate: $firstAirDate, ')
+          ..write('lastAirDate: $lastAirDate, ')
+          ..write('vote: $vote, ')
+          ..write('watchStatus: $watchStatus')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => Object.hash(id, name, tagLine, overview, posterPath,
+      backdropPath, homePage, firstAirDate, lastAirDate, vote, watchStatus);
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || (other is Sery && other.id == this.id);
+      identical(this, other) ||
+      (other is Sery &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.tagLine == this.tagLine &&
+          other.overview == this.overview &&
+          other.posterPath == this.posterPath &&
+          other.backdropPath == this.backdropPath &&
+          other.homePage == this.homePage &&
+          other.firstAirDate == this.firstAirDate &&
+          other.lastAirDate == this.lastAirDate &&
+          other.vote == this.vote &&
+          other.watchStatus == this.watchStatus);
 }
 
 class SeriesCompanion extends UpdateCompanion<Sery> {
   final Value<int> id;
+  final Value<String> name;
+  final Value<String> tagLine;
+  final Value<String> overview;
+  final Value<String> posterPath;
+  final Value<String> backdropPath;
+  final Value<String> homePage;
+  final Value<DateTime> firstAirDate;
+  final Value<DateTime> lastAirDate;
+  final Value<double> vote;
+  final Value<int> watchStatus;
   final Value<int> rowid;
   const SeriesCompanion({
     this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.tagLine = const Value.absent(),
+    this.overview = const Value.absent(),
+    this.posterPath = const Value.absent(),
+    this.backdropPath = const Value.absent(),
+    this.homePage = const Value.absent(),
+    this.firstAirDate = const Value.absent(),
+    this.lastAirDate = const Value.absent(),
+    this.vote = const Value.absent(),
+    this.watchStatus = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SeriesCompanion.insert({
     required int id,
+    required String name,
+    required String tagLine,
+    required String overview,
+    required String posterPath,
+    required String backdropPath,
+    required String homePage,
+    required DateTime firstAirDate,
+    required DateTime lastAirDate,
+    required double vote,
+    this.watchStatus = const Value.absent(),
     this.rowid = const Value.absent(),
-  }) : id = Value(id);
+  })  : id = Value(id),
+        name = Value(name),
+        tagLine = Value(tagLine),
+        overview = Value(overview),
+        posterPath = Value(posterPath),
+        backdropPath = Value(backdropPath),
+        homePage = Value(homePage),
+        firstAirDate = Value(firstAirDate),
+        lastAirDate = Value(lastAirDate),
+        vote = Value(vote);
   static Insertable<Sery> custom({
     Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? tagLine,
+    Expression<String>? overview,
+    Expression<String>? posterPath,
+    Expression<String>? backdropPath,
+    Expression<String>? homePage,
+    Expression<DateTime>? firstAirDate,
+    Expression<DateTime>? lastAirDate,
+    Expression<double>? vote,
+    Expression<int>? watchStatus,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (tagLine != null) 'tag_line': tagLine,
+      if (overview != null) 'overview': overview,
+      if (posterPath != null) 'poster_path': posterPath,
+      if (backdropPath != null) 'backdrop_path': backdropPath,
+      if (homePage != null) 'home_page': homePage,
+      if (firstAirDate != null) 'first_air_date': firstAirDate,
+      if (lastAirDate != null) 'last_air_date': lastAirDate,
+      if (vote != null) 'vote': vote,
+      if (watchStatus != null) 'watch_status': watchStatus,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  SeriesCompanion copyWith({Value<int>? id, Value<int>? rowid}) {
+  SeriesCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? name,
+      Value<String>? tagLine,
+      Value<String>? overview,
+      Value<String>? posterPath,
+      Value<String>? backdropPath,
+      Value<String>? homePage,
+      Value<DateTime>? firstAirDate,
+      Value<DateTime>? lastAirDate,
+      Value<double>? vote,
+      Value<int>? watchStatus,
+      Value<int>? rowid}) {
     return SeriesCompanion(
       id: id ?? this.id,
+      name: name ?? this.name,
+      tagLine: tagLine ?? this.tagLine,
+      overview: overview ?? this.overview,
+      posterPath: posterPath ?? this.posterPath,
+      backdropPath: backdropPath ?? this.backdropPath,
+      homePage: homePage ?? this.homePage,
+      firstAirDate: firstAirDate ?? this.firstAirDate,
+      lastAirDate: lastAirDate ?? this.lastAirDate,
+      vote: vote ?? this.vote,
+      watchStatus: watchStatus ?? this.watchStatus,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -906,6 +1253,36 @@ class SeriesCompanion extends UpdateCompanion<Sery> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (tagLine.present) {
+      map['tag_line'] = Variable<String>(tagLine.value);
+    }
+    if (overview.present) {
+      map['overview'] = Variable<String>(overview.value);
+    }
+    if (posterPath.present) {
+      map['poster_path'] = Variable<String>(posterPath.value);
+    }
+    if (backdropPath.present) {
+      map['backdrop_path'] = Variable<String>(backdropPath.value);
+    }
+    if (homePage.present) {
+      map['home_page'] = Variable<String>(homePage.value);
+    }
+    if (firstAirDate.present) {
+      map['first_air_date'] = Variable<DateTime>(firstAirDate.value);
+    }
+    if (lastAirDate.present) {
+      map['last_air_date'] = Variable<DateTime>(lastAirDate.value);
+    }
+    if (vote.present) {
+      map['vote'] = Variable<double>(vote.value);
+    }
+    if (watchStatus.present) {
+      map['watch_status'] = Variable<int>(watchStatus.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -917,6 +1294,16 @@ class SeriesCompanion extends UpdateCompanion<Sery> {
   String toString() {
     return (StringBuffer('SeriesCompanion(')
           ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('tagLine: $tagLine, ')
+          ..write('overview: $overview, ')
+          ..write('posterPath: $posterPath, ')
+          ..write('backdropPath: $backdropPath, ')
+          ..write('homePage: $homePage, ')
+          ..write('firstAirDate: $firstAirDate, ')
+          ..write('lastAirDate: $lastAirDate, ')
+          ..write('vote: $vote, ')
+          ..write('watchStatus: $watchStatus, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -933,8 +1320,54 @@ class $SeasonsTable extends Seasons with TableInfo<$SeasonsTable, Season> {
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _numberMeta = const VerificationMeta('number');
   @override
-  List<GeneratedColumn> get $columns => [id];
+  late final GeneratedColumn<int> number = GeneratedColumn<int>(
+      'number', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _seriesidMeta =
+      const VerificationMeta('seriesid');
+  @override
+  late final GeneratedColumn<int> seriesid = GeneratedColumn<int>(
+      'seriesid', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES series (id)'));
+  static const VerificationMeta _overviewMeta =
+      const VerificationMeta('overview');
+  @override
+  late final GeneratedColumn<String> overview = GeneratedColumn<String>(
+      'overview', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _posterPathMeta =
+      const VerificationMeta('posterPath');
+  @override
+  late final GeneratedColumn<String> posterPath = GeneratedColumn<String>(
+      'poster_path', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _airDateMeta =
+      const VerificationMeta('airDate');
+  @override
+  late final GeneratedColumn<DateTime> airDate = GeneratedColumn<DateTime>(
+      'air_date', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _voteMeta = const VerificationMeta('vote');
+  @override
+  late final GeneratedColumn<double> vote = GeneratedColumn<double>(
+      'vote', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _watchStatusMeta =
+      const VerificationMeta('watchStatus');
+  @override
+  late final GeneratedColumn<int> watchStatus = GeneratedColumn<int>(
+      'watch_status', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, number, seriesid, overview, posterPath, airDate, vote, watchStatus];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -950,6 +1383,50 @@ class $SeasonsTable extends Seasons with TableInfo<$SeasonsTable, Season> {
     } else if (isInserting) {
       context.missing(_idMeta);
     }
+    if (data.containsKey('number')) {
+      context.handle(_numberMeta,
+          number.isAcceptableOrUnknown(data['number']!, _numberMeta));
+    } else if (isInserting) {
+      context.missing(_numberMeta);
+    }
+    if (data.containsKey('seriesid')) {
+      context.handle(_seriesidMeta,
+          seriesid.isAcceptableOrUnknown(data['seriesid']!, _seriesidMeta));
+    } else if (isInserting) {
+      context.missing(_seriesidMeta);
+    }
+    if (data.containsKey('overview')) {
+      context.handle(_overviewMeta,
+          overview.isAcceptableOrUnknown(data['overview']!, _overviewMeta));
+    } else if (isInserting) {
+      context.missing(_overviewMeta);
+    }
+    if (data.containsKey('poster_path')) {
+      context.handle(
+          _posterPathMeta,
+          posterPath.isAcceptableOrUnknown(
+              data['poster_path']!, _posterPathMeta));
+    } else if (isInserting) {
+      context.missing(_posterPathMeta);
+    }
+    if (data.containsKey('air_date')) {
+      context.handle(_airDateMeta,
+          airDate.isAcceptableOrUnknown(data['air_date']!, _airDateMeta));
+    } else if (isInserting) {
+      context.missing(_airDateMeta);
+    }
+    if (data.containsKey('vote')) {
+      context.handle(
+          _voteMeta, vote.isAcceptableOrUnknown(data['vote']!, _voteMeta));
+    } else if (isInserting) {
+      context.missing(_voteMeta);
+    }
+    if (data.containsKey('watch_status')) {
+      context.handle(
+          _watchStatusMeta,
+          watchStatus.isAcceptableOrUnknown(
+              data['watch_status']!, _watchStatusMeta));
+    }
     return context;
   }
 
@@ -961,6 +1438,20 @@ class $SeasonsTable extends Seasons with TableInfo<$SeasonsTable, Season> {
     return Season(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      number: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}number'])!,
+      seriesid: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}seriesid'])!,
+      overview: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}overview'])!,
+      posterPath: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}poster_path'])!,
+      airDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}air_date'])!,
+      vote: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}vote'])!,
+      watchStatus: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}watch_status'])!,
     );
   }
 
@@ -972,17 +1463,46 @@ class $SeasonsTable extends Seasons with TableInfo<$SeasonsTable, Season> {
 
 class Season extends DataClass implements Insertable<Season> {
   final int id;
-  const Season({required this.id});
+  final int number;
+  final int seriesid;
+  final String overview;
+  final String posterPath;
+  final DateTime airDate;
+  final double vote;
+  final int watchStatus;
+  const Season(
+      {required this.id,
+      required this.number,
+      required this.seriesid,
+      required this.overview,
+      required this.posterPath,
+      required this.airDate,
+      required this.vote,
+      required this.watchStatus});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['number'] = Variable<int>(number);
+    map['seriesid'] = Variable<int>(seriesid);
+    map['overview'] = Variable<String>(overview);
+    map['poster_path'] = Variable<String>(posterPath);
+    map['air_date'] = Variable<DateTime>(airDate);
+    map['vote'] = Variable<double>(vote);
+    map['watch_status'] = Variable<int>(watchStatus);
     return map;
   }
 
   SeasonsCompanion toCompanion(bool nullToAbsent) {
     return SeasonsCompanion(
       id: Value(id),
+      number: Value(number),
+      seriesid: Value(seriesid),
+      overview: Value(overview),
+      posterPath: Value(posterPath),
+      airDate: Value(airDate),
+      vote: Value(vote),
+      watchStatus: Value(watchStatus),
     );
   }
 
@@ -991,6 +1511,13 @@ class Season extends DataClass implements Insertable<Season> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Season(
       id: serializer.fromJson<int>(json['id']),
+      number: serializer.fromJson<int>(json['number']),
+      seriesid: serializer.fromJson<int>(json['seriesid']),
+      overview: serializer.fromJson<String>(json['overview']),
+      posterPath: serializer.fromJson<String>(json['posterPath']),
+      airDate: serializer.fromJson<DateTime>(json['airDate']),
+      vote: serializer.fromJson<double>(json['vote']),
+      watchStatus: serializer.fromJson<int>(json['watchStatus']),
     );
   }
   @override
@@ -998,51 +1525,148 @@ class Season extends DataClass implements Insertable<Season> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'number': serializer.toJson<int>(number),
+      'seriesid': serializer.toJson<int>(seriesid),
+      'overview': serializer.toJson<String>(overview),
+      'posterPath': serializer.toJson<String>(posterPath),
+      'airDate': serializer.toJson<DateTime>(airDate),
+      'vote': serializer.toJson<double>(vote),
+      'watchStatus': serializer.toJson<int>(watchStatus),
     };
   }
 
-  Season copyWith({int? id}) => Season(
+  Season copyWith(
+          {int? id,
+          int? number,
+          int? seriesid,
+          String? overview,
+          String? posterPath,
+          DateTime? airDate,
+          double? vote,
+          int? watchStatus}) =>
+      Season(
         id: id ?? this.id,
+        number: number ?? this.number,
+        seriesid: seriesid ?? this.seriesid,
+        overview: overview ?? this.overview,
+        posterPath: posterPath ?? this.posterPath,
+        airDate: airDate ?? this.airDate,
+        vote: vote ?? this.vote,
+        watchStatus: watchStatus ?? this.watchStatus,
       );
   @override
   String toString() {
     return (StringBuffer('Season(')
-          ..write('id: $id')
+          ..write('id: $id, ')
+          ..write('number: $number, ')
+          ..write('seriesid: $seriesid, ')
+          ..write('overview: $overview, ')
+          ..write('posterPath: $posterPath, ')
+          ..write('airDate: $airDate, ')
+          ..write('vote: $vote, ')
+          ..write('watchStatus: $watchStatus')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => Object.hash(
+      id, number, seriesid, overview, posterPath, airDate, vote, watchStatus);
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || (other is Season && other.id == this.id);
+      identical(this, other) ||
+      (other is Season &&
+          other.id == this.id &&
+          other.number == this.number &&
+          other.seriesid == this.seriesid &&
+          other.overview == this.overview &&
+          other.posterPath == this.posterPath &&
+          other.airDate == this.airDate &&
+          other.vote == this.vote &&
+          other.watchStatus == this.watchStatus);
 }
 
 class SeasonsCompanion extends UpdateCompanion<Season> {
   final Value<int> id;
+  final Value<int> number;
+  final Value<int> seriesid;
+  final Value<String> overview;
+  final Value<String> posterPath;
+  final Value<DateTime> airDate;
+  final Value<double> vote;
+  final Value<int> watchStatus;
   final Value<int> rowid;
   const SeasonsCompanion({
     this.id = const Value.absent(),
+    this.number = const Value.absent(),
+    this.seriesid = const Value.absent(),
+    this.overview = const Value.absent(),
+    this.posterPath = const Value.absent(),
+    this.airDate = const Value.absent(),
+    this.vote = const Value.absent(),
+    this.watchStatus = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SeasonsCompanion.insert({
     required int id,
+    required int number,
+    required int seriesid,
+    required String overview,
+    required String posterPath,
+    required DateTime airDate,
+    required double vote,
+    this.watchStatus = const Value.absent(),
     this.rowid = const Value.absent(),
-  }) : id = Value(id);
+  })  : id = Value(id),
+        number = Value(number),
+        seriesid = Value(seriesid),
+        overview = Value(overview),
+        posterPath = Value(posterPath),
+        airDate = Value(airDate),
+        vote = Value(vote);
   static Insertable<Season> custom({
     Expression<int>? id,
+    Expression<int>? number,
+    Expression<int>? seriesid,
+    Expression<String>? overview,
+    Expression<String>? posterPath,
+    Expression<DateTime>? airDate,
+    Expression<double>? vote,
+    Expression<int>? watchStatus,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (number != null) 'number': number,
+      if (seriesid != null) 'seriesid': seriesid,
+      if (overview != null) 'overview': overview,
+      if (posterPath != null) 'poster_path': posterPath,
+      if (airDate != null) 'air_date': airDate,
+      if (vote != null) 'vote': vote,
+      if (watchStatus != null) 'watch_status': watchStatus,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  SeasonsCompanion copyWith({Value<int>? id, Value<int>? rowid}) {
+  SeasonsCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? number,
+      Value<int>? seriesid,
+      Value<String>? overview,
+      Value<String>? posterPath,
+      Value<DateTime>? airDate,
+      Value<double>? vote,
+      Value<int>? watchStatus,
+      Value<int>? rowid}) {
     return SeasonsCompanion(
       id: id ?? this.id,
+      number: number ?? this.number,
+      seriesid: seriesid ?? this.seriesid,
+      overview: overview ?? this.overview,
+      posterPath: posterPath ?? this.posterPath,
+      airDate: airDate ?? this.airDate,
+      vote: vote ?? this.vote,
+      watchStatus: watchStatus ?? this.watchStatus,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1052,6 +1676,27 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (number.present) {
+      map['number'] = Variable<int>(number.value);
+    }
+    if (seriesid.present) {
+      map['seriesid'] = Variable<int>(seriesid.value);
+    }
+    if (overview.present) {
+      map['overview'] = Variable<String>(overview.value);
+    }
+    if (posterPath.present) {
+      map['poster_path'] = Variable<String>(posterPath.value);
+    }
+    if (airDate.present) {
+      map['air_date'] = Variable<DateTime>(airDate.value);
+    }
+    if (vote.present) {
+      map['vote'] = Variable<double>(vote.value);
+    }
+    if (watchStatus.present) {
+      map['watch_status'] = Variable<int>(watchStatus.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -1063,6 +1708,13 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
   String toString() {
     return (StringBuffer('SeasonsCompanion(')
           ..write('id: $id, ')
+          ..write('number: $number, ')
+          ..write('seriesid: $seriesid, ')
+          ..write('overview: $overview, ')
+          ..write('posterPath: $posterPath, ')
+          ..write('airDate: $airDate, ')
+          ..write('vote: $vote, ')
+          ..write('watchStatus: $watchStatus, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1079,8 +1731,85 @@ class $EpisodesTable extends Episodes with TableInfo<$EpisodesTable, Episode> {
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _seasonidMeta =
+      const VerificationMeta('seasonid');
   @override
-  List<GeneratedColumn> get $columns => [id];
+  late final GeneratedColumn<int> seasonid = GeneratedColumn<int>(
+      'seasonid', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES seasons (id)'));
+  static const VerificationMeta _numberMeta = const VerificationMeta('number');
+  @override
+  late final GeneratedColumn<int> number = GeneratedColumn<int>(
+      'number', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _overviewMeta =
+      const VerificationMeta('overview');
+  @override
+  late final GeneratedColumn<String> overview = GeneratedColumn<String>(
+      'overview', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _filePathMeta =
+      const VerificationMeta('filePath');
+  @override
+  late final GeneratedColumn<String> filePath = GeneratedColumn<String>(
+      'file_path', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _posterPathMeta =
+      const VerificationMeta('posterPath');
+  @override
+  late final GeneratedColumn<String> posterPath = GeneratedColumn<String>(
+      'poster_path', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _airDateMeta =
+      const VerificationMeta('airDate');
+  @override
+  late final GeneratedColumn<DateTime> airDate = GeneratedColumn<DateTime>(
+      'air_date', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _voteMeta = const VerificationMeta('vote');
+  @override
+  late final GeneratedColumn<double> vote = GeneratedColumn<double>(
+      'vote', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _watchedTimeMeta =
+      const VerificationMeta('watchedTime');
+  @override
+  late final GeneratedColumn<int> watchedTime = GeneratedColumn<int>(
+      'watched_time', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _watchStatusMeta =
+      const VerificationMeta('watchStatus');
+  @override
+  late final GeneratedColumn<int> watchStatus = GeneratedColumn<int>(
+      'watch_status', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _runTimeMeta =
+      const VerificationMeta('runTime');
+  @override
+  late final GeneratedColumn<int> runTime = GeneratedColumn<int>(
+      'run_time', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        seasonid,
+        number,
+        overview,
+        filePath,
+        posterPath,
+        airDate,
+        vote,
+        watchedTime,
+        watchStatus,
+        runTime
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1096,6 +1825,68 @@ class $EpisodesTable extends Episodes with TableInfo<$EpisodesTable, Episode> {
     } else if (isInserting) {
       context.missing(_idMeta);
     }
+    if (data.containsKey('seasonid')) {
+      context.handle(_seasonidMeta,
+          seasonid.isAcceptableOrUnknown(data['seasonid']!, _seasonidMeta));
+    } else if (isInserting) {
+      context.missing(_seasonidMeta);
+    }
+    if (data.containsKey('number')) {
+      context.handle(_numberMeta,
+          number.isAcceptableOrUnknown(data['number']!, _numberMeta));
+    } else if (isInserting) {
+      context.missing(_numberMeta);
+    }
+    if (data.containsKey('overview')) {
+      context.handle(_overviewMeta,
+          overview.isAcceptableOrUnknown(data['overview']!, _overviewMeta));
+    } else if (isInserting) {
+      context.missing(_overviewMeta);
+    }
+    if (data.containsKey('file_path')) {
+      context.handle(_filePathMeta,
+          filePath.isAcceptableOrUnknown(data['file_path']!, _filePathMeta));
+    } else if (isInserting) {
+      context.missing(_filePathMeta);
+    }
+    if (data.containsKey('poster_path')) {
+      context.handle(
+          _posterPathMeta,
+          posterPath.isAcceptableOrUnknown(
+              data['poster_path']!, _posterPathMeta));
+    } else if (isInserting) {
+      context.missing(_posterPathMeta);
+    }
+    if (data.containsKey('air_date')) {
+      context.handle(_airDateMeta,
+          airDate.isAcceptableOrUnknown(data['air_date']!, _airDateMeta));
+    } else if (isInserting) {
+      context.missing(_airDateMeta);
+    }
+    if (data.containsKey('vote')) {
+      context.handle(
+          _voteMeta, vote.isAcceptableOrUnknown(data['vote']!, _voteMeta));
+    } else if (isInserting) {
+      context.missing(_voteMeta);
+    }
+    if (data.containsKey('watched_time')) {
+      context.handle(
+          _watchedTimeMeta,
+          watchedTime.isAcceptableOrUnknown(
+              data['watched_time']!, _watchedTimeMeta));
+    }
+    if (data.containsKey('watch_status')) {
+      context.handle(
+          _watchStatusMeta,
+          watchStatus.isAcceptableOrUnknown(
+              data['watch_status']!, _watchStatusMeta));
+    }
+    if (data.containsKey('run_time')) {
+      context.handle(_runTimeMeta,
+          runTime.isAcceptableOrUnknown(data['run_time']!, _runTimeMeta));
+    } else if (isInserting) {
+      context.missing(_runTimeMeta);
+    }
     return context;
   }
 
@@ -1107,6 +1898,26 @@ class $EpisodesTable extends Episodes with TableInfo<$EpisodesTable, Episode> {
     return Episode(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      seasonid: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}seasonid'])!,
+      number: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}number'])!,
+      overview: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}overview'])!,
+      filePath: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}file_path'])!,
+      posterPath: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}poster_path'])!,
+      airDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}air_date'])!,
+      vote: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}vote'])!,
+      watchedTime: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}watched_time'])!,
+      watchStatus: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}watch_status'])!,
+      runTime: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}run_time'])!,
     );
   }
 
@@ -1118,17 +1929,58 @@ class $EpisodesTable extends Episodes with TableInfo<$EpisodesTable, Episode> {
 
 class Episode extends DataClass implements Insertable<Episode> {
   final int id;
-  const Episode({required this.id});
+  final int seasonid;
+  final int number;
+  final String overview;
+  final String filePath;
+  final String posterPath;
+  final DateTime airDate;
+  final double vote;
+  final int watchedTime;
+  final int watchStatus;
+  final int runTime;
+  const Episode(
+      {required this.id,
+      required this.seasonid,
+      required this.number,
+      required this.overview,
+      required this.filePath,
+      required this.posterPath,
+      required this.airDate,
+      required this.vote,
+      required this.watchedTime,
+      required this.watchStatus,
+      required this.runTime});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
+    map['seasonid'] = Variable<int>(seasonid);
+    map['number'] = Variable<int>(number);
+    map['overview'] = Variable<String>(overview);
+    map['file_path'] = Variable<String>(filePath);
+    map['poster_path'] = Variable<String>(posterPath);
+    map['air_date'] = Variable<DateTime>(airDate);
+    map['vote'] = Variable<double>(vote);
+    map['watched_time'] = Variable<int>(watchedTime);
+    map['watch_status'] = Variable<int>(watchStatus);
+    map['run_time'] = Variable<int>(runTime);
     return map;
   }
 
   EpisodesCompanion toCompanion(bool nullToAbsent) {
     return EpisodesCompanion(
       id: Value(id),
+      seasonid: Value(seasonid),
+      number: Value(number),
+      overview: Value(overview),
+      filePath: Value(filePath),
+      posterPath: Value(posterPath),
+      airDate: Value(airDate),
+      vote: Value(vote),
+      watchedTime: Value(watchedTime),
+      watchStatus: Value(watchStatus),
+      runTime: Value(runTime),
     );
   }
 
@@ -1137,6 +1989,16 @@ class Episode extends DataClass implements Insertable<Episode> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Episode(
       id: serializer.fromJson<int>(json['id']),
+      seasonid: serializer.fromJson<int>(json['seasonid']),
+      number: serializer.fromJson<int>(json['number']),
+      overview: serializer.fromJson<String>(json['overview']),
+      filePath: serializer.fromJson<String>(json['filePath']),
+      posterPath: serializer.fromJson<String>(json['posterPath']),
+      airDate: serializer.fromJson<DateTime>(json['airDate']),
+      vote: serializer.fromJson<double>(json['vote']),
+      watchedTime: serializer.fromJson<int>(json['watchedTime']),
+      watchStatus: serializer.fromJson<int>(json['watchStatus']),
+      runTime: serializer.fromJson<int>(json['runTime']),
     );
   }
   @override
@@ -1144,51 +2006,186 @@ class Episode extends DataClass implements Insertable<Episode> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
+      'seasonid': serializer.toJson<int>(seasonid),
+      'number': serializer.toJson<int>(number),
+      'overview': serializer.toJson<String>(overview),
+      'filePath': serializer.toJson<String>(filePath),
+      'posterPath': serializer.toJson<String>(posterPath),
+      'airDate': serializer.toJson<DateTime>(airDate),
+      'vote': serializer.toJson<double>(vote),
+      'watchedTime': serializer.toJson<int>(watchedTime),
+      'watchStatus': serializer.toJson<int>(watchStatus),
+      'runTime': serializer.toJson<int>(runTime),
     };
   }
 
-  Episode copyWith({int? id}) => Episode(
+  Episode copyWith(
+          {int? id,
+          int? seasonid,
+          int? number,
+          String? overview,
+          String? filePath,
+          String? posterPath,
+          DateTime? airDate,
+          double? vote,
+          int? watchedTime,
+          int? watchStatus,
+          int? runTime}) =>
+      Episode(
         id: id ?? this.id,
+        seasonid: seasonid ?? this.seasonid,
+        number: number ?? this.number,
+        overview: overview ?? this.overview,
+        filePath: filePath ?? this.filePath,
+        posterPath: posterPath ?? this.posterPath,
+        airDate: airDate ?? this.airDate,
+        vote: vote ?? this.vote,
+        watchedTime: watchedTime ?? this.watchedTime,
+        watchStatus: watchStatus ?? this.watchStatus,
+        runTime: runTime ?? this.runTime,
       );
   @override
   String toString() {
     return (StringBuffer('Episode(')
-          ..write('id: $id')
+          ..write('id: $id, ')
+          ..write('seasonid: $seasonid, ')
+          ..write('number: $number, ')
+          ..write('overview: $overview, ')
+          ..write('filePath: $filePath, ')
+          ..write('posterPath: $posterPath, ')
+          ..write('airDate: $airDate, ')
+          ..write('vote: $vote, ')
+          ..write('watchedTime: $watchedTime, ')
+          ..write('watchStatus: $watchStatus, ')
+          ..write('runTime: $runTime')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => Object.hash(id, seasonid, number, overview, filePath,
+      posterPath, airDate, vote, watchedTime, watchStatus, runTime);
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || (other is Episode && other.id == this.id);
+      identical(this, other) ||
+      (other is Episode &&
+          other.id == this.id &&
+          other.seasonid == this.seasonid &&
+          other.number == this.number &&
+          other.overview == this.overview &&
+          other.filePath == this.filePath &&
+          other.posterPath == this.posterPath &&
+          other.airDate == this.airDate &&
+          other.vote == this.vote &&
+          other.watchedTime == this.watchedTime &&
+          other.watchStatus == this.watchStatus &&
+          other.runTime == this.runTime);
 }
 
 class EpisodesCompanion extends UpdateCompanion<Episode> {
   final Value<int> id;
+  final Value<int> seasonid;
+  final Value<int> number;
+  final Value<String> overview;
+  final Value<String> filePath;
+  final Value<String> posterPath;
+  final Value<DateTime> airDate;
+  final Value<double> vote;
+  final Value<int> watchedTime;
+  final Value<int> watchStatus;
+  final Value<int> runTime;
   final Value<int> rowid;
   const EpisodesCompanion({
     this.id = const Value.absent(),
+    this.seasonid = const Value.absent(),
+    this.number = const Value.absent(),
+    this.overview = const Value.absent(),
+    this.filePath = const Value.absent(),
+    this.posterPath = const Value.absent(),
+    this.airDate = const Value.absent(),
+    this.vote = const Value.absent(),
+    this.watchedTime = const Value.absent(),
+    this.watchStatus = const Value.absent(),
+    this.runTime = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   EpisodesCompanion.insert({
     required int id,
+    required int seasonid,
+    required int number,
+    required String overview,
+    required String filePath,
+    required String posterPath,
+    required DateTime airDate,
+    required double vote,
+    this.watchedTime = const Value.absent(),
+    this.watchStatus = const Value.absent(),
+    required int runTime,
     this.rowid = const Value.absent(),
-  }) : id = Value(id);
+  })  : id = Value(id),
+        seasonid = Value(seasonid),
+        number = Value(number),
+        overview = Value(overview),
+        filePath = Value(filePath),
+        posterPath = Value(posterPath),
+        airDate = Value(airDate),
+        vote = Value(vote),
+        runTime = Value(runTime);
   static Insertable<Episode> custom({
     Expression<int>? id,
+    Expression<int>? seasonid,
+    Expression<int>? number,
+    Expression<String>? overview,
+    Expression<String>? filePath,
+    Expression<String>? posterPath,
+    Expression<DateTime>? airDate,
+    Expression<double>? vote,
+    Expression<int>? watchedTime,
+    Expression<int>? watchStatus,
+    Expression<int>? runTime,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (seasonid != null) 'seasonid': seasonid,
+      if (number != null) 'number': number,
+      if (overview != null) 'overview': overview,
+      if (filePath != null) 'file_path': filePath,
+      if (posterPath != null) 'poster_path': posterPath,
+      if (airDate != null) 'air_date': airDate,
+      if (vote != null) 'vote': vote,
+      if (watchedTime != null) 'watched_time': watchedTime,
+      if (watchStatus != null) 'watch_status': watchStatus,
+      if (runTime != null) 'run_time': runTime,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  EpisodesCompanion copyWith({Value<int>? id, Value<int>? rowid}) {
+  EpisodesCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? seasonid,
+      Value<int>? number,
+      Value<String>? overview,
+      Value<String>? filePath,
+      Value<String>? posterPath,
+      Value<DateTime>? airDate,
+      Value<double>? vote,
+      Value<int>? watchedTime,
+      Value<int>? watchStatus,
+      Value<int>? runTime,
+      Value<int>? rowid}) {
     return EpisodesCompanion(
       id: id ?? this.id,
+      seasonid: seasonid ?? this.seasonid,
+      number: number ?? this.number,
+      overview: overview ?? this.overview,
+      filePath: filePath ?? this.filePath,
+      posterPath: posterPath ?? this.posterPath,
+      airDate: airDate ?? this.airDate,
+      vote: vote ?? this.vote,
+      watchedTime: watchedTime ?? this.watchedTime,
+      watchStatus: watchStatus ?? this.watchStatus,
+      runTime: runTime ?? this.runTime,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1198,6 +2195,36 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<int>(id.value);
+    }
+    if (seasonid.present) {
+      map['seasonid'] = Variable<int>(seasonid.value);
+    }
+    if (number.present) {
+      map['number'] = Variable<int>(number.value);
+    }
+    if (overview.present) {
+      map['overview'] = Variable<String>(overview.value);
+    }
+    if (filePath.present) {
+      map['file_path'] = Variable<String>(filePath.value);
+    }
+    if (posterPath.present) {
+      map['poster_path'] = Variable<String>(posterPath.value);
+    }
+    if (airDate.present) {
+      map['air_date'] = Variable<DateTime>(airDate.value);
+    }
+    if (vote.present) {
+      map['vote'] = Variable<double>(vote.value);
+    }
+    if (watchedTime.present) {
+      map['watched_time'] = Variable<int>(watchedTime.value);
+    }
+    if (watchStatus.present) {
+      map['watch_status'] = Variable<int>(watchStatus.value);
+    }
+    if (runTime.present) {
+      map['run_time'] = Variable<int>(runTime.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -1209,6 +2236,16 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
   String toString() {
     return (StringBuffer('EpisodesCompanion(')
           ..write('id: $id, ')
+          ..write('seasonid: $seasonid, ')
+          ..write('number: $number, ')
+          ..write('overview: $overview, ')
+          ..write('filePath: $filePath, ')
+          ..write('posterPath: $posterPath, ')
+          ..write('airDate: $airDate, ')
+          ..write('vote: $vote, ')
+          ..write('watchedTime: $watchedTime, ')
+          ..write('watchStatus: $watchStatus, ')
+          ..write('runTime: $runTime, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -1692,7 +2729,7 @@ class $GenresTable extends Genres with TableInfo<$GenresTable, Genre> {
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
       'id', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -1712,8 +2749,6 @@ class $GenresTable extends Genres with TableInfo<$GenresTable, Genre> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
     }
     if (data.containsKey('name')) {
       context.handle(
@@ -1725,7 +2760,7 @@ class $GenresTable extends Genres with TableInfo<$GenresTable, Genre> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => const {};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Genre map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -1803,36 +2838,28 @@ class Genre extends DataClass implements Insertable<Genre> {
 class GenresCompanion extends UpdateCompanion<Genre> {
   final Value<int> id;
   final Value<String> name;
-  final Value<int> rowid;
   const GenresCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
-    this.rowid = const Value.absent(),
   });
   GenresCompanion.insert({
-    required int id,
+    this.id = const Value.absent(),
     required String name,
-    this.rowid = const Value.absent(),
-  })  : id = Value(id),
-        name = Value(name);
+  }) : name = Value(name);
   static Insertable<Genre> custom({
     Expression<int>? id,
     Expression<String>? name,
-    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
-      if (rowid != null) 'rowid': rowid,
     });
   }
 
-  GenresCompanion copyWith(
-      {Value<int>? id, Value<String>? name, Value<int>? rowid}) {
+  GenresCompanion copyWith({Value<int>? id, Value<String>? name}) {
     return GenresCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
-      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -1845,9 +2872,6 @@ class GenresCompanion extends UpdateCompanion<Genre> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
     return map;
   }
 
@@ -1855,8 +2879,7 @@ class GenresCompanion extends UpdateCompanion<Genre> {
   String toString() {
     return (StringBuffer('GenresCompanion(')
           ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('rowid: $rowid')
+          ..write('name: $name')
           ..write(')'))
         .toString();
   }
@@ -2053,6 +3076,459 @@ class MovieGenresCompanion extends UpdateCompanion<MovieGenre> {
   }
 }
 
+class $TvGenresTable extends TvGenres with TableInfo<$TvGenresTable, TvGenre> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TvGenresTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _seriesIdMeta =
+      const VerificationMeta('seriesId');
+  @override
+  late final GeneratedColumn<int> seriesId = GeneratedColumn<int>(
+      'series_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES series (id)'));
+  static const VerificationMeta _genreIdMeta =
+      const VerificationMeta('genreId');
+  @override
+  late final GeneratedColumn<int> genreId = GeneratedColumn<int>(
+      'genre_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES genres (id)'));
+  @override
+  List<GeneratedColumn> get $columns => [seriesId, genreId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'tv_genres';
+  @override
+  VerificationContext validateIntegrity(Insertable<TvGenre> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('series_id')) {
+      context.handle(_seriesIdMeta,
+          seriesId.isAcceptableOrUnknown(data['series_id']!, _seriesIdMeta));
+    } else if (isInserting) {
+      context.missing(_seriesIdMeta);
+    }
+    if (data.containsKey('genre_id')) {
+      context.handle(_genreIdMeta,
+          genreId.isAcceptableOrUnknown(data['genre_id']!, _genreIdMeta));
+    } else if (isInserting) {
+      context.missing(_genreIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {seriesId, genreId};
+  @override
+  TvGenre map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TvGenre(
+      seriesId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}series_id'])!,
+      genreId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}genre_id'])!,
+    );
+  }
+
+  @override
+  $TvGenresTable createAlias(String alias) {
+    return $TvGenresTable(attachedDatabase, alias);
+  }
+}
+
+class TvGenre extends DataClass implements Insertable<TvGenre> {
+  final int seriesId;
+  final int genreId;
+  const TvGenre({required this.seriesId, required this.genreId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['series_id'] = Variable<int>(seriesId);
+    map['genre_id'] = Variable<int>(genreId);
+    return map;
+  }
+
+  TvGenresCompanion toCompanion(bool nullToAbsent) {
+    return TvGenresCompanion(
+      seriesId: Value(seriesId),
+      genreId: Value(genreId),
+    );
+  }
+
+  factory TvGenre.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TvGenre(
+      seriesId: serializer.fromJson<int>(json['seriesId']),
+      genreId: serializer.fromJson<int>(json['genreId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'seriesId': serializer.toJson<int>(seriesId),
+      'genreId': serializer.toJson<int>(genreId),
+    };
+  }
+
+  TvGenre copyWith({int? seriesId, int? genreId}) => TvGenre(
+        seriesId: seriesId ?? this.seriesId,
+        genreId: genreId ?? this.genreId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('TvGenre(')
+          ..write('seriesId: $seriesId, ')
+          ..write('genreId: $genreId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(seriesId, genreId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TvGenre &&
+          other.seriesId == this.seriesId &&
+          other.genreId == this.genreId);
+}
+
+class TvGenresCompanion extends UpdateCompanion<TvGenre> {
+  final Value<int> seriesId;
+  final Value<int> genreId;
+  final Value<int> rowid;
+  const TvGenresCompanion({
+    this.seriesId = const Value.absent(),
+    this.genreId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TvGenresCompanion.insert({
+    required int seriesId,
+    required int genreId,
+    this.rowid = const Value.absent(),
+  })  : seriesId = Value(seriesId),
+        genreId = Value(genreId);
+  static Insertable<TvGenre> custom({
+    Expression<int>? seriesId,
+    Expression<int>? genreId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (seriesId != null) 'series_id': seriesId,
+      if (genreId != null) 'genre_id': genreId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TvGenresCompanion copyWith(
+      {Value<int>? seriesId, Value<int>? genreId, Value<int>? rowid}) {
+    return TvGenresCompanion(
+      seriesId: seriesId ?? this.seriesId,
+      genreId: genreId ?? this.genreId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (seriesId.present) {
+      map['series_id'] = Variable<int>(seriesId.value);
+    }
+    if (genreId.present) {
+      map['genre_id'] = Variable<int>(genreId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TvGenresCompanion(')
+          ..write('seriesId: $seriesId, ')
+          ..write('genreId: $genreId, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $TvCastTable extends TvCast with TableInfo<$TvCastTable, TvCastData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TvCastTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _actorIdMeta =
+      const VerificationMeta('actorId');
+  @override
+  late final GeneratedColumn<int> actorId = GeneratedColumn<int>(
+      'actor_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES actors (id)'));
+  static const VerificationMeta _seriesIdMeta =
+      const VerificationMeta('seriesId');
+  @override
+  late final GeneratedColumn<int> seriesId = GeneratedColumn<int>(
+      'series_id', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: true,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('REFERENCES series (id)'));
+  static const VerificationMeta _roleMeta = const VerificationMeta('role');
+  @override
+  late final GeneratedColumn<String> role = GeneratedColumn<String>(
+      'role', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _asMeta = const VerificationMeta('as');
+  @override
+  late final GeneratedColumn<String> as = GeneratedColumn<String>(
+      'as', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [actorId, seriesId, role, as];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'tv_cast';
+  @override
+  VerificationContext validateIntegrity(Insertable<TvCastData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('actor_id')) {
+      context.handle(_actorIdMeta,
+          actorId.isAcceptableOrUnknown(data['actor_id']!, _actorIdMeta));
+    } else if (isInserting) {
+      context.missing(_actorIdMeta);
+    }
+    if (data.containsKey('series_id')) {
+      context.handle(_seriesIdMeta,
+          seriesId.isAcceptableOrUnknown(data['series_id']!, _seriesIdMeta));
+    } else if (isInserting) {
+      context.missing(_seriesIdMeta);
+    }
+    if (data.containsKey('role')) {
+      context.handle(
+          _roleMeta, role.isAcceptableOrUnknown(data['role']!, _roleMeta));
+    } else if (isInserting) {
+      context.missing(_roleMeta);
+    }
+    if (data.containsKey('as')) {
+      context.handle(_asMeta, as.isAcceptableOrUnknown(data['as']!, _asMeta));
+    } else if (isInserting) {
+      context.missing(_asMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {actorId, seriesId, role};
+  @override
+  TvCastData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TvCastData(
+      actorId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}actor_id'])!,
+      seriesId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}series_id'])!,
+      role: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}role'])!,
+      as: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}as'])!,
+    );
+  }
+
+  @override
+  $TvCastTable createAlias(String alias) {
+    return $TvCastTable(attachedDatabase, alias);
+  }
+}
+
+class TvCastData extends DataClass implements Insertable<TvCastData> {
+  final int actorId;
+  final int seriesId;
+  final String role;
+  final String as;
+  const TvCastData(
+      {required this.actorId,
+      required this.seriesId,
+      required this.role,
+      required this.as});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['actor_id'] = Variable<int>(actorId);
+    map['series_id'] = Variable<int>(seriesId);
+    map['role'] = Variable<String>(role);
+    map['as'] = Variable<String>(as);
+    return map;
+  }
+
+  TvCastCompanion toCompanion(bool nullToAbsent) {
+    return TvCastCompanion(
+      actorId: Value(actorId),
+      seriesId: Value(seriesId),
+      role: Value(role),
+      as: Value(as),
+    );
+  }
+
+  factory TvCastData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TvCastData(
+      actorId: serializer.fromJson<int>(json['actorId']),
+      seriesId: serializer.fromJson<int>(json['seriesId']),
+      role: serializer.fromJson<String>(json['role']),
+      as: serializer.fromJson<String>(json['as']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'actorId': serializer.toJson<int>(actorId),
+      'seriesId': serializer.toJson<int>(seriesId),
+      'role': serializer.toJson<String>(role),
+      'as': serializer.toJson<String>(as),
+    };
+  }
+
+  TvCastData copyWith(
+          {int? actorId, int? seriesId, String? role, String? as}) =>
+      TvCastData(
+        actorId: actorId ?? this.actorId,
+        seriesId: seriesId ?? this.seriesId,
+        role: role ?? this.role,
+        as: as ?? this.as,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('TvCastData(')
+          ..write('actorId: $actorId, ')
+          ..write('seriesId: $seriesId, ')
+          ..write('role: $role, ')
+          ..write('as: $as')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(actorId, seriesId, role, as);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TvCastData &&
+          other.actorId == this.actorId &&
+          other.seriesId == this.seriesId &&
+          other.role == this.role &&
+          other.as == this.as);
+}
+
+class TvCastCompanion extends UpdateCompanion<TvCastData> {
+  final Value<int> actorId;
+  final Value<int> seriesId;
+  final Value<String> role;
+  final Value<String> as;
+  final Value<int> rowid;
+  const TvCastCompanion({
+    this.actorId = const Value.absent(),
+    this.seriesId = const Value.absent(),
+    this.role = const Value.absent(),
+    this.as = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TvCastCompanion.insert({
+    required int actorId,
+    required int seriesId,
+    required String role,
+    required String as,
+    this.rowid = const Value.absent(),
+  })  : actorId = Value(actorId),
+        seriesId = Value(seriesId),
+        role = Value(role),
+        as = Value(as);
+  static Insertable<TvCastData> custom({
+    Expression<int>? actorId,
+    Expression<int>? seriesId,
+    Expression<String>? role,
+    Expression<String>? as,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (actorId != null) 'actor_id': actorId,
+      if (seriesId != null) 'series_id': seriesId,
+      if (role != null) 'role': role,
+      if (as != null) 'as': as,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TvCastCompanion copyWith(
+      {Value<int>? actorId,
+      Value<int>? seriesId,
+      Value<String>? role,
+      Value<String>? as,
+      Value<int>? rowid}) {
+    return TvCastCompanion(
+      actorId: actorId ?? this.actorId,
+      seriesId: seriesId ?? this.seriesId,
+      role: role ?? this.role,
+      as: as ?? this.as,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (actorId.present) {
+      map['actor_id'] = Variable<int>(actorId.value);
+    }
+    if (seriesId.present) {
+      map['series_id'] = Variable<int>(seriesId.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<String>(role.value);
+    }
+    if (as.present) {
+      map['as'] = Variable<String>(as.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TvCastCompanion(')
+          ..write('actorId: $actorId, ')
+          ..write('seriesId: $seriesId, ')
+          ..write('role: $role, ')
+          ..write('as: $as, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
@@ -2064,6 +3540,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $MovieCastTable movieCast = $MovieCastTable(this);
   late final $GenresTable genres = $GenresTable(this);
   late final $MovieGenresTable movieGenres = $MovieGenresTable(this);
+  late final $TvGenresTable tvGenres = $TvGenresTable(this);
+  late final $TvCastTable tvCast = $TvCastTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2076,7 +3554,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         actors,
         movieCast,
         genres,
-        movieGenres
+        movieGenres,
+        tvGenres,
+        tvCast
       ];
 }
 
@@ -2443,10 +3923,30 @@ class $$MoviesTableTableOrderingComposer
 
 typedef $$SeriesTableInsertCompanionBuilder = SeriesCompanion Function({
   required int id,
+  required String name,
+  required String tagLine,
+  required String overview,
+  required String posterPath,
+  required String backdropPath,
+  required String homePage,
+  required DateTime firstAirDate,
+  required DateTime lastAirDate,
+  required double vote,
+  Value<int> watchStatus,
   Value<int> rowid,
 });
 typedef $$SeriesTableUpdateCompanionBuilder = SeriesCompanion Function({
   Value<int> id,
+  Value<String> name,
+  Value<String> tagLine,
+  Value<String> overview,
+  Value<String> posterPath,
+  Value<String> backdropPath,
+  Value<String> homePage,
+  Value<DateTime> firstAirDate,
+  Value<DateTime> lastAirDate,
+  Value<double> vote,
+  Value<int> watchStatus,
   Value<int> rowid,
 });
 
@@ -2470,18 +3970,58 @@ class $$SeriesTableTableManager extends RootTableManager<
           getChildManagerBuilder: (p) => $$SeriesTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> tagLine = const Value.absent(),
+            Value<String> overview = const Value.absent(),
+            Value<String> posterPath = const Value.absent(),
+            Value<String> backdropPath = const Value.absent(),
+            Value<String> homePage = const Value.absent(),
+            Value<DateTime> firstAirDate = const Value.absent(),
+            Value<DateTime> lastAirDate = const Value.absent(),
+            Value<double> vote = const Value.absent(),
+            Value<int> watchStatus = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               SeriesCompanion(
             id: id,
+            name: name,
+            tagLine: tagLine,
+            overview: overview,
+            posterPath: posterPath,
+            backdropPath: backdropPath,
+            homePage: homePage,
+            firstAirDate: firstAirDate,
+            lastAirDate: lastAirDate,
+            vote: vote,
+            watchStatus: watchStatus,
             rowid: rowid,
           ),
           getInsertCompanionBuilder: ({
             required int id,
+            required String name,
+            required String tagLine,
+            required String overview,
+            required String posterPath,
+            required String backdropPath,
+            required String homePage,
+            required DateTime firstAirDate,
+            required DateTime lastAirDate,
+            required double vote,
+            Value<int> watchStatus = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               SeriesCompanion.insert(
             id: id,
+            name: name,
+            tagLine: tagLine,
+            overview: overview,
+            posterPath: posterPath,
+            backdropPath: backdropPath,
+            homePage: homePage,
+            firstAirDate: firstAirDate,
+            lastAirDate: lastAirDate,
+            vote: vote,
+            watchStatus: watchStatus,
             rowid: rowid,
           ),
         ));
@@ -2506,6 +4046,95 @@ class $$SeriesTableFilterComposer
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get tagLine => $state.composableBuilder(
+      column: $state.table.tagLine,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get overview => $state.composableBuilder(
+      column: $state.table.overview,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get posterPath => $state.composableBuilder(
+      column: $state.table.posterPath,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get backdropPath => $state.composableBuilder(
+      column: $state.table.backdropPath,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get homePage => $state.composableBuilder(
+      column: $state.table.homePage,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get firstAirDate => $state.composableBuilder(
+      column: $state.table.firstAirDate,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get lastAirDate => $state.composableBuilder(
+      column: $state.table.lastAirDate,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get vote => $state.composableBuilder(
+      column: $state.table.vote,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get watchStatus => $state.composableBuilder(
+      column: $state.table.watchStatus,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ComposableFilter seasonsRefs(
+      ComposableFilter Function($$SeasonsTableFilterComposer f) f) {
+    final $$SeasonsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.seasons,
+        getReferencedColumn: (t) => t.seriesid,
+        builder: (joinBuilder, parentComposers) => $$SeasonsTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.seasons, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter tvGenresRefs(
+      ComposableFilter Function($$TvGenresTableFilterComposer f) f) {
+    final $$TvGenresTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.tvGenres,
+        getReferencedColumn: (t) => t.seriesId,
+        builder: (joinBuilder, parentComposers) =>
+            $$TvGenresTableFilterComposer(ComposerState(
+                $state.db, $state.db.tvGenres, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter tvCastRefs(
+      ComposableFilter Function($$TvCastTableFilterComposer f) f) {
+    final $$TvCastTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.tvCast,
+        getReferencedColumn: (t) => t.seriesId,
+        builder: (joinBuilder, parentComposers) => $$TvCastTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.tvCast, joinBuilder, parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$SeriesTableOrderingComposer
@@ -2515,14 +4144,78 @@ class $$SeriesTableOrderingComposer
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get tagLine => $state.composableBuilder(
+      column: $state.table.tagLine,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get overview => $state.composableBuilder(
+      column: $state.table.overview,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get posterPath => $state.composableBuilder(
+      column: $state.table.posterPath,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get backdropPath => $state.composableBuilder(
+      column: $state.table.backdropPath,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get homePage => $state.composableBuilder(
+      column: $state.table.homePage,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get firstAirDate => $state.composableBuilder(
+      column: $state.table.firstAirDate,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get lastAirDate => $state.composableBuilder(
+      column: $state.table.lastAirDate,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get vote => $state.composableBuilder(
+      column: $state.table.vote,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get watchStatus => $state.composableBuilder(
+      column: $state.table.watchStatus,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $$SeasonsTableInsertCompanionBuilder = SeasonsCompanion Function({
   required int id,
+  required int number,
+  required int seriesid,
+  required String overview,
+  required String posterPath,
+  required DateTime airDate,
+  required double vote,
+  Value<int> watchStatus,
   Value<int> rowid,
 });
 typedef $$SeasonsTableUpdateCompanionBuilder = SeasonsCompanion Function({
   Value<int> id,
+  Value<int> number,
+  Value<int> seriesid,
+  Value<String> overview,
+  Value<String> posterPath,
+  Value<DateTime> airDate,
+  Value<double> vote,
+  Value<int> watchStatus,
   Value<int> rowid,
 });
 
@@ -2546,18 +4239,46 @@ class $$SeasonsTableTableManager extends RootTableManager<
           getChildManagerBuilder: (p) => $$SeasonsTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
+            Value<int> number = const Value.absent(),
+            Value<int> seriesid = const Value.absent(),
+            Value<String> overview = const Value.absent(),
+            Value<String> posterPath = const Value.absent(),
+            Value<DateTime> airDate = const Value.absent(),
+            Value<double> vote = const Value.absent(),
+            Value<int> watchStatus = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               SeasonsCompanion(
             id: id,
+            number: number,
+            seriesid: seriesid,
+            overview: overview,
+            posterPath: posterPath,
+            airDate: airDate,
+            vote: vote,
+            watchStatus: watchStatus,
             rowid: rowid,
           ),
           getInsertCompanionBuilder: ({
             required int id,
+            required int number,
+            required int seriesid,
+            required String overview,
+            required String posterPath,
+            required DateTime airDate,
+            required double vote,
+            Value<int> watchStatus = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               SeasonsCompanion.insert(
             id: id,
+            number: number,
+            seriesid: seriesid,
+            overview: overview,
+            posterPath: posterPath,
+            airDate: airDate,
+            vote: vote,
+            watchStatus: watchStatus,
             rowid: rowid,
           ),
         ));
@@ -2582,6 +4303,61 @@ class $$SeasonsTableFilterComposer
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get number => $state.composableBuilder(
+      column: $state.table.number,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get overview => $state.composableBuilder(
+      column: $state.table.overview,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get posterPath => $state.composableBuilder(
+      column: $state.table.posterPath,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get airDate => $state.composableBuilder(
+      column: $state.table.airDate,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get vote => $state.composableBuilder(
+      column: $state.table.vote,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get watchStatus => $state.composableBuilder(
+      column: $state.table.watchStatus,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$SeriesTableFilterComposer get seriesid {
+    final $$SeriesTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.seriesid,
+        referencedTable: $state.db.series,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$SeriesTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.series, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  ComposableFilter episodesRefs(
+      ComposableFilter Function($$EpisodesTableFilterComposer f) f) {
+    final $$EpisodesTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.episodes,
+        getReferencedColumn: (t) => t.seasonid,
+        builder: (joinBuilder, parentComposers) =>
+            $$EpisodesTableFilterComposer(ComposerState(
+                $state.db, $state.db.episodes, joinBuilder, parentComposers)));
+    return f(composer);
+  }
 }
 
 class $$SeasonsTableOrderingComposer
@@ -2591,14 +4367,76 @@ class $$SeasonsTableOrderingComposer
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get number => $state.composableBuilder(
+      column: $state.table.number,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get overview => $state.composableBuilder(
+      column: $state.table.overview,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get posterPath => $state.composableBuilder(
+      column: $state.table.posterPath,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get airDate => $state.composableBuilder(
+      column: $state.table.airDate,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get vote => $state.composableBuilder(
+      column: $state.table.vote,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get watchStatus => $state.composableBuilder(
+      column: $state.table.watchStatus,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$SeriesTableOrderingComposer get seriesid {
+    final $$SeriesTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.seriesid,
+        referencedTable: $state.db.series,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$SeriesTableOrderingComposer(ComposerState(
+                $state.db, $state.db.series, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
 typedef $$EpisodesTableInsertCompanionBuilder = EpisodesCompanion Function({
   required int id,
+  required int seasonid,
+  required int number,
+  required String overview,
+  required String filePath,
+  required String posterPath,
+  required DateTime airDate,
+  required double vote,
+  Value<int> watchedTime,
+  Value<int> watchStatus,
+  required int runTime,
   Value<int> rowid,
 });
 typedef $$EpisodesTableUpdateCompanionBuilder = EpisodesCompanion Function({
   Value<int> id,
+  Value<int> seasonid,
+  Value<int> number,
+  Value<String> overview,
+  Value<String> filePath,
+  Value<String> posterPath,
+  Value<DateTime> airDate,
+  Value<double> vote,
+  Value<int> watchedTime,
+  Value<int> watchStatus,
+  Value<int> runTime,
   Value<int> rowid,
 });
 
@@ -2623,18 +4461,58 @@ class $$EpisodesTableTableManager extends RootTableManager<
               $$EpisodesTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
+            Value<int> seasonid = const Value.absent(),
+            Value<int> number = const Value.absent(),
+            Value<String> overview = const Value.absent(),
+            Value<String> filePath = const Value.absent(),
+            Value<String> posterPath = const Value.absent(),
+            Value<DateTime> airDate = const Value.absent(),
+            Value<double> vote = const Value.absent(),
+            Value<int> watchedTime = const Value.absent(),
+            Value<int> watchStatus = const Value.absent(),
+            Value<int> runTime = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               EpisodesCompanion(
             id: id,
+            seasonid: seasonid,
+            number: number,
+            overview: overview,
+            filePath: filePath,
+            posterPath: posterPath,
+            airDate: airDate,
+            vote: vote,
+            watchedTime: watchedTime,
+            watchStatus: watchStatus,
+            runTime: runTime,
             rowid: rowid,
           ),
           getInsertCompanionBuilder: ({
             required int id,
+            required int seasonid,
+            required int number,
+            required String overview,
+            required String filePath,
+            required String posterPath,
+            required DateTime airDate,
+            required double vote,
+            Value<int> watchedTime = const Value.absent(),
+            Value<int> watchStatus = const Value.absent(),
+            required int runTime,
             Value<int> rowid = const Value.absent(),
           }) =>
               EpisodesCompanion.insert(
             id: id,
+            seasonid: seasonid,
+            number: number,
+            overview: overview,
+            filePath: filePath,
+            posterPath: posterPath,
+            airDate: airDate,
+            vote: vote,
+            watchedTime: watchedTime,
+            watchStatus: watchStatus,
+            runTime: runTime,
             rowid: rowid,
           ),
         ));
@@ -2659,6 +4537,63 @@ class $$EpisodesTableFilterComposer
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get number => $state.composableBuilder(
+      column: $state.table.number,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get overview => $state.composableBuilder(
+      column: $state.table.overview,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get filePath => $state.composableBuilder(
+      column: $state.table.filePath,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get posterPath => $state.composableBuilder(
+      column: $state.table.posterPath,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<DateTime> get airDate => $state.composableBuilder(
+      column: $state.table.airDate,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<double> get vote => $state.composableBuilder(
+      column: $state.table.vote,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get watchedTime => $state.composableBuilder(
+      column: $state.table.watchedTime,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get watchStatus => $state.composableBuilder(
+      column: $state.table.watchStatus,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get runTime => $state.composableBuilder(
+      column: $state.table.runTime,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$SeasonsTableFilterComposer get seasonid {
+    final $$SeasonsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.seasonid,
+        referencedTable: $state.db.seasons,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$SeasonsTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.seasons, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
 class $$EpisodesTableOrderingComposer
@@ -2668,6 +4603,63 @@ class $$EpisodesTableOrderingComposer
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get number => $state.composableBuilder(
+      column: $state.table.number,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get overview => $state.composableBuilder(
+      column: $state.table.overview,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get filePath => $state.composableBuilder(
+      column: $state.table.filePath,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get posterPath => $state.composableBuilder(
+      column: $state.table.posterPath,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<DateTime> get airDate => $state.composableBuilder(
+      column: $state.table.airDate,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<double> get vote => $state.composableBuilder(
+      column: $state.table.vote,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get watchedTime => $state.composableBuilder(
+      column: $state.table.watchedTime,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get watchStatus => $state.composableBuilder(
+      column: $state.table.watchStatus,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get runTime => $state.composableBuilder(
+      column: $state.table.runTime,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$SeasonsTableOrderingComposer get seasonid {
+    final $$SeasonsTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.seasonid,
+        referencedTable: $state.db.seasons,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$SeasonsTableOrderingComposer(ComposerState(
+                $state.db, $state.db.seasons, joinBuilder, parentComposers)));
+    return composer;
+  }
 }
 
 typedef $$ActorsTableInsertCompanionBuilder = ActorsCompanion Function({
@@ -2762,6 +4754,19 @@ class $$ActorsTableFilterComposer
         builder: (joinBuilder, parentComposers) =>
             $$MovieCastTableFilterComposer(ComposerState(
                 $state.db, $state.db.movieCast, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter tvCastRefs(
+      ComposableFilter Function($$TvCastTableFilterComposer f) f) {
+    final $$TvCastTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.tvCast,
+        getReferencedColumn: (t) => t.actorId,
+        builder: (joinBuilder, parentComposers) => $$TvCastTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.tvCast, joinBuilder, parentComposers)));
     return f(composer);
   }
 }
@@ -2939,14 +4944,12 @@ class $$MovieCastTableOrderingComposer
 }
 
 typedef $$GenresTableInsertCompanionBuilder = GenresCompanion Function({
-  required int id,
+  Value<int> id,
   required String name,
-  Value<int> rowid,
 });
 typedef $$GenresTableUpdateCompanionBuilder = GenresCompanion Function({
   Value<int> id,
   Value<String> name,
-  Value<int> rowid,
 });
 
 class $$GenresTableTableManager extends RootTableManager<
@@ -2970,22 +4973,18 @@ class $$GenresTableTableManager extends RootTableManager<
           getUpdateCompanionBuilder: ({
             Value<int> id = const Value.absent(),
             Value<String> name = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
           }) =>
               GenresCompanion(
             id: id,
             name: name,
-            rowid: rowid,
           ),
           getInsertCompanionBuilder: ({
-            required int id,
+            Value<int> id = const Value.absent(),
             required String name,
-            Value<int> rowid = const Value.absent(),
           }) =>
               GenresCompanion.insert(
             id: id,
             name: name,
-            rowid: rowid,
           ),
         ));
 }
@@ -3025,6 +5024,19 @@ class $$GenresTableFilterComposer
         builder: (joinBuilder, parentComposers) =>
             $$MovieGenresTableFilterComposer(ComposerState($state.db,
                 $state.db.movieGenres, joinBuilder, parentComposers)));
+    return f(composer);
+  }
+
+  ComposableFilter tvGenresRefs(
+      ComposableFilter Function($$TvGenresTableFilterComposer f) f) {
+    final $$TvGenresTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.id,
+        referencedTable: $state.db.tvGenres,
+        getReferencedColumn: (t) => t.genreId,
+        builder: (joinBuilder, parentComposers) =>
+            $$TvGenresTableFilterComposer(ComposerState(
+                $state.db, $state.db.tvGenres, joinBuilder, parentComposers)));
     return f(composer);
   }
 }
@@ -3166,6 +5178,279 @@ class $$MovieGenresTableOrderingComposer
   }
 }
 
+typedef $$TvGenresTableInsertCompanionBuilder = TvGenresCompanion Function({
+  required int seriesId,
+  required int genreId,
+  Value<int> rowid,
+});
+typedef $$TvGenresTableUpdateCompanionBuilder = TvGenresCompanion Function({
+  Value<int> seriesId,
+  Value<int> genreId,
+  Value<int> rowid,
+});
+
+class $$TvGenresTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $TvGenresTable,
+    TvGenre,
+    $$TvGenresTableFilterComposer,
+    $$TvGenresTableOrderingComposer,
+    $$TvGenresTableProcessedTableManager,
+    $$TvGenresTableInsertCompanionBuilder,
+    $$TvGenresTableUpdateCompanionBuilder> {
+  $$TvGenresTableTableManager(_$AppDatabase db, $TvGenresTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TvGenresTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TvGenresTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) =>
+              $$TvGenresTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> seriesId = const Value.absent(),
+            Value<int> genreId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TvGenresCompanion(
+            seriesId: seriesId,
+            genreId: genreId,
+            rowid: rowid,
+          ),
+          getInsertCompanionBuilder: ({
+            required int seriesId,
+            required int genreId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TvGenresCompanion.insert(
+            seriesId: seriesId,
+            genreId: genreId,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$TvGenresTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $TvGenresTable,
+    TvGenre,
+    $$TvGenresTableFilterComposer,
+    $$TvGenresTableOrderingComposer,
+    $$TvGenresTableProcessedTableManager,
+    $$TvGenresTableInsertCompanionBuilder,
+    $$TvGenresTableUpdateCompanionBuilder> {
+  $$TvGenresTableProcessedTableManager(super.$state);
+}
+
+class $$TvGenresTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TvGenresTable> {
+  $$TvGenresTableFilterComposer(super.$state);
+  $$SeriesTableFilterComposer get seriesId {
+    final $$SeriesTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.seriesId,
+        referencedTable: $state.db.series,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$SeriesTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.series, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$GenresTableFilterComposer get genreId {
+    final $$GenresTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.genreId,
+        referencedTable: $state.db.genres,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$GenresTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.genres, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$TvGenresTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TvGenresTable> {
+  $$TvGenresTableOrderingComposer(super.$state);
+  $$SeriesTableOrderingComposer get seriesId {
+    final $$SeriesTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.seriesId,
+        referencedTable: $state.db.series,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$SeriesTableOrderingComposer(ComposerState(
+                $state.db, $state.db.series, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$GenresTableOrderingComposer get genreId {
+    final $$GenresTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.genreId,
+        referencedTable: $state.db.genres,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$GenresTableOrderingComposer(ComposerState(
+                $state.db, $state.db.genres, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+typedef $$TvCastTableInsertCompanionBuilder = TvCastCompanion Function({
+  required int actorId,
+  required int seriesId,
+  required String role,
+  required String as,
+  Value<int> rowid,
+});
+typedef $$TvCastTableUpdateCompanionBuilder = TvCastCompanion Function({
+  Value<int> actorId,
+  Value<int> seriesId,
+  Value<String> role,
+  Value<String> as,
+  Value<int> rowid,
+});
+
+class $$TvCastTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $TvCastTable,
+    TvCastData,
+    $$TvCastTableFilterComposer,
+    $$TvCastTableOrderingComposer,
+    $$TvCastTableProcessedTableManager,
+    $$TvCastTableInsertCompanionBuilder,
+    $$TvCastTableUpdateCompanionBuilder> {
+  $$TvCastTableTableManager(_$AppDatabase db, $TvCastTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TvCastTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TvCastTableOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $$TvCastTableProcessedTableManager(p),
+          getUpdateCompanionBuilder: ({
+            Value<int> actorId = const Value.absent(),
+            Value<int> seriesId = const Value.absent(),
+            Value<String> role = const Value.absent(),
+            Value<String> as = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TvCastCompanion(
+            actorId: actorId,
+            seriesId: seriesId,
+            role: role,
+            as: as,
+            rowid: rowid,
+          ),
+          getInsertCompanionBuilder: ({
+            required int actorId,
+            required int seriesId,
+            required String role,
+            required String as,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TvCastCompanion.insert(
+            actorId: actorId,
+            seriesId: seriesId,
+            role: role,
+            as: as,
+            rowid: rowid,
+          ),
+        ));
+}
+
+class $$TvCastTableProcessedTableManager extends ProcessedTableManager<
+    _$AppDatabase,
+    $TvCastTable,
+    TvCastData,
+    $$TvCastTableFilterComposer,
+    $$TvCastTableOrderingComposer,
+    $$TvCastTableProcessedTableManager,
+    $$TvCastTableInsertCompanionBuilder,
+    $$TvCastTableUpdateCompanionBuilder> {
+  $$TvCastTableProcessedTableManager(super.$state);
+}
+
+class $$TvCastTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $TvCastTable> {
+  $$TvCastTableFilterComposer(super.$state);
+  ColumnFilters<String> get role => $state.composableBuilder(
+      column: $state.table.role,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get as => $state.composableBuilder(
+      column: $state.table.as,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  $$ActorsTableFilterComposer get actorId {
+    final $$ActorsTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.actorId,
+        referencedTable: $state.db.actors,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$ActorsTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.actors, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$SeriesTableFilterComposer get seriesId {
+    final $$SeriesTableFilterComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.seriesId,
+        referencedTable: $state.db.series,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) => $$SeriesTableFilterComposer(
+            ComposerState(
+                $state.db, $state.db.series, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
+class $$TvCastTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $TvCastTable> {
+  $$TvCastTableOrderingComposer(super.$state);
+  ColumnOrderings<String> get role => $state.composableBuilder(
+      column: $state.table.role,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get as => $state.composableBuilder(
+      column: $state.table.as,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  $$ActorsTableOrderingComposer get actorId {
+    final $$ActorsTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.actorId,
+        referencedTable: $state.db.actors,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$ActorsTableOrderingComposer(ComposerState(
+                $state.db, $state.db.actors, joinBuilder, parentComposers)));
+    return composer;
+  }
+
+  $$SeriesTableOrderingComposer get seriesId {
+    final $$SeriesTableOrderingComposer composer = $state.composerBuilder(
+        composer: this,
+        getCurrentColumn: (t) => t.seriesId,
+        referencedTable: $state.db.series,
+        getReferencedColumn: (t) => t.id,
+        builder: (joinBuilder, parentComposers) =>
+            $$SeriesTableOrderingComposer(ComposerState(
+                $state.db, $state.db.series, joinBuilder, parentComposers)));
+    return composer;
+  }
+}
+
 class _$AppDatabaseManager {
   final _$AppDatabase _db;
   _$AppDatabaseManager(this._db);
@@ -3185,4 +5470,8 @@ class _$AppDatabaseManager {
       $$GenresTableTableManager(_db, _db.genres);
   $$MovieGenresTableTableManager get movieGenres =>
       $$MovieGenresTableTableManager(_db, _db.movieGenres);
+  $$TvGenresTableTableManager get tvGenres =>
+      $$TvGenresTableTableManager(_db, _db.tvGenres);
+  $$TvCastTableTableManager get tvCast =>
+      $$TvCastTableTableManager(_db, _db.tvCast);
 }
