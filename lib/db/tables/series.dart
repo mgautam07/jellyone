@@ -5,6 +5,7 @@ class Series extends Table {
   TextColumn get name => text()();
   TextColumn get tagLine => text()();
   TextColumn get overview => text()();
+  TextColumn get logoPath => text()();
   TextColumn get posterPath => text()();
   TextColumn get backdropPath => text()();
   TextColumn get homePage => text()();

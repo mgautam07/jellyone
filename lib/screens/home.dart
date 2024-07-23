@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:jellyone/db/db.dart';
 import 'package:jellyone/widgets/media_card.dart';
+import 'package:jellyone/widgets/series_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,6 +24,18 @@ class _HomeScreenState extends State<HomeScreen> {
     // print(allMovies);
     database.close();
     return allMovies;
+  }
+
+  Future<List?> getShows() {
+    final database = AppDatabase();
+    final allShows = (database.select(database.series)
+          ..where((tbl) => tbl.watchStatus.equals(0))
+          ..orderBy([(t) => d.OrderingTerm.desc(t.lastAirDate)])
+          ..limit(9))
+        .get();
+    // print(allShows);
+    database.close();
+    return allShows;
   }
 
   @override
@@ -80,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 340,
                 width: double.infinity,
                 child: FutureBuilder(
-                    future: getMovies(),
+                    future: getShows(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.data != null) {
@@ -91,7 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemCount: snapshot.data?.length ?? 0,
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (context, index) {
-                                return MediaCard(movie: snapshot.data![index]);
+                                return SeriesCard(
+                                    series: snapshot.data![index]);
                               },
                             ),
                           );
@@ -100,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       return const SizedBox(
                         height: 340,
                         child: Center(
-                          child: Text('No movie found'),
+                          child: Text('No shows found'),
                         ),
                       );
                     })),

@@ -229,7 +229,7 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
                   role: Value(role),
                   as: Value(role),
                 ));
-            print('Crew: ${crew[i]['name']} ${role} inserted');
+            print('Crew: ${crew[i]['name']} $role inserted');
           }
         }
       }
@@ -285,7 +285,11 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
       if (id != null) {
         final imdbInfo = await tmdb.v3.tv.getDetails(id);
         seriesId = imdbInfo['id'];
-        if (imdbInfo.isNotEmpty) {
+        final imgs = await tmdb.v3.tv.getImages(id, language: 'en');
+        if (imdbInfo.isNotEmpty &&
+            imgs.isNotEmpty &&
+            imgs['logos'].length > 0) {
+          final logoPath = imgs['logos'][0]['file_path'];
           String nonNullMovieName = info['name'] ?? 'Blah Blah';
           DateTime firstDate = DateTime.parse(imdbInfo['first_air_date']);
           DateTime lastDate = DateTime.parse(imdbInfo['last_air_date']);
@@ -295,6 +299,7 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
               name: Value(nonNullMovieName),
               tagLine: Value(imdbInfo['tagline']),
               overview: Value(imdbInfo['overview']),
+              logoPath: Value(logoPath),
               posterPath: Value(imdbInfo['poster_path']),
               homePage: Value(imdbInfo['homepage']),
               vote: Value(
@@ -335,6 +340,34 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
                         as: Value(cast[i]['character'])));
                 print('TV Cast: ${cast[i]['name']} inserted');
               }
+            }
+            final crew = castInfo['crew'];
+            print(crew.length);
+            for (var i = 0; i < crew.length; i++) {
+              print(crew[i]);
+              String role = crew[i]['job'];
+              if (role != 'Screenplay' &&
+                  role != 'Producer' &&
+                  role != 'Series Director') {
+                continue;
+              }
+              if (role == 'Screenplay') role = 'Writer';
+
+              await database.into(database.actors).insertOnConflictUpdate(
+                  ActorsCompanion.insert(
+                      id: Value(crew[i]['id']),
+                      name: crew[i]['name'],
+                      profilePath: crew[i]['profile_path'] ?? ''));
+
+              await database
+                  .into(database.tvCast)
+                  .insertOnConflictUpdate(TvCastCompanion(
+                    actorId: Value(crew[i]['id']),
+                    seriesId: Value(id),
+                    role: Value(role),
+                    as: Value(role),
+                  ));
+              print('Crew: ${crew[i]['name']} $role inserted');
             }
           }
         } else {
@@ -383,6 +416,7 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
             id: Value(ep['id']),
             seasonid: Value(seasonId),
             number: Value(int.parse(info['episode']!)),
+            name: Value(ep['name']),
             overview: Value(ep['overview']),
             posterPath: Value(ep['still_path']),
             filePath: Value(filePath),

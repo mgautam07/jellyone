@@ -5,6 +5,7 @@ class Episodes extends Table {
   IntColumn get id => integer()();
   IntColumn get seasonid => integer().references(Seasons, #id)();
   IntColumn get number => integer()();
+  TextColumn get name => text()();
   TextColumn get overview => text()();
   TextColumn get filePath => text()();
   TextColumn get posterPath => text()();

@@ -804,6 +804,12 @@ class $SeriesTable extends Series with TableInfo<$SeriesTable, Sery> {
   late final GeneratedColumn<String> overview = GeneratedColumn<String>(
       'overview', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _logoPathMeta =
+      const VerificationMeta('logoPath');
+  @override
+  late final GeneratedColumn<String> logoPath = GeneratedColumn<String>(
+      'logo_path', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _posterPathMeta =
       const VerificationMeta('posterPath');
   @override
@@ -853,6 +859,7 @@ class $SeriesTable extends Series with TableInfo<$SeriesTable, Sery> {
         name,
         tagLine,
         overview,
+        logoPath,
         posterPath,
         backdropPath,
         homePage,
@@ -893,6 +900,12 @@ class $SeriesTable extends Series with TableInfo<$SeriesTable, Sery> {
           overview.isAcceptableOrUnknown(data['overview']!, _overviewMeta));
     } else if (isInserting) {
       context.missing(_overviewMeta);
+    }
+    if (data.containsKey('logo_path')) {
+      context.handle(_logoPathMeta,
+          logoPath.isAcceptableOrUnknown(data['logo_path']!, _logoPathMeta));
+    } else if (isInserting) {
+      context.missing(_logoPathMeta);
     }
     if (data.containsKey('poster_path')) {
       context.handle(
@@ -961,6 +974,8 @@ class $SeriesTable extends Series with TableInfo<$SeriesTable, Sery> {
           .read(DriftSqlType.string, data['${effectivePrefix}tag_line'])!,
       overview: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}overview'])!,
+      logoPath: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}logo_path'])!,
       posterPath: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}poster_path'])!,
       backdropPath: attachedDatabase.typeMapping
@@ -989,6 +1004,7 @@ class Sery extends DataClass implements Insertable<Sery> {
   final String name;
   final String tagLine;
   final String overview;
+  final String logoPath;
   final String posterPath;
   final String backdropPath;
   final String homePage;
@@ -1001,6 +1017,7 @@ class Sery extends DataClass implements Insertable<Sery> {
       required this.name,
       required this.tagLine,
       required this.overview,
+      required this.logoPath,
       required this.posterPath,
       required this.backdropPath,
       required this.homePage,
@@ -1015,6 +1032,7 @@ class Sery extends DataClass implements Insertable<Sery> {
     map['name'] = Variable<String>(name);
     map['tag_line'] = Variable<String>(tagLine);
     map['overview'] = Variable<String>(overview);
+    map['logo_path'] = Variable<String>(logoPath);
     map['poster_path'] = Variable<String>(posterPath);
     map['backdrop_path'] = Variable<String>(backdropPath);
     map['home_page'] = Variable<String>(homePage);
@@ -1031,6 +1049,7 @@ class Sery extends DataClass implements Insertable<Sery> {
       name: Value(name),
       tagLine: Value(tagLine),
       overview: Value(overview),
+      logoPath: Value(logoPath),
       posterPath: Value(posterPath),
       backdropPath: Value(backdropPath),
       homePage: Value(homePage),
@@ -1049,6 +1068,7 @@ class Sery extends DataClass implements Insertable<Sery> {
       name: serializer.fromJson<String>(json['name']),
       tagLine: serializer.fromJson<String>(json['tagLine']),
       overview: serializer.fromJson<String>(json['overview']),
+      logoPath: serializer.fromJson<String>(json['logoPath']),
       posterPath: serializer.fromJson<String>(json['posterPath']),
       backdropPath: serializer.fromJson<String>(json['backdropPath']),
       homePage: serializer.fromJson<String>(json['homePage']),
@@ -1066,6 +1086,7 @@ class Sery extends DataClass implements Insertable<Sery> {
       'name': serializer.toJson<String>(name),
       'tagLine': serializer.toJson<String>(tagLine),
       'overview': serializer.toJson<String>(overview),
+      'logoPath': serializer.toJson<String>(logoPath),
       'posterPath': serializer.toJson<String>(posterPath),
       'backdropPath': serializer.toJson<String>(backdropPath),
       'homePage': serializer.toJson<String>(homePage),
@@ -1081,6 +1102,7 @@ class Sery extends DataClass implements Insertable<Sery> {
           String? name,
           String? tagLine,
           String? overview,
+          String? logoPath,
           String? posterPath,
           String? backdropPath,
           String? homePage,
@@ -1093,6 +1115,7 @@ class Sery extends DataClass implements Insertable<Sery> {
         name: name ?? this.name,
         tagLine: tagLine ?? this.tagLine,
         overview: overview ?? this.overview,
+        logoPath: logoPath ?? this.logoPath,
         posterPath: posterPath ?? this.posterPath,
         backdropPath: backdropPath ?? this.backdropPath,
         homePage: homePage ?? this.homePage,
@@ -1108,6 +1131,7 @@ class Sery extends DataClass implements Insertable<Sery> {
           ..write('name: $name, ')
           ..write('tagLine: $tagLine, ')
           ..write('overview: $overview, ')
+          ..write('logoPath: $logoPath, ')
           ..write('posterPath: $posterPath, ')
           ..write('backdropPath: $backdropPath, ')
           ..write('homePage: $homePage, ')
@@ -1120,8 +1144,19 @@ class Sery extends DataClass implements Insertable<Sery> {
   }
 
   @override
-  int get hashCode => Object.hash(id, name, tagLine, overview, posterPath,
-      backdropPath, homePage, firstAirDate, lastAirDate, vote, watchStatus);
+  int get hashCode => Object.hash(
+      id,
+      name,
+      tagLine,
+      overview,
+      logoPath,
+      posterPath,
+      backdropPath,
+      homePage,
+      firstAirDate,
+      lastAirDate,
+      vote,
+      watchStatus);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1130,6 +1165,7 @@ class Sery extends DataClass implements Insertable<Sery> {
           other.name == this.name &&
           other.tagLine == this.tagLine &&
           other.overview == this.overview &&
+          other.logoPath == this.logoPath &&
           other.posterPath == this.posterPath &&
           other.backdropPath == this.backdropPath &&
           other.homePage == this.homePage &&
@@ -1144,6 +1180,7 @@ class SeriesCompanion extends UpdateCompanion<Sery> {
   final Value<String> name;
   final Value<String> tagLine;
   final Value<String> overview;
+  final Value<String> logoPath;
   final Value<String> posterPath;
   final Value<String> backdropPath;
   final Value<String> homePage;
@@ -1157,6 +1194,7 @@ class SeriesCompanion extends UpdateCompanion<Sery> {
     this.name = const Value.absent(),
     this.tagLine = const Value.absent(),
     this.overview = const Value.absent(),
+    this.logoPath = const Value.absent(),
     this.posterPath = const Value.absent(),
     this.backdropPath = const Value.absent(),
     this.homePage = const Value.absent(),
@@ -1171,6 +1209,7 @@ class SeriesCompanion extends UpdateCompanion<Sery> {
     required String name,
     required String tagLine,
     required String overview,
+    required String logoPath,
     required String posterPath,
     required String backdropPath,
     required String homePage,
@@ -1183,6 +1222,7 @@ class SeriesCompanion extends UpdateCompanion<Sery> {
         name = Value(name),
         tagLine = Value(tagLine),
         overview = Value(overview),
+        logoPath = Value(logoPath),
         posterPath = Value(posterPath),
         backdropPath = Value(backdropPath),
         homePage = Value(homePage),
@@ -1194,6 +1234,7 @@ class SeriesCompanion extends UpdateCompanion<Sery> {
     Expression<String>? name,
     Expression<String>? tagLine,
     Expression<String>? overview,
+    Expression<String>? logoPath,
     Expression<String>? posterPath,
     Expression<String>? backdropPath,
     Expression<String>? homePage,
@@ -1208,6 +1249,7 @@ class SeriesCompanion extends UpdateCompanion<Sery> {
       if (name != null) 'name': name,
       if (tagLine != null) 'tag_line': tagLine,
       if (overview != null) 'overview': overview,
+      if (logoPath != null) 'logo_path': logoPath,
       if (posterPath != null) 'poster_path': posterPath,
       if (backdropPath != null) 'backdrop_path': backdropPath,
       if (homePage != null) 'home_page': homePage,
@@ -1224,6 +1266,7 @@ class SeriesCompanion extends UpdateCompanion<Sery> {
       Value<String>? name,
       Value<String>? tagLine,
       Value<String>? overview,
+      Value<String>? logoPath,
       Value<String>? posterPath,
       Value<String>? backdropPath,
       Value<String>? homePage,
@@ -1237,6 +1280,7 @@ class SeriesCompanion extends UpdateCompanion<Sery> {
       name: name ?? this.name,
       tagLine: tagLine ?? this.tagLine,
       overview: overview ?? this.overview,
+      logoPath: logoPath ?? this.logoPath,
       posterPath: posterPath ?? this.posterPath,
       backdropPath: backdropPath ?? this.backdropPath,
       homePage: homePage ?? this.homePage,
@@ -1262,6 +1306,9 @@ class SeriesCompanion extends UpdateCompanion<Sery> {
     }
     if (overview.present) {
       map['overview'] = Variable<String>(overview.value);
+    }
+    if (logoPath.present) {
+      map['logo_path'] = Variable<String>(logoPath.value);
     }
     if (posterPath.present) {
       map['poster_path'] = Variable<String>(posterPath.value);
@@ -1297,6 +1344,7 @@ class SeriesCompanion extends UpdateCompanion<Sery> {
           ..write('name: $name, ')
           ..write('tagLine: $tagLine, ')
           ..write('overview: $overview, ')
+          ..write('logoPath: $logoPath, ')
           ..write('posterPath: $posterPath, ')
           ..write('backdropPath: $backdropPath, ')
           ..write('homePage: $homePage, ')
@@ -1745,6 +1793,11 @@ class $EpisodesTable extends Episodes with TableInfo<$EpisodesTable, Episode> {
   late final GeneratedColumn<int> number = GeneratedColumn<int>(
       'number', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+      'name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _overviewMeta =
       const VerificationMeta('overview');
   @override
@@ -1801,6 +1854,7 @@ class $EpisodesTable extends Episodes with TableInfo<$EpisodesTable, Episode> {
         id,
         seasonid,
         number,
+        name,
         overview,
         filePath,
         posterPath,
@@ -1836,6 +1890,12 @@ class $EpisodesTable extends Episodes with TableInfo<$EpisodesTable, Episode> {
           number.isAcceptableOrUnknown(data['number']!, _numberMeta));
     } else if (isInserting) {
       context.missing(_numberMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
     }
     if (data.containsKey('overview')) {
       context.handle(_overviewMeta,
@@ -1902,6 +1962,8 @@ class $EpisodesTable extends Episodes with TableInfo<$EpisodesTable, Episode> {
           .read(DriftSqlType.int, data['${effectivePrefix}seasonid'])!,
       number: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}number'])!,
+      name: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
       overview: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}overview'])!,
       filePath: attachedDatabase.typeMapping
@@ -1931,6 +1993,7 @@ class Episode extends DataClass implements Insertable<Episode> {
   final int id;
   final int seasonid;
   final int number;
+  final String name;
   final String overview;
   final String filePath;
   final String posterPath;
@@ -1943,6 +2006,7 @@ class Episode extends DataClass implements Insertable<Episode> {
       {required this.id,
       required this.seasonid,
       required this.number,
+      required this.name,
       required this.overview,
       required this.filePath,
       required this.posterPath,
@@ -1957,6 +2021,7 @@ class Episode extends DataClass implements Insertable<Episode> {
     map['id'] = Variable<int>(id);
     map['seasonid'] = Variable<int>(seasonid);
     map['number'] = Variable<int>(number);
+    map['name'] = Variable<String>(name);
     map['overview'] = Variable<String>(overview);
     map['file_path'] = Variable<String>(filePath);
     map['poster_path'] = Variable<String>(posterPath);
@@ -1973,6 +2038,7 @@ class Episode extends DataClass implements Insertable<Episode> {
       id: Value(id),
       seasonid: Value(seasonid),
       number: Value(number),
+      name: Value(name),
       overview: Value(overview),
       filePath: Value(filePath),
       posterPath: Value(posterPath),
@@ -1991,6 +2057,7 @@ class Episode extends DataClass implements Insertable<Episode> {
       id: serializer.fromJson<int>(json['id']),
       seasonid: serializer.fromJson<int>(json['seasonid']),
       number: serializer.fromJson<int>(json['number']),
+      name: serializer.fromJson<String>(json['name']),
       overview: serializer.fromJson<String>(json['overview']),
       filePath: serializer.fromJson<String>(json['filePath']),
       posterPath: serializer.fromJson<String>(json['posterPath']),
@@ -2008,6 +2075,7 @@ class Episode extends DataClass implements Insertable<Episode> {
       'id': serializer.toJson<int>(id),
       'seasonid': serializer.toJson<int>(seasonid),
       'number': serializer.toJson<int>(number),
+      'name': serializer.toJson<String>(name),
       'overview': serializer.toJson<String>(overview),
       'filePath': serializer.toJson<String>(filePath),
       'posterPath': serializer.toJson<String>(posterPath),
@@ -2023,6 +2091,7 @@ class Episode extends DataClass implements Insertable<Episode> {
           {int? id,
           int? seasonid,
           int? number,
+          String? name,
           String? overview,
           String? filePath,
           String? posterPath,
@@ -2035,6 +2104,7 @@ class Episode extends DataClass implements Insertable<Episode> {
         id: id ?? this.id,
         seasonid: seasonid ?? this.seasonid,
         number: number ?? this.number,
+        name: name ?? this.name,
         overview: overview ?? this.overview,
         filePath: filePath ?? this.filePath,
         posterPath: posterPath ?? this.posterPath,
@@ -2050,6 +2120,7 @@ class Episode extends DataClass implements Insertable<Episode> {
           ..write('id: $id, ')
           ..write('seasonid: $seasonid, ')
           ..write('number: $number, ')
+          ..write('name: $name, ')
           ..write('overview: $overview, ')
           ..write('filePath: $filePath, ')
           ..write('posterPath: $posterPath, ')
@@ -2063,8 +2134,8 @@ class Episode extends DataClass implements Insertable<Episode> {
   }
 
   @override
-  int get hashCode => Object.hash(id, seasonid, number, overview, filePath,
-      posterPath, airDate, vote, watchedTime, watchStatus, runTime);
+  int get hashCode => Object.hash(id, seasonid, number, name, overview,
+      filePath, posterPath, airDate, vote, watchedTime, watchStatus, runTime);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2072,6 +2143,7 @@ class Episode extends DataClass implements Insertable<Episode> {
           other.id == this.id &&
           other.seasonid == this.seasonid &&
           other.number == this.number &&
+          other.name == this.name &&
           other.overview == this.overview &&
           other.filePath == this.filePath &&
           other.posterPath == this.posterPath &&
@@ -2086,6 +2158,7 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
   final Value<int> id;
   final Value<int> seasonid;
   final Value<int> number;
+  final Value<String> name;
   final Value<String> overview;
   final Value<String> filePath;
   final Value<String> posterPath;
@@ -2099,6 +2172,7 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
     this.id = const Value.absent(),
     this.seasonid = const Value.absent(),
     this.number = const Value.absent(),
+    this.name = const Value.absent(),
     this.overview = const Value.absent(),
     this.filePath = const Value.absent(),
     this.posterPath = const Value.absent(),
@@ -2113,6 +2187,7 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
     required int id,
     required int seasonid,
     required int number,
+    required String name,
     required String overview,
     required String filePath,
     required String posterPath,
@@ -2125,6 +2200,7 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
   })  : id = Value(id),
         seasonid = Value(seasonid),
         number = Value(number),
+        name = Value(name),
         overview = Value(overview),
         filePath = Value(filePath),
         posterPath = Value(posterPath),
@@ -2135,6 +2211,7 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
     Expression<int>? id,
     Expression<int>? seasonid,
     Expression<int>? number,
+    Expression<String>? name,
     Expression<String>? overview,
     Expression<String>? filePath,
     Expression<String>? posterPath,
@@ -2149,6 +2226,7 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
       if (id != null) 'id': id,
       if (seasonid != null) 'seasonid': seasonid,
       if (number != null) 'number': number,
+      if (name != null) 'name': name,
       if (overview != null) 'overview': overview,
       if (filePath != null) 'file_path': filePath,
       if (posterPath != null) 'poster_path': posterPath,
@@ -2165,6 +2243,7 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
       {Value<int>? id,
       Value<int>? seasonid,
       Value<int>? number,
+      Value<String>? name,
       Value<String>? overview,
       Value<String>? filePath,
       Value<String>? posterPath,
@@ -2178,6 +2257,7 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
       id: id ?? this.id,
       seasonid: seasonid ?? this.seasonid,
       number: number ?? this.number,
+      name: name ?? this.name,
       overview: overview ?? this.overview,
       filePath: filePath ?? this.filePath,
       posterPath: posterPath ?? this.posterPath,
@@ -2201,6 +2281,9 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
     }
     if (number.present) {
       map['number'] = Variable<int>(number.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
     }
     if (overview.present) {
       map['overview'] = Variable<String>(overview.value);
@@ -2238,6 +2321,7 @@ class EpisodesCompanion extends UpdateCompanion<Episode> {
           ..write('id: $id, ')
           ..write('seasonid: $seasonid, ')
           ..write('number: $number, ')
+          ..write('name: $name, ')
           ..write('overview: $overview, ')
           ..write('filePath: $filePath, ')
           ..write('posterPath: $posterPath, ')
@@ -3926,6 +4010,7 @@ typedef $$SeriesTableInsertCompanionBuilder = SeriesCompanion Function({
   required String name,
   required String tagLine,
   required String overview,
+  required String logoPath,
   required String posterPath,
   required String backdropPath,
   required String homePage,
@@ -3940,6 +4025,7 @@ typedef $$SeriesTableUpdateCompanionBuilder = SeriesCompanion Function({
   Value<String> name,
   Value<String> tagLine,
   Value<String> overview,
+  Value<String> logoPath,
   Value<String> posterPath,
   Value<String> backdropPath,
   Value<String> homePage,
@@ -3973,6 +4059,7 @@ class $$SeriesTableTableManager extends RootTableManager<
             Value<String> name = const Value.absent(),
             Value<String> tagLine = const Value.absent(),
             Value<String> overview = const Value.absent(),
+            Value<String> logoPath = const Value.absent(),
             Value<String> posterPath = const Value.absent(),
             Value<String> backdropPath = const Value.absent(),
             Value<String> homePage = const Value.absent(),
@@ -3987,6 +4074,7 @@ class $$SeriesTableTableManager extends RootTableManager<
             name: name,
             tagLine: tagLine,
             overview: overview,
+            logoPath: logoPath,
             posterPath: posterPath,
             backdropPath: backdropPath,
             homePage: homePage,
@@ -4001,6 +4089,7 @@ class $$SeriesTableTableManager extends RootTableManager<
             required String name,
             required String tagLine,
             required String overview,
+            required String logoPath,
             required String posterPath,
             required String backdropPath,
             required String homePage,
@@ -4015,6 +4104,7 @@ class $$SeriesTableTableManager extends RootTableManager<
             name: name,
             tagLine: tagLine,
             overview: overview,
+            logoPath: logoPath,
             posterPath: posterPath,
             backdropPath: backdropPath,
             homePage: homePage,
@@ -4059,6 +4149,11 @@ class $$SeriesTableFilterComposer
 
   ColumnFilters<String> get overview => $state.composableBuilder(
       column: $state.table.overview,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get logoPath => $state.composableBuilder(
+      column: $state.table.logoPath,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -4157,6 +4252,11 @@ class $$SeriesTableOrderingComposer
 
   ColumnOrderings<String> get overview => $state.composableBuilder(
       column: $state.table.overview,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get logoPath => $state.composableBuilder(
+      column: $state.table.logoPath,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
@@ -4415,6 +4515,7 @@ typedef $$EpisodesTableInsertCompanionBuilder = EpisodesCompanion Function({
   required int id,
   required int seasonid,
   required int number,
+  required String name,
   required String overview,
   required String filePath,
   required String posterPath,
@@ -4429,6 +4530,7 @@ typedef $$EpisodesTableUpdateCompanionBuilder = EpisodesCompanion Function({
   Value<int> id,
   Value<int> seasonid,
   Value<int> number,
+  Value<String> name,
   Value<String> overview,
   Value<String> filePath,
   Value<String> posterPath,
@@ -4463,6 +4565,7 @@ class $$EpisodesTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<int> seasonid = const Value.absent(),
             Value<int> number = const Value.absent(),
+            Value<String> name = const Value.absent(),
             Value<String> overview = const Value.absent(),
             Value<String> filePath = const Value.absent(),
             Value<String> posterPath = const Value.absent(),
@@ -4477,6 +4580,7 @@ class $$EpisodesTableTableManager extends RootTableManager<
             id: id,
             seasonid: seasonid,
             number: number,
+            name: name,
             overview: overview,
             filePath: filePath,
             posterPath: posterPath,
@@ -4491,6 +4595,7 @@ class $$EpisodesTableTableManager extends RootTableManager<
             required int id,
             required int seasonid,
             required int number,
+            required String name,
             required String overview,
             required String filePath,
             required String posterPath,
@@ -4505,6 +4610,7 @@ class $$EpisodesTableTableManager extends RootTableManager<
             id: id,
             seasonid: seasonid,
             number: number,
+            name: name,
             overview: overview,
             filePath: filePath,
             posterPath: posterPath,
@@ -4540,6 +4646,11 @@ class $$EpisodesTableFilterComposer
 
   ColumnFilters<int> get number => $state.composableBuilder(
       column: $state.table.number,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -4606,6 +4717,11 @@ class $$EpisodesTableOrderingComposer
 
   ColumnOrderings<int> get number => $state.composableBuilder(
       column: $state.table.number,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
