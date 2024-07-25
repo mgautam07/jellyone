@@ -342,9 +342,7 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
               }
             }
             final crew = castInfo['crew'];
-            print(crew.length);
             for (var i = 0; i < crew.length; i++) {
-              print(crew[i]);
               String role = crew[i]['job'];
               if (role != 'Screenplay' &&
                   role != 'Producer' &&

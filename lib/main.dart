@@ -15,18 +15,22 @@ import 'package:jellyone/utils/udpate_media.dart';
 
 import 'package:drift/drift.dart';
 import 'package:path/path.dart' as p;
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 
 void main() async {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   await dotenv.load(fileName: ".env");
+  await Hive.initFlutter();
+
+  var credBox = await Hive.openBox('credBox');
 
   final envVars = {
-    'MOVIES_DIR': dotenv.get('MOVIES_DIR'),
-    'SHOWS_DIR': dotenv.get('SHOWS_DIR'),
-    'ACCESS_TOKEN': dotenv.get('ACCESS_TOKEN'),
-    'API_KEY': dotenv.get('API_KEY'),
+    'MOVIES_DIR': credBox.get('MOVIES_DIR') ?? dotenv.get('MOVIES_DIR'),
+    'SHOWS_DIR': credBox.get('SHOWS_DIR') ?? dotenv.get('SHOWS_DIR'),
+    'ACCESS_TOKEN': credBox.get('ACCESS_TOKEN') ?? dotenv.get('ACCESS_TOKEN'),
+    'API_KEY': credBox.get('API_KEY') ?? dotenv.get('API_KEY'),
   };
 
   Directory dir = await getApplicationSupportDirectory();
