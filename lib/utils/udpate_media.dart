@@ -149,37 +149,46 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
         final logoPath = imgs['logos'][0]['file_path'];
         DateTime releaseDate = DateTime.parse(imdbInfo['release_date']);
         String nonNullMovieName = info['name'] ?? 'Blah Blah';
-        await database
-            .into($MoviesTableTable(database))
-            .insert(MoviesTableCompanion(
-              id: Value(imdbInfo['id']),
-              adult: Value(imdbInfo['adult']),
-              backdropPath: Value(imdbInfo['backdrop_path']),
-              name: Value(nonNullMovieName),
-              tagLine: Value(imdbInfo['tagline']),
-              overview: Value(imdbInfo['overview']),
-              posterPath: Value(imdbInfo['poster_path']),
-              logoPath: Value(logoPath ?? '/fcIKzqbhtlUeWOvYjFdkR8rZOAC.png'),
-              resolution: Value(info['resolution'] ?? 'unavailable'),
-              homePage: Value(imdbInfo['homepage']),
-              releaseDate: Value(releaseDate),
-              imdb: Value(imdbInfo['imdb_id']),
-              videoFile: Value(filePath),
-              vote: Value(
-                  double.parse(imdbInfo['vote_average'].toStringAsFixed(1))),
-              runTime: Value(imdbInfo['runtime']),
-            ));
-        print('Movie: ${result['original_title']} inserted');
+        try {
+          await database
+              .into($MoviesTableTable(database))
+              .insert(MoviesTableCompanion(
+                id: Value(imdbInfo['id']),
+                adult: Value(imdbInfo['adult']),
+                backdropPath: Value(imdbInfo['backdrop_path']),
+                name: Value(nonNullMovieName),
+                tagLine: Value(imdbInfo['tagline']),
+                overview: Value(imdbInfo['overview']),
+                posterPath: Value(imdbInfo['poster_path']),
+                logoPath: Value(logoPath ?? '/fcIKzqbhtlUeWOvYjFdkR8rZOAC.png'),
+                resolution: Value(info['resolution'] ?? 'unavailable'),
+                homePage: Value(imdbInfo['homepage']),
+                releaseDate: Value(releaseDate),
+                imdb: Value(imdbInfo['imdb_id']),
+                videoFile: Value(filePath),
+                vote: Value(
+                    double.parse(imdbInfo['vote_average'].toStringAsFixed(1))),
+                runTime: Value(imdbInfo['runtime']),
+              ));
+          print('Movie: ${result['original_title']} inserted');
+        } catch (e) {
+          print(e);
+        }
 
         print('------------------- adding genre --------------');
         for (var genre in imdbInfo['genres']) {
-          await database.into(database.genres).insertOnConflictUpdate(
-              GenresCompanion(
-                  id: Value(genre['id']), name: Value(genre['name'])));
+          try {
+            await database.into(database.genres).insertOnConflictUpdate(
+                GenresCompanion(
+                    id: Value(genre['id']), name: Value(genre['name'])));
 
-          await database.into(database.movieGenres).insertOnConflictUpdate(
-              MovieGenresCompanion(
-                  movieId: Value(imdbInfo['id']), genreId: Value(genre['id'])));
+            await database.into(database.movieGenres).insertOnConflictUpdate(
+                MovieGenresCompanion(
+                    movieId: Value(imdbInfo['id']),
+                    genreId: Value(genre['id'])));
+          } catch (e) {
+            print(e);
+          }
         }
 
         print('------------------- getting cast --------------');
@@ -189,18 +198,22 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
           for (var i = 0; i < min(cast.length, 15); i++) {
             if (cast[i]['profile_path'] == null) continue;
             if (cast[i]['known_for_department'] == 'Acting') {
-              await database.into(database.actors).insertOnConflictUpdate(
-                  ActorsCompanion.insert(
-                      id: Value(cast[i]['id']),
-                      name: cast[i]['name'],
-                      profilePath: cast[i]['profile_path']));
-              await database.into(database.movieCast).insertOnConflictUpdate(
-                  MovieCastCompanion(
-                      actorId: Value(cast[i]['id']),
-                      movieId: Value(id),
-                      role: const Value('Actor'),
-                      as: Value(cast[i]['character'])));
-              print('Cast: ${cast[i]['name']} inserted');
+              try {
+                await database.into(database.actors).insertOnConflictUpdate(
+                    ActorsCompanion.insert(
+                        id: Value(cast[i]['id']),
+                        name: cast[i]['name'],
+                        profilePath: cast[i]['profile_path']));
+                await database.into(database.movieCast).insertOnConflictUpdate(
+                    MovieCastCompanion(
+                        actorId: Value(cast[i]['id']),
+                        movieId: Value(id),
+                        role: const Value('Actor'),
+                        as: Value(cast[i]['character'])));
+                print('Cast: ${cast[i]['name']} inserted');
+              } catch (e) {
+                print(e);
+              }
             }
           }
 
@@ -215,21 +228,25 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
             }
             if (role == 'Screenplay') role = 'Writer';
 
-            await database.into(database.actors).insertOnConflictUpdate(
-                ActorsCompanion.insert(
-                    id: Value(crew[i]['id']),
-                    name: crew[i]['name'],
-                    profilePath: crew[i]['profile_path']));
+            try {
+              await database.into(database.actors).insertOnConflictUpdate(
+                  ActorsCompanion.insert(
+                      id: Value(crew[i]['id']),
+                      name: crew[i]['name'],
+                      profilePath: crew[i]['profile_path']));
 
-            await database
-                .into(database.movieCast)
-                .insertOnConflictUpdate(MovieCastCompanion(
-                  actorId: Value(crew[i]['id']),
-                  movieId: Value(id),
-                  role: Value(role),
-                  as: Value(role),
-                ));
-            print('Crew: ${crew[i]['name']} $role inserted');
+              await database
+                  .into(database.movieCast)
+                  .insertOnConflictUpdate(MovieCastCompanion(
+                    actorId: Value(crew[i]['id']),
+                    movieId: Value(id),
+                    role: Value(role),
+                    as: Value(role),
+                  ));
+              print('Crew: ${crew[i]['name']} $role inserted');
+            } catch (e) {
+              print(e);
+            }
           }
         }
       }
@@ -293,31 +310,40 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
           String nonNullMovieName = info['name'] ?? 'Blah Blah';
           DateTime firstDate = DateTime.parse(imdbInfo['first_air_date']);
           DateTime lastDate = DateTime.parse(imdbInfo['last_air_date']);
-          await database.into($SeriesTable(database)).insert(SeriesCompanion(
-              id: Value(imdbInfo['id']),
-              backdropPath: Value(imdbInfo['backdrop_path']),
-              name: Value(nonNullMovieName),
-              tagLine: Value(imdbInfo['tagline']),
-              overview: Value(imdbInfo['overview']),
-              logoPath: Value(logoPath),
-              posterPath: Value(imdbInfo['poster_path']),
-              homePage: Value(imdbInfo['homepage']),
-              vote: Value(
-                  double.parse(imdbInfo['vote_average'].toStringAsFixed(1))),
-              firstAirDate: Value(firstDate),
-              lastAirDate: Value(lastDate)));
-          print('Show: ${result['original_name']} inserted');
+
+          try {
+            await database.into($SeriesTable(database)).insert(SeriesCompanion(
+                id: Value(imdbInfo['id']),
+                backdropPath: Value(imdbInfo['backdrop_path']),
+                name: Value(nonNullMovieName),
+                tagLine: Value(imdbInfo['tagline']),
+                overview: Value(imdbInfo['overview']),
+                logoPath: Value(logoPath),
+                posterPath: Value(imdbInfo['poster_path']),
+                homePage: Value(imdbInfo['homepage']),
+                vote: Value(
+                    double.parse(imdbInfo['vote_average'].toStringAsFixed(1))),
+                firstAirDate: Value(firstDate),
+                lastAirDate: Value(lastDate)));
+            print('Show: ${result['original_name']} inserted');
+          } catch (e) {
+            print(e);
+          }
 
           print('------------------- adding TV genre --------------');
           for (var genre in imdbInfo['genres']) {
-            await database.into(database.genres).insertOnConflictUpdate(
-                GenresCompanion(
-                    id: Value(genre['id']), name: Value(genre['name'])));
+            try {
+              await database.into(database.genres).insertOnConflictUpdate(
+                  GenresCompanion(
+                      id: Value(genre['id']), name: Value(genre['name'])));
 
-            await database.into(database.tvGenres).insertOnConflictUpdate(
-                TvGenresCompanion(
-                    seriesId: Value(imdbInfo['id']),
-                    genreId: Value(genre['id'])));
+              await database.into(database.tvGenres).insertOnConflictUpdate(
+                  TvGenresCompanion(
+                      seriesId: Value(imdbInfo['id']),
+                      genreId: Value(genre['id'])));
+            } catch (e) {
+              print(e);
+            }
           }
 
           print('------------------- getting TV cast --------------');
@@ -327,18 +353,22 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
             for (var i = 0; i < min(cast.length, 15); i++) {
               if (cast[i]['profile_path'] == null) continue;
               if (cast[i]['known_for_department'] == 'Acting') {
-                await database.into(database.actors).insertOnConflictUpdate(
-                    ActorsCompanion.insert(
-                        id: Value(cast[i]['id']),
-                        name: cast[i]['name'],
-                        profilePath: cast[i]['profile_path']));
-                await database.into(database.tvCast).insertOnConflictUpdate(
-                    TvCastCompanion(
-                        actorId: Value(cast[i]['id']),
-                        seriesId: Value(id),
-                        role: const Value('Actor'),
-                        as: Value(cast[i]['character'])));
-                print('TV Cast: ${cast[i]['name']} inserted');
+                try {
+                  await database.into(database.actors).insertOnConflictUpdate(
+                      ActorsCompanion.insert(
+                          id: Value(cast[i]['id']),
+                          name: cast[i]['name'],
+                          profilePath: cast[i]['profile_path']));
+                  await database.into(database.tvCast).insertOnConflictUpdate(
+                      TvCastCompanion(
+                          actorId: Value(cast[i]['id']),
+                          seriesId: Value(id),
+                          role: const Value('Actor'),
+                          as: Value(cast[i]['character'])));
+                  print('TV Cast: ${cast[i]['name']} inserted');
+                } catch (e) {
+                  print(e);
+                }
               }
             }
             final crew = castInfo['crew'];
@@ -351,21 +381,25 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
               }
               if (role == 'Screenplay') role = 'Writer';
 
-              await database.into(database.actors).insertOnConflictUpdate(
-                  ActorsCompanion.insert(
-                      id: Value(crew[i]['id']),
-                      name: crew[i]['name'],
-                      profilePath: crew[i]['profile_path'] ?? ''));
+              try {
+                await database.into(database.actors).insertOnConflictUpdate(
+                    ActorsCompanion.insert(
+                        id: Value(crew[i]['id']),
+                        name: crew[i]['name'],
+                        profilePath: crew[i]['profile_path'] ?? ''));
 
-              await database
-                  .into(database.tvCast)
-                  .insertOnConflictUpdate(TvCastCompanion(
-                    actorId: Value(crew[i]['id']),
-                    seriesId: Value(id),
-                    role: Value(role),
-                    as: Value(role),
-                  ));
-              print('Crew: ${crew[i]['name']} $role inserted');
+                await database
+                    .into(database.tvCast)
+                    .insertOnConflictUpdate(TvCastCompanion(
+                      actorId: Value(crew[i]['id']),
+                      seriesId: Value(id),
+                      role: Value(role),
+                      as: Value(role),
+                    ));
+                print('Crew: ${crew[i]['name']} $role inserted');
+              } catch (e) {
+                print(e);
+              }
             }
           }
         } else {
@@ -389,16 +423,20 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
       final s = await tmdb.v3.tvSeasons.getDetails(seriesId, seasonNumber);
       seasonId = s['id'];
       if (s.isNotEmpty) {
-        database.into(database.seasons).insert(SeasonsCompanion(
-            id: Value(s['id']),
-            seriesid: Value(seriesId),
-            number: Value(seasonNumber),
-            overview:
-                Value(s['overview'] == '' ? 'No overview' : s['overview']),
-            posterPath: Value(s['poster_path']),
-            airDate: Value(DateTime.parse(s['air_date'])),
-            vote: Value(double.parse(s['vote_average'].toStringAsFixed(1)))));
-        print('TV Season: ${info['name']} ${info['season']} inserted');
+        try {
+          database.into(database.seasons).insert(SeasonsCompanion(
+              id: Value(s['id']),
+              seriesid: Value(seriesId),
+              number: Value(seasonNumber),
+              overview:
+                  Value(s['overview'] == '' ? 'No overview' : s['overview']),
+              posterPath: Value(s['poster_path']),
+              airDate: Value(DateTime.parse(s['air_date'])),
+              vote: Value(double.parse(s['vote_average'].toStringAsFixed(1)))));
+          print('TV Season: ${info['name']} ${info['season']} inserted');
+        } catch (e) {
+          print(e);
+        }
       }
     }
 
@@ -410,19 +448,23 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
           seriesId, int.parse(info['season']!), int.parse(info['episode']!));
 
       if (ep.isNotEmpty) {
-        database.into(database.episodes).insert(EpisodesCompanion(
-            id: Value(ep['id']),
-            seasonid: Value(seasonId),
-            number: Value(int.parse(info['episode']!)),
-            name: Value(ep['name']),
-            overview: Value(ep['overview']),
-            posterPath: Value(ep['still_path']),
-            filePath: Value(filePath),
-            airDate: Value(DateTime.parse(ep['air_date'])),
-            vote: Value(ep['vote_average']),
-            runTime: Value(ep['runtime'])));
-        print(
-            'TV Episode: ${info['name']} ${info['season']} ${info['episode']} inserted');
+        try {
+          database.into(database.episodes).insert(EpisodesCompanion(
+              id: Value(ep['id']),
+              seasonid: Value(seasonId),
+              number: Value(int.parse(info['episode']!)),
+              name: Value(ep['name']),
+              overview: Value(ep['overview']),
+              posterPath: Value(ep['still_path']),
+              filePath: Value(filePath),
+              airDate: Value(DateTime.parse(ep['air_date'])),
+              vote: Value(ep['vote_average']),
+              runTime: Value(ep['runtime'])));
+          print(
+              'TV Episode: ${info['name']} ${info['season']} ${info['episode']} inserted');
+        } catch (e) {
+          print(e);
+        }
       }
     }
   }
