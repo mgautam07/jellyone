@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:jellyone/screens/home.dart';
 import 'package:jellyone/screens/movies.dart';
+import 'package:jellyone/screens/onboarding.dart';
 import 'package:jellyone/screens/settings.dart';
 import 'package:jellyone/screens/shows.dart';
 import 'package:jellyone/theme/app_styles.dart';
@@ -21,31 +22,29 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 
 void main() async {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
-  await dotenv.load(fileName: ".env");
-  await Hive.initFlutter();
-
-  var credBox = await Hive.openBox('credBox');
-
-  final envVars = {
-    'MOVIES_DIR': credBox.get('MOVIES_DIR') ?? dotenv.get('MOVIES_DIR'),
-    'SHOWS_DIR': credBox.get('SHOWS_DIR') ?? dotenv.get('SHOWS_DIR'),
-    'ACCESS_TOKEN': credBox.get('ACCESS_TOKEN') ?? dotenv.get('ACCESS_TOKEN'),
-    'API_KEY': credBox.get('API_KEY') ?? dotenv.get('API_KEY'),
-  };
-
   Directory dir = await getApplicationSupportDirectory();
+  await dotenv.load(fileName: ".env");
+
+  String hiveStorageLocation = p.join(dir.path, 'hive');
+  await Hive.initFlutter(hiveStorageLocation);
+
   String imageStorageLocation = p.join(dir.path, 'cache', 'images');
   await FastCachedImageConfig.init(
       subDir: imageStorageLocation, clearCacheAfter: const Duration(days: 60));
 
-  runApp(const MyApp());
-
-  final isolate = await createDBIsolate();
-  Isolate.spawn(updateMedia, [envVars, isolate]);
+  var infoBox = await Hive.openBox('infoBox');
+  if (infoBox.get('onboarding') == null) {
+    infoBox.put('onboarding', 1);
+    runApp(const MyApp(onboarding: 0));
+  } else {
+    runApp(const MyApp(onboarding: 1));
+  }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final int onboarding;
+
+  const MyApp({super.key, required this.onboarding});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +58,8 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: AppTheme.dark,
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
+      home: onboarding == 0 ? OnboardingScreen() : const MyHomePage(),
+      // home: const MyHomePage(),
     );
   }
 }
@@ -73,6 +73,28 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
+
+  void startIsolate() async {
+    var infoBox = await Hive.openBox('infoBox');
+
+    final envVars = {
+      'MOVIES_DIR': infoBox.get('MOVIES_DIR') ?? dotenv.get('MOVIES_DIR'),
+      'SHOWS_DIR': infoBox.get('SHOWS_DIR') ?? dotenv.get('SHOWS_DIR'),
+      'ACCESS_TOKEN': infoBox.get('ACCESS_TOKEN') ?? dotenv.get('ACCESS_TOKEN'),
+      'API_KEY': infoBox.get('API_KEY') ?? dotenv.get('API_KEY'),
+    };
+    final isolate = await createDBIsolate();
+    Isolate.spawn(updateMedia, [envVars, isolate]);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Start the isolate after the UI is displayed
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      startIsolate();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

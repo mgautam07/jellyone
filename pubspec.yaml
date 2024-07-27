@@ -48,6 +48,8 @@ dependencies:
   media_kit_video: ^1.2.4                        # For video rendering.
   media_kit_libs_video: ^1.0.4                   # Native video dependencies.
   hive_flutter: ^1.1.0
+  introduction_screen: ^3.1.14
+  file_picker: ^8.0.6
 
 dev_dependencies:
   flutter_test:
@@ -80,7 +82,9 @@ flutter:
     - assets/images/poster_tiou.jpg
     - assets/images/logo_tiou.png
     - assets/images/anne.jpg
-  #   - images/a_dot_ham.jpeg
+    - assets/images/movie_night.png
+    - assets/images/security.png
+    - assets/images/searching.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
