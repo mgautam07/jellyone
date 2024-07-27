@@ -134,7 +134,8 @@ Future<List<Season>> getSeasons(int id) async {
   final database = AppDatabase();
 
   final seasonsList = await (database.select(database.seasons)
-        ..where((tbl) => tbl.seriesid.equals(id)))
+        ..where((tbl) => tbl.seriesid.equals(id))
+        ..orderBy([(tbl) => d.OrderingTerm.asc(tbl.number)]))
       .get();
 
   return seasonsList;

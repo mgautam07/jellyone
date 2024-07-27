@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:drift/drift.dart' as d;
 import 'package:flutter/material.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 
@@ -11,7 +12,8 @@ Future<List<Episode>> getEpisodes(int id) async {
   final database = AppDatabase();
 
   final episodeList = await (database.select(database.episodes)
-        ..where((tbl) => tbl.seasonid.equals(id)))
+        ..where((tbl) => tbl.seasonid.equals(id))
+        ..orderBy([(t) => d.OrderingTerm.asc(t.number)]))
       .get();
 
   return episodeList;
