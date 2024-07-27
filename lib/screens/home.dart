@@ -43,12 +43,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.only(left: 25),
       child: SingleChildScrollView(
+          child: Padding(
+        padding: const EdgeInsets.only(top: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             const Text(
-              'LM',
+              'Latest Movies',
               style: TextStyle(fontSize: 22),
             ),
             const SizedBox(width: double.infinity, height: 10),
@@ -85,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 13,
             ),
             const Text(
-              'LS',
+              'Latest Shows',
               style: TextStyle(fontSize: 22),
             ),
             const SizedBox(width: double.infinity, height: 10),
@@ -121,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(width: double.infinity, height: 70),
           ],
         ),
-      ),
+      )),
     );
   }
 }

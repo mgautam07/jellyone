@@ -101,6 +101,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('JellyOne'),
+        centerTitle: true,
+        backgroundColor: AppTheme.medium,
+        elevation: 1,
       ),
       body: Row(
         children: [
@@ -115,6 +118,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   NavigationRail navRail() {
     return NavigationRail(
+      backgroundColor: AppTheme.dark,
+      indicatorColor: Color.fromARGB(179, 30, 161, 204),
       selectedIndex: _selectedIndex,
       onDestinationSelected: (int index) {
         setState(() {
