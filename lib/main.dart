@@ -26,11 +26,9 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   String hiveStorageLocation = p.join(dir.path, 'hive');
-  await Hive.initFlutter(hiveStorageLocation);
-
-  String imageStorageLocation = p.join(dir.path, 'cache', 'images');
   await FastCachedImageConfig.init(
-      subDir: imageStorageLocation, clearCacheAfter: const Duration(days: 60));
+      subDir: hiveStorageLocation, clearCacheAfter: const Duration(days: 60));
+  await Hive.initFlutter(hiveStorageLocation);
 
   var infoBox = await Hive.openBox('infoBox');
   if (infoBox.get('onboarding') == null) {
