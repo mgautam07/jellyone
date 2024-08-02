@@ -32,7 +32,7 @@ class EpisodeCard extends StatelessWidget {
               );
             },
             hoverColor: AppTheme.medium,
-            child: Container(
+            child: SizedBox(
               height: 197,
               width: double.infinity,
               child: Row(

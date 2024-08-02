@@ -10,6 +10,7 @@ import 'package:jellyone/db/tables/tv_genres.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:logger/logger.dart';
 import 'package:path/path.dart' as p;
+// ignore: depend_on_referenced_packages
 import 'package:sqlite3/sqlite3.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
 

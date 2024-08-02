@@ -49,7 +49,8 @@ class MediaCard extends StatelessWidget {
                   Text(
                     '${movie.releaseDate.year}',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: AppTheme.subText, fontSize: 13),
+                    style:
+                        const TextStyle(color: AppTheme.subText, fontSize: 13),
                   )
                 ],
               ),

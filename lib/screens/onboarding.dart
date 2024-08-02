@@ -199,9 +199,11 @@ class OnboardingScreen extends StatelessWidget {
                 infoBox.put('API_KEY', _apiKeyController.text);
                 infoBox.put('ACCESS_TOKEN', _accessTokenController.text);
 
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const MyHomePage()),
-                );
+                if (context.mounted) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const MyHomePage()),
+                  );
+                }
               },
               dotsDecorator: const DotsDecorator(
                   activeColor: AppTheme.accent, activeSize: Size.square(13.0)),
