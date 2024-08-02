@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:drift/drift.dart';
 import 'package:drift/isolate.dart';
+import 'package:logger/logger.dart' as l;
 import 'package:jellyone/db/db.dart';
 import 'package:video_parser/video_parser.dart';
 import 'package:tmdb_api/tmdb_api.dart';
@@ -17,6 +18,8 @@ Future<void> updateMedia(List<dynamic> args) async {
 
   final connection = await isolate.connect(singleClientMode: true);
   final database = AppDatabase(connection);
+
+  var log = l.Logger(printer: l.SimplePrinter());
 
   var moviesDirectory = Directory(movieFolderPath!);
   var showsDirectory = Directory(showsFolderPath!);
@@ -46,7 +49,7 @@ Future<void> updateMedia(List<dynamic> args) async {
               await addMovieToDB(database, name, envVars['API_KEY']!,
                   envVars['ACCESS_TOKEN']!, file.path);
             } catch (e) {
-              print(e);
+              log.e(e);
             }
           }
           break;
@@ -67,7 +70,7 @@ Future<void> updateMedia(List<dynamic> args) async {
             await addMovieToDB(database, name, envVars['API_KEY']!,
                 envVars['ACCESS_TOKEN']!, folder.path);
           } catch (e) {
-            print(e);
+            log.e(e);
           }
         }
       }
@@ -96,7 +99,7 @@ Future<void> updateMedia(List<dynamic> args) async {
               await addEpisodeToDB(database, name, envVars['API_KEY']!,
                   envVars['ACCESS_TOKEN']!, file.path);
             } catch (e) {
-              print(e);
+              log.e(e);
             }
           }
         }
@@ -109,9 +112,15 @@ Future<void> updateMedia(List<dynamic> args) async {
 
 Future addMovieToDB(AppDatabase database, String name, String apiKey,
     String accessToken, String filePath) async {
+  var log = l.Logger(printer: l.SimplePrinter());
   var info = parseName(name);
   final movieExists = await database.getMovieFromName(info['name']!);
   if (movieExists.isNotEmpty || info.isEmpty) {
+    if (movieExists.isNotEmpty) {
+      log.i('Movie: $name found');
+    } else {
+      log.e('Movie: $name info not found');
+    }
     return;
   }
 
@@ -127,8 +136,7 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
 
   // search for movie from file name
   if (info['year'] != null) {
-    print(info['name']);
-    print(info['year']);
+    log.i('${info['name']} - ${info['year']} ');
     final res = await tmdb.v3.search.queryMovies(info['name']!,
         includeAdult: true, year: int.parse(info['year']!));
     result = res['results'][0];
@@ -170,12 +178,12 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
                     double.parse(imdbInfo['vote_average'].toStringAsFixed(1))),
                 runTime: Value(imdbInfo['runtime']),
               ));
-          print('Movie: ${result['original_title']} inserted');
+          log.i('Movie: ${result['original_title']} inserted');
         } catch (e) {
-          print(e);
+          log.e(e);
         }
 
-        print('------------------- adding genre --------------');
+        log.i('------------------- adding genre --------------');
         for (var genre in imdbInfo['genres']) {
           try {
             await database.into(database.genres).insertOnConflictUpdate(
@@ -187,11 +195,11 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
                     movieId: Value(imdbInfo['id']),
                     genreId: Value(genre['id'])));
           } catch (e) {
-            print(e);
+            log.e(e);
           }
         }
 
-        print('------------------- getting cast --------------');
+        log.i('------------------- getting cast --------------');
         final castInfo = await tmdb.v3.movies.getCredits(id);
         if (castInfo.isNotEmpty) {
           final cast = castInfo['cast'];
@@ -210,9 +218,9 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
                         movieId: Value(id),
                         role: const Value('Actor'),
                         as: Value(cast[i]['character'])));
-                print('Cast: ${cast[i]['name']} inserted');
+                log.i('Cast: ${cast[i]['name']} inserted');
               } catch (e) {
-                print(e);
+                log.e(e);
               }
             }
           }
@@ -243,9 +251,9 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
                     role: Value(role),
                     as: Value(role),
                   ));
-              print('Crew: ${crew[i]['name']} $role inserted');
+              log.i('Crew: ${crew[i]['name']} $role inserted');
             } catch (e) {
-              print(e);
+              log.e(e);
             }
           }
         }
@@ -258,8 +266,9 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
 
 Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
     String accessToken, String filePath) async {
+  var log = l.Logger(printer: l.SimplePrinter());
   var info = parseName(name);
-  print(info);
+  log.i(info);
 
   if (info.isEmpty) {
     return;
@@ -278,15 +287,15 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
 
   if (seriesExists.isNotEmpty) {
     seriesId = seriesExists[0].id;
-    print('SERIES FOUND');
+    log.i('SERIES FOUND');
     final seasonExists =
         await database.getSeasonFromId(int.parse(info['season']!), seriesId);
     if (seasonExists != null && seasonExists.isNotEmpty) {
-      print('SEASON FOUND');
+      log.i('SEASON FOUND');
       final epExists = await database.getEpisodeFromId(
           int.parse(info['episode']!), seasonExists[0].id);
       if (epExists != null && epExists.isNotEmpty) {
-        print('EP FOUND');
+        log.i('EP FOUND');
         return;
       }
     }
@@ -325,12 +334,12 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
                     double.parse(imdbInfo['vote_average'].toStringAsFixed(1))),
                 firstAirDate: Value(firstDate),
                 lastAirDate: Value(lastDate)));
-            print('Show: ${result['original_name']} inserted');
+            log.i('Show: ${result['original_name']} inserted');
           } catch (e) {
-            print(e);
+            log.e(e);
           }
 
-          print('------------------- adding TV genre --------------');
+          log.i('------------------- adding TV genre --------------');
           for (var genre in imdbInfo['genres']) {
             try {
               await database.into(database.genres).insertOnConflictUpdate(
@@ -342,11 +351,11 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
                       seriesId: Value(imdbInfo['id']),
                       genreId: Value(genre['id'])));
             } catch (e) {
-              print(e);
+              log.e(e);
             }
           }
 
-          print('------------------- getting TV cast --------------');
+          log.i('------------------- getting TV cast --------------');
           final castInfo = await tmdb.v3.tv.getCredits(id);
           if (castInfo.isNotEmpty) {
             final cast = castInfo['cast'];
@@ -365,9 +374,9 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
                           seriesId: Value(id),
                           role: const Value('Actor'),
                           as: Value(cast[i]['character'])));
-                  print('TV Cast: ${cast[i]['name']} inserted');
+                  log.i('TV Cast: ${cast[i]['name']} inserted');
                 } catch (e) {
-                  print(e);
+                  log.e(e);
                 }
               }
             }
@@ -396,9 +405,9 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
                       role: Value(role),
                       as: Value(role),
                     ));
-                print('Crew: ${crew[i]['name']} $role inserted');
+                log.i('Crew: ${crew[i]['name']} $role inserted');
               } catch (e) {
-                print(e);
+                log.e(e);
               }
             }
           }
@@ -419,7 +428,7 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
     }
 
     if (seasonExists.isEmpty) {
-      print('season not found');
+      log.i('season not found');
       final s = await tmdb.v3.tvSeasons.getDetails(seriesId, seasonNumber);
       seasonId = s['id'];
       if (s.isNotEmpty) {
@@ -433,9 +442,9 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
               posterPath: Value(s['poster_path']),
               airDate: Value(DateTime.parse(s['air_date'])),
               vote: Value(double.parse(s['vote_average'].toStringAsFixed(1)))));
-          print('TV Season: ${info['name']} ${info['season']} inserted');
+          log.i('TV Season: ${info['name']} ${info['season']} inserted');
         } catch (e) {
-          print(e);
+          log.e(e);
         }
       }
     }
@@ -460,10 +469,10 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
               airDate: Value(DateTime.parse(ep['air_date'])),
               vote: Value(ep['vote_average']),
               runTime: Value(ep['runtime'])));
-          print(
+          log.i(
               'TV Episode: ${info['name']} ${info['season']} ${info['episode']} inserted');
         } catch (e) {
-          print(e);
+          log.e(e);
         }
       }
     }

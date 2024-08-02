@@ -8,6 +8,7 @@ import 'package:jellyone/db/tables/tv_cast.dart';
 import 'package:jellyone/db/tables/tv_genres.dart';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:logger/logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqlite3/sqlite3.dart';
 import 'package:sqlite3_flutter_libs/sqlite3_flutter_libs.dart';
@@ -38,6 +39,7 @@ part 'db.g.dart';
 class AppDatabase extends _$AppDatabase {
   // AppDatabase(QueryExecutor e) : super(e);
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
+  var logger = Logger();
 
   @override
   int get schemaVersion => 1;
@@ -48,7 +50,7 @@ class AppDatabase extends _$AppDatabase {
           await (select(moviesTable)..where((r) => r.name.equals(name))).get();
       return result;
     } catch (e) {
-      print('Error: $e');
+      logger.e('Error: $e');
       return [];
     }
   }
@@ -59,7 +61,7 @@ class AppDatabase extends _$AppDatabase {
           await (select(series)..where((r) => r.name.equals(name))).get();
       return result;
     } catch (e) {
-      print('Error: $e');
+      logger.e('Error: $e');
       return [];
     }
   }
@@ -72,7 +74,7 @@ class AppDatabase extends _$AppDatabase {
           .get();
       return result;
     } catch (e) {
-      print('Error: $e');
+      logger.e('Error: $e');
       return null;
     }
   }
@@ -85,7 +87,7 @@ class AppDatabase extends _$AppDatabase {
           .get();
       return result;
     } catch (e) {
-      print('Error: $e');
+      logger.e('Error: $e');
       return null;
     }
   }

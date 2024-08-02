@@ -49,7 +49,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _pickFolder(String key) async {
     String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-    print(selectedDirectory);
     if (selectedDirectory != null) {
       var box = await Hive.openBox('infoBox');
       box.put(key, selectedDirectory);
