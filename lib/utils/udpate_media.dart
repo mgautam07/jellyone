@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:drift/drift.dart';
 import 'package:drift/isolate.dart';
 import 'package:logger/logger.dart' as l;
+import 'package:jellyone/utils/logger.dart';
 import 'package:jellyone/db/db.dart';
 import 'package:video_parser/video_parser.dart';
 import 'package:tmdb_api/tmdb_api.dart';
@@ -19,7 +20,7 @@ Future<void> updateMedia(List<dynamic> args) async {
   final connection = await isolate.connect(singleClientMode: true);
   final database = AppDatabase(connection);
 
-  var log = l.Logger(printer: l.SimplePrinter());
+  var log = await customLogger(envVars['LOG_PATH']);
 
   var moviesDirectory = Directory(movieFolderPath!);
   var showsDirectory = Directory(showsFolderPath!);
@@ -47,7 +48,7 @@ Future<void> updateMedia(List<dynamic> args) async {
           if (name.contains(RegExp(r'mkv|mp4|mov|avi|wmv|mpeg'))) {
             try {
               await addMovieToDB(database, name, envVars['API_KEY']!,
-                  envVars['ACCESS_TOKEN']!, file.path);
+                  envVars['ACCESS_TOKEN']!, log, file.path);
             } catch (e) {
               log.e(e);
             }
@@ -68,7 +69,7 @@ Future<void> updateMedia(List<dynamic> args) async {
         if (name.contains(RegExp(r'mkv|mp4|mov|avi|wmv|mpeg'))) {
           try {
             await addMovieToDB(database, name, envVars['API_KEY']!,
-                envVars['ACCESS_TOKEN']!, folder.path);
+                envVars['ACCESS_TOKEN']!, log, folder.path);
           } catch (e) {
             log.e(e);
           }
@@ -97,7 +98,7 @@ Future<void> updateMedia(List<dynamic> args) async {
           if (name.contains(RegExp(r'mkv|mp4|mov|avi|wmv|mpeg'))) {
             try {
               await addEpisodeToDB(database, name, envVars['API_KEY']!,
-                  envVars['ACCESS_TOKEN']!, file.path);
+                  envVars['ACCESS_TOKEN']!, log, file.path);
             } catch (e) {
               log.e(e);
             }
@@ -111,8 +112,7 @@ Future<void> updateMedia(List<dynamic> args) async {
 }
 
 Future addMovieToDB(AppDatabase database, String name, String apiKey,
-    String accessToken, String filePath) async {
-  var log = l.Logger(printer: l.SimplePrinter());
+    String accessToken, l.Logger log, String filePath) async {
   var info = parseName(name);
   final movieExists = await database.getMovieFromName(info['name']!);
   if (movieExists.isNotEmpty || info.isEmpty) {
@@ -265,8 +265,7 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
 }
 
 Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
-    String accessToken, String filePath) async {
-  var log = l.Logger(printer: l.SimplePrinter());
+    String accessToken, l.Logger log, String filePath) async {
   var info = parseName(name);
   log.i(info);
 
@@ -290,11 +289,11 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
     log.i('SERIES FOUND');
     final seasonExists =
         await database.getSeasonFromId(int.parse(info['season']!), seriesId);
-    if (seasonExists != null && seasonExists.isNotEmpty) {
+    if (seasonExists.isNotEmpty && seasonExists.isNotEmpty) {
       log.i('SEASON FOUND');
       final epExists = await database.getEpisodeFromId(
           int.parse(info['episode']!), seasonExists[0].id);
-      if (epExists != null && epExists.isNotEmpty) {
+      if (epExists.isNotEmpty && epExists.isNotEmpty) {
         log.i('EP FOUND');
         return;
       }
@@ -423,7 +422,7 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
     final seasonExists = await database.getSeasonFromId(seasonNumber, seriesId);
     int seasonId = 0;
 
-    if (seasonExists!.isNotEmpty) {
+    if (seasonExists.isNotEmpty) {
       seasonId = seasonExists[0].id;
     }
 
@@ -452,7 +451,7 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
     final epExists =
         await database.getEpisodeFromId(int.parse(info['episode']!), seasonId);
 
-    if (epExists!.isEmpty) {
+    if (epExists.isEmpty) {
       final ep = await tmdb.v3.tvEpisodes.getDetails(
           seriesId, int.parse(info['season']!), int.parse(info['episode']!));
 

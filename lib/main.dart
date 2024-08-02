@@ -73,6 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
   void startIsolate() async {
+    final supportDir = await getApplicationSupportDirectory();
     var infoBox = await Hive.openBox('infoBox');
 
     final envVars = {
@@ -80,6 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
       'SHOWS_DIR': infoBox.get('SHOWS_DIR') ?? dotenv.get('SHOWS_DIR'),
       'ACCESS_TOKEN': infoBox.get('ACCESS_TOKEN') ?? dotenv.get('ACCESS_TOKEN'),
       'API_KEY': infoBox.get('API_KEY') ?? dotenv.get('API_KEY'),
+      'LOG_PATH': supportDir.path
     };
     final isolate = await createDBIsolate();
     Isolate.spawn(updateMedia, [envVars, isolate]);

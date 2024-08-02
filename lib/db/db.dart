@@ -8,7 +8,6 @@ import 'package:jellyone/db/tables/tv_cast.dart';
 import 'package:jellyone/db/tables/tv_genres.dart';
 
 import 'package:path_provider/path_provider.dart';
-import 'package:logger/logger.dart';
 import 'package:path/path.dart' as p;
 // ignore: depend_on_referenced_packages
 import 'package:sqlite3/sqlite3.dart';
@@ -40,7 +39,6 @@ part 'db.g.dart';
 class AppDatabase extends _$AppDatabase {
   // AppDatabase(QueryExecutor e) : super(e);
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
-  var logger = Logger();
 
   @override
   int get schemaVersion => 1;
@@ -51,7 +49,6 @@ class AppDatabase extends _$AppDatabase {
           await (select(moviesTable)..where((r) => r.name.equals(name))).get();
       return result;
     } catch (e) {
-      logger.e('Error: $e');
       return [];
     }
   }
@@ -62,12 +59,11 @@ class AppDatabase extends _$AppDatabase {
           await (select(series)..where((r) => r.name.equals(name))).get();
       return result;
     } catch (e) {
-      logger.e('Error: $e');
       return [];
     }
   }
 
-  Future<List<Season>>? getSeasonFromId(int seasonNumber, int id) {
+  Future<List<Season>> getSeasonFromId(int seasonNumber, int id) async {
     try {
       final result = (select(seasons)
             ..where(
@@ -75,12 +71,11 @@ class AppDatabase extends _$AppDatabase {
           .get();
       return result;
     } catch (e) {
-      logger.e('Error: $e');
-      return null;
+      return [];
     }
   }
 
-  Future<List<Episode>>? getEpisodeFromId(int episodeNumber, int id) {
+  Future<List<Episode>> getEpisodeFromId(int episodeNumber, int id) async {
     try {
       final result = (select(episodes)
             ..where((r) =>
@@ -88,8 +83,7 @@ class AppDatabase extends _$AppDatabase {
           .get();
       return result;
     } catch (e) {
-      logger.e('Error: $e');
-      return null;
+      return [];
     }
   }
 
