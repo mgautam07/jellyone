@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:jellyone/db/db.dart';
 import 'package:jellyone/widgets/media_card.dart';
 import 'package:jellyone/widgets/series_card.dart';
+import 'package:jellyone/utils/custom_scroll.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -63,8 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.data != null) {
                           return ScrollConfiguration(
-                            behavior: const ScrollBehavior()
-                                .copyWith(overscroll: false),
+                            behavior: CustomScrollBehavior(),
                             child: ListView.builder(
                               itemCount: snapshot.data?.length ?? 0,
                               scrollDirection: Axis.horizontal,
@@ -100,8 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.data != null) {
                           return ScrollConfiguration(
-                            behavior: const ScrollBehavior()
-                                .copyWith(overscroll: false),
+                            behavior: CustomScrollBehavior(),
                             child: ListView.builder(
                               itemCount: snapshot.data?.length ?? 0,
                               scrollDirection: Axis.horizontal,

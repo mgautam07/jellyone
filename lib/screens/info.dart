@@ -8,6 +8,7 @@ import 'package:jellyone/screens/video_player.dart';
 import 'package:jellyone/theme/app_styles.dart';
 import 'package:jellyone/widgets/cast_card.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:jellyone/utils/custom_scroll.dart';
 
 Future<List<String>> getGenres(int id) async {
   final database = AppDatabase();
@@ -686,7 +687,7 @@ class _MediaInfoScreenState extends State<MediaInfoScreen> {
                                                     TextStyle(fontSize: 15)));
                                       } else {
                                         return ScrollConfiguration(
-                                          behavior: const ScrollBehavior()
+                                          behavior: CustomScrollBehavior()
                                               .copyWith(overscroll: false),
                                           child: ListView.builder(
                                             itemCount:
