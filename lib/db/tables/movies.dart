@@ -10,6 +10,7 @@ class MoviesTable extends Table {
   TextColumn get posterPath => text()();
   TextColumn get logoPath => text()();
   TextColumn get videoFile => text()();
+  TextColumn get subtitlesFolder => text().nullable()();
   TextColumn get resolution => text()();
   TextColumn get homePage => text()();
   DateTimeColumn get releaseDate => dateTime()();

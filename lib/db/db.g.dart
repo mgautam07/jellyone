@@ -63,6 +63,12 @@ class $MoviesTableTable extends MoviesTable
   late final GeneratedColumn<String> videoFile = GeneratedColumn<String>(
       'video_file', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _subtitlesFolderMeta =
+      const VerificationMeta('subtitlesFolder');
+  @override
+  late final GeneratedColumn<String> subtitlesFolder = GeneratedColumn<String>(
+      'subtitles_folder', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _resolutionMeta =
       const VerificationMeta('resolution');
   @override
@@ -124,6 +130,7 @@ class $MoviesTableTable extends MoviesTable
         posterPath,
         logoPath,
         videoFile,
+        subtitlesFolder,
         resolution,
         homePage,
         releaseDate,
@@ -199,6 +206,12 @@ class $MoviesTableTable extends MoviesTable
           videoFile.isAcceptableOrUnknown(data['video_file']!, _videoFileMeta));
     } else if (isInserting) {
       context.missing(_videoFileMeta);
+    }
+    if (data.containsKey('subtitles_folder')) {
+      context.handle(
+          _subtitlesFolderMeta,
+          subtitlesFolder.isAcceptableOrUnknown(
+              data['subtitles_folder']!, _subtitlesFolderMeta));
     }
     if (data.containsKey('resolution')) {
       context.handle(
@@ -279,6 +292,8 @@ class $MoviesTableTable extends MoviesTable
           .read(DriftSqlType.string, data['${effectivePrefix}logo_path'])!,
       videoFile: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}video_file'])!,
+      subtitlesFolder: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}subtitles_folder']),
       resolution: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}resolution'])!,
       homePage: attachedDatabase.typeMapping
@@ -314,6 +329,7 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
   final String posterPath;
   final String logoPath;
   final String videoFile;
+  final String? subtitlesFolder;
   final String resolution;
   final String homePage;
   final DateTime releaseDate;
@@ -332,6 +348,7 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
       required this.posterPath,
       required this.logoPath,
       required this.videoFile,
+      this.subtitlesFolder,
       required this.resolution,
       required this.homePage,
       required this.releaseDate,
@@ -352,6 +369,9 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
     map['poster_path'] = Variable<String>(posterPath);
     map['logo_path'] = Variable<String>(logoPath);
     map['video_file'] = Variable<String>(videoFile);
+    if (!nullToAbsent || subtitlesFolder != null) {
+      map['subtitles_folder'] = Variable<String>(subtitlesFolder);
+    }
     map['resolution'] = Variable<String>(resolution);
     map['home_page'] = Variable<String>(homePage);
     map['release_date'] = Variable<DateTime>(releaseDate);
@@ -374,6 +394,9 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
       posterPath: Value(posterPath),
       logoPath: Value(logoPath),
       videoFile: Value(videoFile),
+      subtitlesFolder: subtitlesFolder == null && nullToAbsent
+          ? const Value.absent()
+          : Value(subtitlesFolder),
       resolution: Value(resolution),
       homePage: Value(homePage),
       releaseDate: Value(releaseDate),
@@ -398,6 +421,7 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
       posterPath: serializer.fromJson<String>(json['posterPath']),
       logoPath: serializer.fromJson<String>(json['logoPath']),
       videoFile: serializer.fromJson<String>(json['videoFile']),
+      subtitlesFolder: serializer.fromJson<String?>(json['subtitlesFolder']),
       resolution: serializer.fromJson<String>(json['resolution']),
       homePage: serializer.fromJson<String>(json['homePage']),
       releaseDate: serializer.fromJson<DateTime>(json['releaseDate']),
@@ -421,6 +445,7 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
       'posterPath': serializer.toJson<String>(posterPath),
       'logoPath': serializer.toJson<String>(logoPath),
       'videoFile': serializer.toJson<String>(videoFile),
+      'subtitlesFolder': serializer.toJson<String?>(subtitlesFolder),
       'resolution': serializer.toJson<String>(resolution),
       'homePage': serializer.toJson<String>(homePage),
       'releaseDate': serializer.toJson<DateTime>(releaseDate),
@@ -442,6 +467,7 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
           String? posterPath,
           String? logoPath,
           String? videoFile,
+          Value<String?> subtitlesFolder = const Value.absent(),
           String? resolution,
           String? homePage,
           DateTime? releaseDate,
@@ -460,6 +486,9 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
         posterPath: posterPath ?? this.posterPath,
         logoPath: logoPath ?? this.logoPath,
         videoFile: videoFile ?? this.videoFile,
+        subtitlesFolder: subtitlesFolder.present
+            ? subtitlesFolder.value
+            : this.subtitlesFolder,
         resolution: resolution ?? this.resolution,
         homePage: homePage ?? this.homePage,
         releaseDate: releaseDate ?? this.releaseDate,
@@ -469,6 +498,38 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
         watchStatus: watchStatus ?? this.watchStatus,
         runTime: runTime ?? this.runTime,
       );
+  MoviesTableData copyWithCompanion(MoviesTableCompanion data) {
+    return MoviesTableData(
+      id: data.id.present ? data.id.value : this.id,
+      adult: data.adult.present ? data.adult.value : this.adult,
+      backdropPath: data.backdropPath.present
+          ? data.backdropPath.value
+          : this.backdropPath,
+      name: data.name.present ? data.name.value : this.name,
+      tagLine: data.tagLine.present ? data.tagLine.value : this.tagLine,
+      overview: data.overview.present ? data.overview.value : this.overview,
+      posterPath:
+          data.posterPath.present ? data.posterPath.value : this.posterPath,
+      logoPath: data.logoPath.present ? data.logoPath.value : this.logoPath,
+      videoFile: data.videoFile.present ? data.videoFile.value : this.videoFile,
+      subtitlesFolder: data.subtitlesFolder.present
+          ? data.subtitlesFolder.value
+          : this.subtitlesFolder,
+      resolution:
+          data.resolution.present ? data.resolution.value : this.resolution,
+      homePage: data.homePage.present ? data.homePage.value : this.homePage,
+      releaseDate:
+          data.releaseDate.present ? data.releaseDate.value : this.releaseDate,
+      imdb: data.imdb.present ? data.imdb.value : this.imdb,
+      vote: data.vote.present ? data.vote.value : this.vote,
+      watchedTime:
+          data.watchedTime.present ? data.watchedTime.value : this.watchedTime,
+      watchStatus:
+          data.watchStatus.present ? data.watchStatus.value : this.watchStatus,
+      runTime: data.runTime.present ? data.runTime.value : this.runTime,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('MoviesTableData(')
@@ -481,6 +542,7 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
           ..write('posterPath: $posterPath, ')
           ..write('logoPath: $logoPath, ')
           ..write('videoFile: $videoFile, ')
+          ..write('subtitlesFolder: $subtitlesFolder, ')
           ..write('resolution: $resolution, ')
           ..write('homePage: $homePage, ')
           ..write('releaseDate: $releaseDate, ')
@@ -504,6 +566,7 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
       posterPath,
       logoPath,
       videoFile,
+      subtitlesFolder,
       resolution,
       homePage,
       releaseDate,
@@ -525,6 +588,7 @@ class MoviesTableData extends DataClass implements Insertable<MoviesTableData> {
           other.posterPath == this.posterPath &&
           other.logoPath == this.logoPath &&
           other.videoFile == this.videoFile &&
+          other.subtitlesFolder == this.subtitlesFolder &&
           other.resolution == this.resolution &&
           other.homePage == this.homePage &&
           other.releaseDate == this.releaseDate &&
@@ -545,6 +609,7 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
   final Value<String> posterPath;
   final Value<String> logoPath;
   final Value<String> videoFile;
+  final Value<String?> subtitlesFolder;
   final Value<String> resolution;
   final Value<String> homePage;
   final Value<DateTime> releaseDate;
@@ -564,6 +629,7 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
     this.posterPath = const Value.absent(),
     this.logoPath = const Value.absent(),
     this.videoFile = const Value.absent(),
+    this.subtitlesFolder = const Value.absent(),
     this.resolution = const Value.absent(),
     this.homePage = const Value.absent(),
     this.releaseDate = const Value.absent(),
@@ -584,6 +650,7 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
     required String posterPath,
     required String logoPath,
     required String videoFile,
+    this.subtitlesFolder = const Value.absent(),
     required String resolution,
     required String homePage,
     required DateTime releaseDate,
@@ -618,6 +685,7 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
     Expression<String>? posterPath,
     Expression<String>? logoPath,
     Expression<String>? videoFile,
+    Expression<String>? subtitlesFolder,
     Expression<String>? resolution,
     Expression<String>? homePage,
     Expression<DateTime>? releaseDate,
@@ -638,6 +706,7 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
       if (posterPath != null) 'poster_path': posterPath,
       if (logoPath != null) 'logo_path': logoPath,
       if (videoFile != null) 'video_file': videoFile,
+      if (subtitlesFolder != null) 'subtitles_folder': subtitlesFolder,
       if (resolution != null) 'resolution': resolution,
       if (homePage != null) 'home_page': homePage,
       if (releaseDate != null) 'release_date': releaseDate,
@@ -660,6 +729,7 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
       Value<String>? posterPath,
       Value<String>? logoPath,
       Value<String>? videoFile,
+      Value<String?>? subtitlesFolder,
       Value<String>? resolution,
       Value<String>? homePage,
       Value<DateTime>? releaseDate,
@@ -679,6 +749,7 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
       posterPath: posterPath ?? this.posterPath,
       logoPath: logoPath ?? this.logoPath,
       videoFile: videoFile ?? this.videoFile,
+      subtitlesFolder: subtitlesFolder ?? this.subtitlesFolder,
       resolution: resolution ?? this.resolution,
       homePage: homePage ?? this.homePage,
       releaseDate: releaseDate ?? this.releaseDate,
@@ -720,6 +791,9 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
     }
     if (videoFile.present) {
       map['video_file'] = Variable<String>(videoFile.value);
+    }
+    if (subtitlesFolder.present) {
+      map['subtitles_folder'] = Variable<String>(subtitlesFolder.value);
     }
     if (resolution.present) {
       map['resolution'] = Variable<String>(resolution.value);
@@ -763,6 +837,7 @@ class MoviesTableCompanion extends UpdateCompanion<MoviesTableData> {
           ..write('posterPath: $posterPath, ')
           ..write('logoPath: $logoPath, ')
           ..write('videoFile: $videoFile, ')
+          ..write('subtitlesFolder: $subtitlesFolder, ')
           ..write('resolution: $resolution, ')
           ..write('homePage: $homePage, ')
           ..write('releaseDate: $releaseDate, ')
@@ -1124,6 +1199,30 @@ class Sery extends DataClass implements Insertable<Sery> {
         vote: vote ?? this.vote,
         watchStatus: watchStatus ?? this.watchStatus,
       );
+  Sery copyWithCompanion(SeriesCompanion data) {
+    return Sery(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      tagLine: data.tagLine.present ? data.tagLine.value : this.tagLine,
+      overview: data.overview.present ? data.overview.value : this.overview,
+      logoPath: data.logoPath.present ? data.logoPath.value : this.logoPath,
+      posterPath:
+          data.posterPath.present ? data.posterPath.value : this.posterPath,
+      backdropPath: data.backdropPath.present
+          ? data.backdropPath.value
+          : this.backdropPath,
+      homePage: data.homePage.present ? data.homePage.value : this.homePage,
+      firstAirDate: data.firstAirDate.present
+          ? data.firstAirDate.value
+          : this.firstAirDate,
+      lastAirDate:
+          data.lastAirDate.present ? data.lastAirDate.value : this.lastAirDate,
+      vote: data.vote.present ? data.vote.value : this.vote,
+      watchStatus:
+          data.watchStatus.present ? data.watchStatus.value : this.watchStatus,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Sery(')
@@ -1394,6 +1493,12 @@ class $SeasonsTable extends Seasons with TableInfo<$SeasonsTable, Season> {
   late final GeneratedColumn<String> posterPath = GeneratedColumn<String>(
       'poster_path', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _seasonFolderMeta =
+      const VerificationMeta('seasonFolder');
+  @override
+  late final GeneratedColumn<String> seasonFolder = GeneratedColumn<String>(
+      'season_folder', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _airDateMeta =
       const VerificationMeta('airDate');
   @override
@@ -1414,8 +1519,17 @@ class $SeasonsTable extends Seasons with TableInfo<$SeasonsTable, Season> {
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, number, seriesid, overview, posterPath, airDate, vote, watchStatus];
+  List<GeneratedColumn> get $columns => [
+        id,
+        number,
+        seriesid,
+        overview,
+        posterPath,
+        seasonFolder,
+        airDate,
+        vote,
+        watchStatus
+      ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1457,6 +1571,12 @@ class $SeasonsTable extends Seasons with TableInfo<$SeasonsTable, Season> {
     } else if (isInserting) {
       context.missing(_posterPathMeta);
     }
+    if (data.containsKey('season_folder')) {
+      context.handle(
+          _seasonFolderMeta,
+          seasonFolder.isAcceptableOrUnknown(
+              data['season_folder']!, _seasonFolderMeta));
+    }
     if (data.containsKey('air_date')) {
       context.handle(_airDateMeta,
           airDate.isAcceptableOrUnknown(data['air_date']!, _airDateMeta));
@@ -1494,6 +1614,8 @@ class $SeasonsTable extends Seasons with TableInfo<$SeasonsTable, Season> {
           .read(DriftSqlType.string, data['${effectivePrefix}overview'])!,
       posterPath: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}poster_path'])!,
+      seasonFolder: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}season_folder']),
       airDate: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}air_date'])!,
       vote: attachedDatabase.typeMapping
@@ -1515,6 +1637,7 @@ class Season extends DataClass implements Insertable<Season> {
   final int seriesid;
   final String overview;
   final String posterPath;
+  final String? seasonFolder;
   final DateTime airDate;
   final double vote;
   final int watchStatus;
@@ -1524,6 +1647,7 @@ class Season extends DataClass implements Insertable<Season> {
       required this.seriesid,
       required this.overview,
       required this.posterPath,
+      this.seasonFolder,
       required this.airDate,
       required this.vote,
       required this.watchStatus});
@@ -1535,6 +1659,9 @@ class Season extends DataClass implements Insertable<Season> {
     map['seriesid'] = Variable<int>(seriesid);
     map['overview'] = Variable<String>(overview);
     map['poster_path'] = Variable<String>(posterPath);
+    if (!nullToAbsent || seasonFolder != null) {
+      map['season_folder'] = Variable<String>(seasonFolder);
+    }
     map['air_date'] = Variable<DateTime>(airDate);
     map['vote'] = Variable<double>(vote);
     map['watch_status'] = Variable<int>(watchStatus);
@@ -1548,6 +1675,9 @@ class Season extends DataClass implements Insertable<Season> {
       seriesid: Value(seriesid),
       overview: Value(overview),
       posterPath: Value(posterPath),
+      seasonFolder: seasonFolder == null && nullToAbsent
+          ? const Value.absent()
+          : Value(seasonFolder),
       airDate: Value(airDate),
       vote: Value(vote),
       watchStatus: Value(watchStatus),
@@ -1563,6 +1693,7 @@ class Season extends DataClass implements Insertable<Season> {
       seriesid: serializer.fromJson<int>(json['seriesid']),
       overview: serializer.fromJson<String>(json['overview']),
       posterPath: serializer.fromJson<String>(json['posterPath']),
+      seasonFolder: serializer.fromJson<String?>(json['seasonFolder']),
       airDate: serializer.fromJson<DateTime>(json['airDate']),
       vote: serializer.fromJson<double>(json['vote']),
       watchStatus: serializer.fromJson<int>(json['watchStatus']),
@@ -1577,6 +1708,7 @@ class Season extends DataClass implements Insertable<Season> {
       'seriesid': serializer.toJson<int>(seriesid),
       'overview': serializer.toJson<String>(overview),
       'posterPath': serializer.toJson<String>(posterPath),
+      'seasonFolder': serializer.toJson<String?>(seasonFolder),
       'airDate': serializer.toJson<DateTime>(airDate),
       'vote': serializer.toJson<double>(vote),
       'watchStatus': serializer.toJson<int>(watchStatus),
@@ -1589,6 +1721,7 @@ class Season extends DataClass implements Insertable<Season> {
           int? seriesid,
           String? overview,
           String? posterPath,
+          Value<String?> seasonFolder = const Value.absent(),
           DateTime? airDate,
           double? vote,
           int? watchStatus}) =>
@@ -1598,10 +1731,30 @@ class Season extends DataClass implements Insertable<Season> {
         seriesid: seriesid ?? this.seriesid,
         overview: overview ?? this.overview,
         posterPath: posterPath ?? this.posterPath,
+        seasonFolder:
+            seasonFolder.present ? seasonFolder.value : this.seasonFolder,
         airDate: airDate ?? this.airDate,
         vote: vote ?? this.vote,
         watchStatus: watchStatus ?? this.watchStatus,
       );
+  Season copyWithCompanion(SeasonsCompanion data) {
+    return Season(
+      id: data.id.present ? data.id.value : this.id,
+      number: data.number.present ? data.number.value : this.number,
+      seriesid: data.seriesid.present ? data.seriesid.value : this.seriesid,
+      overview: data.overview.present ? data.overview.value : this.overview,
+      posterPath:
+          data.posterPath.present ? data.posterPath.value : this.posterPath,
+      seasonFolder: data.seasonFolder.present
+          ? data.seasonFolder.value
+          : this.seasonFolder,
+      airDate: data.airDate.present ? data.airDate.value : this.airDate,
+      vote: data.vote.present ? data.vote.value : this.vote,
+      watchStatus:
+          data.watchStatus.present ? data.watchStatus.value : this.watchStatus,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Season(')
@@ -1610,6 +1763,7 @@ class Season extends DataClass implements Insertable<Season> {
           ..write('seriesid: $seriesid, ')
           ..write('overview: $overview, ')
           ..write('posterPath: $posterPath, ')
+          ..write('seasonFolder: $seasonFolder, ')
           ..write('airDate: $airDate, ')
           ..write('vote: $vote, ')
           ..write('watchStatus: $watchStatus')
@@ -1618,8 +1772,8 @@ class Season extends DataClass implements Insertable<Season> {
   }
 
   @override
-  int get hashCode => Object.hash(
-      id, number, seriesid, overview, posterPath, airDate, vote, watchStatus);
+  int get hashCode => Object.hash(id, number, seriesid, overview, posterPath,
+      seasonFolder, airDate, vote, watchStatus);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1629,6 +1783,7 @@ class Season extends DataClass implements Insertable<Season> {
           other.seriesid == this.seriesid &&
           other.overview == this.overview &&
           other.posterPath == this.posterPath &&
+          other.seasonFolder == this.seasonFolder &&
           other.airDate == this.airDate &&
           other.vote == this.vote &&
           other.watchStatus == this.watchStatus);
@@ -1640,6 +1795,7 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
   final Value<int> seriesid;
   final Value<String> overview;
   final Value<String> posterPath;
+  final Value<String?> seasonFolder;
   final Value<DateTime> airDate;
   final Value<double> vote;
   final Value<int> watchStatus;
@@ -1650,6 +1806,7 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
     this.seriesid = const Value.absent(),
     this.overview = const Value.absent(),
     this.posterPath = const Value.absent(),
+    this.seasonFolder = const Value.absent(),
     this.airDate = const Value.absent(),
     this.vote = const Value.absent(),
     this.watchStatus = const Value.absent(),
@@ -1661,6 +1818,7 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
     required int seriesid,
     required String overview,
     required String posterPath,
+    this.seasonFolder = const Value.absent(),
     required DateTime airDate,
     required double vote,
     this.watchStatus = const Value.absent(),
@@ -1678,6 +1836,7 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
     Expression<int>? seriesid,
     Expression<String>? overview,
     Expression<String>? posterPath,
+    Expression<String>? seasonFolder,
     Expression<DateTime>? airDate,
     Expression<double>? vote,
     Expression<int>? watchStatus,
@@ -1689,6 +1848,7 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
       if (seriesid != null) 'seriesid': seriesid,
       if (overview != null) 'overview': overview,
       if (posterPath != null) 'poster_path': posterPath,
+      if (seasonFolder != null) 'season_folder': seasonFolder,
       if (airDate != null) 'air_date': airDate,
       if (vote != null) 'vote': vote,
       if (watchStatus != null) 'watch_status': watchStatus,
@@ -1702,6 +1862,7 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
       Value<int>? seriesid,
       Value<String>? overview,
       Value<String>? posterPath,
+      Value<String?>? seasonFolder,
       Value<DateTime>? airDate,
       Value<double>? vote,
       Value<int>? watchStatus,
@@ -1712,6 +1873,7 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
       seriesid: seriesid ?? this.seriesid,
       overview: overview ?? this.overview,
       posterPath: posterPath ?? this.posterPath,
+      seasonFolder: seasonFolder ?? this.seasonFolder,
       airDate: airDate ?? this.airDate,
       vote: vote ?? this.vote,
       watchStatus: watchStatus ?? this.watchStatus,
@@ -1737,6 +1899,9 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
     if (posterPath.present) {
       map['poster_path'] = Variable<String>(posterPath.value);
     }
+    if (seasonFolder.present) {
+      map['season_folder'] = Variable<String>(seasonFolder.value);
+    }
     if (airDate.present) {
       map['air_date'] = Variable<DateTime>(airDate.value);
     }
@@ -1760,6 +1925,7 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
           ..write('seriesid: $seriesid, ')
           ..write('overview: $overview, ')
           ..write('posterPath: $posterPath, ')
+          ..write('seasonFolder: $seasonFolder, ')
           ..write('airDate: $airDate, ')
           ..write('vote: $vote, ')
           ..write('watchStatus: $watchStatus, ')
@@ -2114,6 +2280,26 @@ class Episode extends DataClass implements Insertable<Episode> {
         watchStatus: watchStatus ?? this.watchStatus,
         runTime: runTime ?? this.runTime,
       );
+  Episode copyWithCompanion(EpisodesCompanion data) {
+    return Episode(
+      id: data.id.present ? data.id.value : this.id,
+      seasonid: data.seasonid.present ? data.seasonid.value : this.seasonid,
+      number: data.number.present ? data.number.value : this.number,
+      name: data.name.present ? data.name.value : this.name,
+      overview: data.overview.present ? data.overview.value : this.overview,
+      filePath: data.filePath.present ? data.filePath.value : this.filePath,
+      posterPath:
+          data.posterPath.present ? data.posterPath.value : this.posterPath,
+      airDate: data.airDate.present ? data.airDate.value : this.airDate,
+      vote: data.vote.present ? data.vote.value : this.vote,
+      watchedTime:
+          data.watchedTime.present ? data.watchedTime.value : this.watchedTime,
+      watchStatus:
+          data.watchStatus.present ? data.watchStatus.value : this.watchStatus,
+      runTime: data.runTime.present ? data.runTime.value : this.runTime,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Episode(')
@@ -2457,6 +2643,15 @@ class Actor extends DataClass implements Insertable<Actor> {
         name: name ?? this.name,
         profilePath: profilePath ?? this.profilePath,
       );
+  Actor copyWithCompanion(ActorsCompanion data) {
+    return Actor(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      profilePath:
+          data.profilePath.present ? data.profilePath.value : this.profilePath,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Actor(')
@@ -2693,6 +2888,15 @@ class MovieCastData extends DataClass implements Insertable<MovieCastData> {
         role: role ?? this.role,
         as: as ?? this.as,
       );
+  MovieCastData copyWithCompanion(MovieCastCompanion data) {
+    return MovieCastData(
+      actorId: data.actorId.present ? data.actorId.value : this.actorId,
+      movieId: data.movieId.present ? data.movieId.value : this.movieId,
+      role: data.role.present ? data.role.value : this.role,
+      as: data.as.present ? data.as.value : this.as,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('MovieCastData(')
@@ -2902,6 +3106,13 @@ class Genre extends DataClass implements Insertable<Genre> {
         id: id ?? this.id,
         name: name ?? this.name,
       );
+  Genre copyWithCompanion(GenresCompanion data) {
+    return Genre(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('Genre(')
@@ -3079,6 +3290,13 @@ class MovieGenre extends DataClass implements Insertable<MovieGenre> {
         movieId: movieId ?? this.movieId,
         genreId: genreId ?? this.genreId,
       );
+  MovieGenre copyWithCompanion(MovieGenresCompanion data) {
+    return MovieGenre(
+      movieId: data.movieId.present ? data.movieId.value : this.movieId,
+      genreId: data.genreId.present ? data.genreId.value : this.genreId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('MovieGenre(')
@@ -3269,6 +3487,13 @@ class TvGenre extends DataClass implements Insertable<TvGenre> {
         seriesId: seriesId ?? this.seriesId,
         genreId: genreId ?? this.genreId,
       );
+  TvGenre copyWithCompanion(TvGenresCompanion data) {
+    return TvGenre(
+      seriesId: data.seriesId.present ? data.seriesId.value : this.seriesId,
+      genreId: data.genreId.present ? data.genreId.value : this.genreId,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TvGenre(')
@@ -3502,6 +3727,15 @@ class TvCastData extends DataClass implements Insertable<TvCastData> {
         role: role ?? this.role,
         as: as ?? this.as,
       );
+  TvCastData copyWithCompanion(TvCastCompanion data) {
+    return TvCastData(
+      actorId: data.actorId.present ? data.actorId.value : this.actorId,
+      seriesId: data.seriesId.present ? data.seriesId.value : this.seriesId,
+      role: data.role.present ? data.role.value : this.role,
+      as: data.as.present ? data.as.value : this.as,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('TvCastData(')
@@ -3615,7 +3849,7 @@ class TvCastCompanion extends UpdateCompanion<TvCastData> {
 
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
-  _$AppDatabaseManager get managers => _$AppDatabaseManager(this);
+  $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $MoviesTableTable moviesTable = $MoviesTableTable(this);
   late final $SeriesTable series = $SeriesTable(this);
   late final $SeasonsTable seasons = $SeasonsTable(this);
@@ -3644,7 +3878,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       ];
 }
 
-typedef $$MoviesTableTableInsertCompanionBuilder = MoviesTableCompanion
+typedef $$MoviesTableTableCreateCompanionBuilder = MoviesTableCompanion
     Function({
   required int id,
   required bool adult,
@@ -3655,6 +3889,7 @@ typedef $$MoviesTableTableInsertCompanionBuilder = MoviesTableCompanion
   required String posterPath,
   required String logoPath,
   required String videoFile,
+  Value<String?> subtitlesFolder,
   required String resolution,
   required String homePage,
   required DateTime releaseDate,
@@ -3676,6 +3911,7 @@ typedef $$MoviesTableTableUpdateCompanionBuilder = MoviesTableCompanion
   Value<String> posterPath,
   Value<String> logoPath,
   Value<String> videoFile,
+  Value<String?> subtitlesFolder,
   Value<String> resolution,
   Value<String> homePage,
   Value<DateTime> releaseDate,
@@ -3687,118 +3923,39 @@ typedef $$MoviesTableTableUpdateCompanionBuilder = MoviesTableCompanion
   Value<int> rowid,
 });
 
-class $$MoviesTableTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $MoviesTableTable,
-    MoviesTableData,
-    $$MoviesTableTableFilterComposer,
-    $$MoviesTableTableOrderingComposer,
-    $$MoviesTableTableProcessedTableManager,
-    $$MoviesTableTableInsertCompanionBuilder,
-    $$MoviesTableTableUpdateCompanionBuilder> {
-  $$MoviesTableTableTableManager(_$AppDatabase db, $MoviesTableTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$MoviesTableTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$MoviesTableTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$MoviesTableTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            Value<bool> adult = const Value.absent(),
-            Value<String> backdropPath = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String> tagLine = const Value.absent(),
-            Value<String> overview = const Value.absent(),
-            Value<String> posterPath = const Value.absent(),
-            Value<String> logoPath = const Value.absent(),
-            Value<String> videoFile = const Value.absent(),
-            Value<String> resolution = const Value.absent(),
-            Value<String> homePage = const Value.absent(),
-            Value<DateTime> releaseDate = const Value.absent(),
-            Value<String> imdb = const Value.absent(),
-            Value<double> vote = const Value.absent(),
-            Value<int> watchedTime = const Value.absent(),
-            Value<int> watchStatus = const Value.absent(),
-            Value<int> runTime = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              MoviesTableCompanion(
-            id: id,
-            adult: adult,
-            backdropPath: backdropPath,
-            name: name,
-            tagLine: tagLine,
-            overview: overview,
-            posterPath: posterPath,
-            logoPath: logoPath,
-            videoFile: videoFile,
-            resolution: resolution,
-            homePage: homePage,
-            releaseDate: releaseDate,
-            imdb: imdb,
-            vote: vote,
-            watchedTime: watchedTime,
-            watchStatus: watchStatus,
-            runTime: runTime,
-            rowid: rowid,
-          ),
-          getInsertCompanionBuilder: ({
-            required int id,
-            required bool adult,
-            required String backdropPath,
-            required String name,
-            required String tagLine,
-            required String overview,
-            required String posterPath,
-            required String logoPath,
-            required String videoFile,
-            required String resolution,
-            required String homePage,
-            required DateTime releaseDate,
-            required String imdb,
-            required double vote,
-            Value<int> watchedTime = const Value.absent(),
-            Value<int> watchStatus = const Value.absent(),
-            required int runTime,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              MoviesTableCompanion.insert(
-            id: id,
-            adult: adult,
-            backdropPath: backdropPath,
-            name: name,
-            tagLine: tagLine,
-            overview: overview,
-            posterPath: posterPath,
-            logoPath: logoPath,
-            videoFile: videoFile,
-            resolution: resolution,
-            homePage: homePage,
-            releaseDate: releaseDate,
-            imdb: imdb,
-            vote: vote,
-            watchedTime: watchedTime,
-            watchStatus: watchStatus,
-            runTime: runTime,
-            rowid: rowid,
-          ),
-        ));
-}
+final class $$MoviesTableTableReferences
+    extends BaseReferences<_$AppDatabase, $MoviesTableTable, MoviesTableData> {
+  $$MoviesTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-class $$MoviesTableTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $MoviesTableTable,
-    MoviesTableData,
-    $$MoviesTableTableFilterComposer,
-    $$MoviesTableTableOrderingComposer,
-    $$MoviesTableTableProcessedTableManager,
-    $$MoviesTableTableInsertCompanionBuilder,
-    $$MoviesTableTableUpdateCompanionBuilder> {
-  $$MoviesTableTableProcessedTableManager(super.$state);
+  static MultiTypedResultKey<$MovieCastTable, List<MovieCastData>>
+      _movieCastRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+          db.movieCast,
+          aliasName:
+              $_aliasNameGenerator(db.moviesTable.id, db.movieCast.movieId));
+
+  $$MovieCastTableProcessedTableManager get movieCastRefs {
+    final manager = $$MovieCastTableTableManager($_db, $_db.movieCast)
+        .filter((f) => f.movieId.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_movieCastRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$MovieGenresTable, List<MovieGenre>>
+      _movieGenresRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+          db.movieGenres,
+          aliasName:
+              $_aliasNameGenerator(db.moviesTable.id, db.movieGenres.movieId));
+
+  $$MovieGenresTableProcessedTableManager get movieGenresRefs {
+    final manager = $$MovieGenresTableTableManager($_db, $_db.movieGenres)
+        .filter((f) => f.movieId.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_movieGenresRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$MoviesTableTableFilterComposer
@@ -3846,6 +4003,11 @@ class $$MoviesTableTableFilterComposer
 
   ColumnFilters<String> get videoFile => $state.composableBuilder(
       column: $state.table.videoFile,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get subtitlesFolder => $state.composableBuilder(
+      column: $state.table.subtitlesFolder,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -3964,6 +4126,11 @@ class $$MoviesTableTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
+  ColumnOrderings<String> get subtitlesFolder => $state.composableBuilder(
+      column: $state.table.subtitlesFolder,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
   ColumnOrderings<String> get resolution => $state.composableBuilder(
       column: $state.table.resolution,
       builder: (column, joinBuilders) =>
@@ -4005,7 +4172,169 @@ class $$MoviesTableTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$SeriesTableInsertCompanionBuilder = SeriesCompanion Function({
+class $$MoviesTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $MoviesTableTable,
+    MoviesTableData,
+    $$MoviesTableTableFilterComposer,
+    $$MoviesTableTableOrderingComposer,
+    $$MoviesTableTableCreateCompanionBuilder,
+    $$MoviesTableTableUpdateCompanionBuilder,
+    (MoviesTableData, $$MoviesTableTableReferences),
+    MoviesTableData,
+    PrefetchHooks Function({bool movieCastRefs, bool movieGenresRefs})> {
+  $$MoviesTableTableTableManager(_$AppDatabase db, $MoviesTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$MoviesTableTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$MoviesTableTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<bool> adult = const Value.absent(),
+            Value<String> backdropPath = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> tagLine = const Value.absent(),
+            Value<String> overview = const Value.absent(),
+            Value<String> posterPath = const Value.absent(),
+            Value<String> logoPath = const Value.absent(),
+            Value<String> videoFile = const Value.absent(),
+            Value<String?> subtitlesFolder = const Value.absent(),
+            Value<String> resolution = const Value.absent(),
+            Value<String> homePage = const Value.absent(),
+            Value<DateTime> releaseDate = const Value.absent(),
+            Value<String> imdb = const Value.absent(),
+            Value<double> vote = const Value.absent(),
+            Value<int> watchedTime = const Value.absent(),
+            Value<int> watchStatus = const Value.absent(),
+            Value<int> runTime = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MoviesTableCompanion(
+            id: id,
+            adult: adult,
+            backdropPath: backdropPath,
+            name: name,
+            tagLine: tagLine,
+            overview: overview,
+            posterPath: posterPath,
+            logoPath: logoPath,
+            videoFile: videoFile,
+            subtitlesFolder: subtitlesFolder,
+            resolution: resolution,
+            homePage: homePage,
+            releaseDate: releaseDate,
+            imdb: imdb,
+            vote: vote,
+            watchedTime: watchedTime,
+            watchStatus: watchStatus,
+            runTime: runTime,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int id,
+            required bool adult,
+            required String backdropPath,
+            required String name,
+            required String tagLine,
+            required String overview,
+            required String posterPath,
+            required String logoPath,
+            required String videoFile,
+            Value<String?> subtitlesFolder = const Value.absent(),
+            required String resolution,
+            required String homePage,
+            required DateTime releaseDate,
+            required String imdb,
+            required double vote,
+            Value<int> watchedTime = const Value.absent(),
+            Value<int> watchStatus = const Value.absent(),
+            required int runTime,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MoviesTableCompanion.insert(
+            id: id,
+            adult: adult,
+            backdropPath: backdropPath,
+            name: name,
+            tagLine: tagLine,
+            overview: overview,
+            posterPath: posterPath,
+            logoPath: logoPath,
+            videoFile: videoFile,
+            subtitlesFolder: subtitlesFolder,
+            resolution: resolution,
+            homePage: homePage,
+            releaseDate: releaseDate,
+            imdb: imdb,
+            vote: vote,
+            watchedTime: watchedTime,
+            watchStatus: watchStatus,
+            runTime: runTime,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$MoviesTableTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: (
+              {movieCastRefs = false, movieGenresRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (movieCastRefs) db.movieCast,
+                if (movieGenresRefs) db.movieGenres
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (movieCastRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable: $$MoviesTableTableReferences
+                            ._movieCastRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$MoviesTableTableReferences(db, table, p0)
+                                .movieCastRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.movieId == item.id),
+                        typedResults: items),
+                  if (movieGenresRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable: $$MoviesTableTableReferences
+                            ._movieGenresRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$MoviesTableTableReferences(db, table, p0)
+                                .movieGenresRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.movieId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$MoviesTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $MoviesTableTable,
+    MoviesTableData,
+    $$MoviesTableTableFilterComposer,
+    $$MoviesTableTableOrderingComposer,
+    $$MoviesTableTableCreateCompanionBuilder,
+    $$MoviesTableTableUpdateCompanionBuilder,
+    (MoviesTableData, $$MoviesTableTableReferences),
+    MoviesTableData,
+    PrefetchHooks Function({bool movieCastRefs, bool movieGenresRefs})>;
+typedef $$SeriesTableCreateCompanionBuilder = SeriesCompanion Function({
   required int id,
   required String name,
   required String tagLine,
@@ -4036,97 +4365,51 @@ typedef $$SeriesTableUpdateCompanionBuilder = SeriesCompanion Function({
   Value<int> rowid,
 });
 
-class $$SeriesTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $SeriesTable,
-    Sery,
-    $$SeriesTableFilterComposer,
-    $$SeriesTableOrderingComposer,
-    $$SeriesTableProcessedTableManager,
-    $$SeriesTableInsertCompanionBuilder,
-    $$SeriesTableUpdateCompanionBuilder> {
-  $$SeriesTableTableManager(_$AppDatabase db, $SeriesTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$SeriesTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$SeriesTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$SeriesTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String> tagLine = const Value.absent(),
-            Value<String> overview = const Value.absent(),
-            Value<String> logoPath = const Value.absent(),
-            Value<String> posterPath = const Value.absent(),
-            Value<String> backdropPath = const Value.absent(),
-            Value<String> homePage = const Value.absent(),
-            Value<DateTime> firstAirDate = const Value.absent(),
-            Value<DateTime> lastAirDate = const Value.absent(),
-            Value<double> vote = const Value.absent(),
-            Value<int> watchStatus = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              SeriesCompanion(
-            id: id,
-            name: name,
-            tagLine: tagLine,
-            overview: overview,
-            logoPath: logoPath,
-            posterPath: posterPath,
-            backdropPath: backdropPath,
-            homePage: homePage,
-            firstAirDate: firstAirDate,
-            lastAirDate: lastAirDate,
-            vote: vote,
-            watchStatus: watchStatus,
-            rowid: rowid,
-          ),
-          getInsertCompanionBuilder: ({
-            required int id,
-            required String name,
-            required String tagLine,
-            required String overview,
-            required String logoPath,
-            required String posterPath,
-            required String backdropPath,
-            required String homePage,
-            required DateTime firstAirDate,
-            required DateTime lastAirDate,
-            required double vote,
-            Value<int> watchStatus = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              SeriesCompanion.insert(
-            id: id,
-            name: name,
-            tagLine: tagLine,
-            overview: overview,
-            logoPath: logoPath,
-            posterPath: posterPath,
-            backdropPath: backdropPath,
-            homePage: homePage,
-            firstAirDate: firstAirDate,
-            lastAirDate: lastAirDate,
-            vote: vote,
-            watchStatus: watchStatus,
-            rowid: rowid,
-          ),
-        ));
-}
+final class $$SeriesTableReferences
+    extends BaseReferences<_$AppDatabase, $SeriesTable, Sery> {
+  $$SeriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-class $$SeriesTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $SeriesTable,
-    Sery,
-    $$SeriesTableFilterComposer,
-    $$SeriesTableOrderingComposer,
-    $$SeriesTableProcessedTableManager,
-    $$SeriesTableInsertCompanionBuilder,
-    $$SeriesTableUpdateCompanionBuilder> {
-  $$SeriesTableProcessedTableManager(super.$state);
+  static MultiTypedResultKey<$SeasonsTable, List<Season>> _seasonsRefsTable(
+          _$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(db.seasons,
+          aliasName: $_aliasNameGenerator(db.series.id, db.seasons.seriesid));
+
+  $$SeasonsTableProcessedTableManager get seasonsRefs {
+    final manager = $$SeasonsTableTableManager($_db, $_db.seasons)
+        .filter((f) => f.seriesid.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_seasonsRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$TvGenresTable, List<TvGenre>> _tvGenresRefsTable(
+          _$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(db.tvGenres,
+          aliasName: $_aliasNameGenerator(db.series.id, db.tvGenres.seriesId));
+
+  $$TvGenresTableProcessedTableManager get tvGenresRefs {
+    final manager = $$TvGenresTableTableManager($_db, $_db.tvGenres)
+        .filter((f) => f.seriesId.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_tvGenresRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$TvCastTable, List<TvCastData>> _tvCastRefsTable(
+          _$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(db.tvCast,
+          aliasName: $_aliasNameGenerator(db.series.id, db.tvCast.seriesId));
+
+  $$TvCastTableProcessedTableManager get tvCastRefs {
+    final manager = $$TvCastTableTableManager($_db, $_db.tvCast)
+        .filter((f) => f.seriesId.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_tvCastRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$SeriesTableFilterComposer
@@ -4296,12 +4579,161 @@ class $$SeriesTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$SeasonsTableInsertCompanionBuilder = SeasonsCompanion Function({
+class $$SeriesTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $SeriesTable,
+    Sery,
+    $$SeriesTableFilterComposer,
+    $$SeriesTableOrderingComposer,
+    $$SeriesTableCreateCompanionBuilder,
+    $$SeriesTableUpdateCompanionBuilder,
+    (Sery, $$SeriesTableReferences),
+    Sery,
+    PrefetchHooks Function(
+        {bool seasonsRefs, bool tvGenresRefs, bool tvCastRefs})> {
+  $$SeriesTableTableManager(_$AppDatabase db, $SeriesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$SeriesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$SeriesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> tagLine = const Value.absent(),
+            Value<String> overview = const Value.absent(),
+            Value<String> logoPath = const Value.absent(),
+            Value<String> posterPath = const Value.absent(),
+            Value<String> backdropPath = const Value.absent(),
+            Value<String> homePage = const Value.absent(),
+            Value<DateTime> firstAirDate = const Value.absent(),
+            Value<DateTime> lastAirDate = const Value.absent(),
+            Value<double> vote = const Value.absent(),
+            Value<int> watchStatus = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SeriesCompanion(
+            id: id,
+            name: name,
+            tagLine: tagLine,
+            overview: overview,
+            logoPath: logoPath,
+            posterPath: posterPath,
+            backdropPath: backdropPath,
+            homePage: homePage,
+            firstAirDate: firstAirDate,
+            lastAirDate: lastAirDate,
+            vote: vote,
+            watchStatus: watchStatus,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int id,
+            required String name,
+            required String tagLine,
+            required String overview,
+            required String logoPath,
+            required String posterPath,
+            required String backdropPath,
+            required String homePage,
+            required DateTime firstAirDate,
+            required DateTime lastAirDate,
+            required double vote,
+            Value<int> watchStatus = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SeriesCompanion.insert(
+            id: id,
+            name: name,
+            tagLine: tagLine,
+            overview: overview,
+            logoPath: logoPath,
+            posterPath: posterPath,
+            backdropPath: backdropPath,
+            homePage: homePage,
+            firstAirDate: firstAirDate,
+            lastAirDate: lastAirDate,
+            vote: vote,
+            watchStatus: watchStatus,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) =>
+                  (e.readTable(table), $$SeriesTableReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: (
+              {seasonsRefs = false, tvGenresRefs = false, tvCastRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (seasonsRefs) db.seasons,
+                if (tvGenresRefs) db.tvGenres,
+                if (tvCastRefs) db.tvCast
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (seasonsRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable:
+                            $$SeriesTableReferences._seasonsRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$SeriesTableReferences(db, table, p0).seasonsRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.seriesid == item.id),
+                        typedResults: items),
+                  if (tvGenresRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable:
+                            $$SeriesTableReferences._tvGenresRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$SeriesTableReferences(db, table, p0).tvGenresRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.seriesId == item.id),
+                        typedResults: items),
+                  if (tvCastRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable:
+                            $$SeriesTableReferences._tvCastRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$SeriesTableReferences(db, table, p0).tvCastRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.seriesId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$SeriesTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $SeriesTable,
+    Sery,
+    $$SeriesTableFilterComposer,
+    $$SeriesTableOrderingComposer,
+    $$SeriesTableCreateCompanionBuilder,
+    $$SeriesTableUpdateCompanionBuilder,
+    (Sery, $$SeriesTableReferences),
+    Sery,
+    PrefetchHooks Function(
+        {bool seasonsRefs, bool tvGenresRefs, bool tvCastRefs})>;
+typedef $$SeasonsTableCreateCompanionBuilder = SeasonsCompanion Function({
   required int id,
   required int number,
   required int seriesid,
   required String overview,
   required String posterPath,
+  Value<String?> seasonFolder,
   required DateTime airDate,
   required double vote,
   Value<int> watchStatus,
@@ -4313,87 +4745,43 @@ typedef $$SeasonsTableUpdateCompanionBuilder = SeasonsCompanion Function({
   Value<int> seriesid,
   Value<String> overview,
   Value<String> posterPath,
+  Value<String?> seasonFolder,
   Value<DateTime> airDate,
   Value<double> vote,
   Value<int> watchStatus,
   Value<int> rowid,
 });
 
-class $$SeasonsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $SeasonsTable,
-    Season,
-    $$SeasonsTableFilterComposer,
-    $$SeasonsTableOrderingComposer,
-    $$SeasonsTableProcessedTableManager,
-    $$SeasonsTableInsertCompanionBuilder,
-    $$SeasonsTableUpdateCompanionBuilder> {
-  $$SeasonsTableTableManager(_$AppDatabase db, $SeasonsTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$SeasonsTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$SeasonsTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$SeasonsTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            Value<int> number = const Value.absent(),
-            Value<int> seriesid = const Value.absent(),
-            Value<String> overview = const Value.absent(),
-            Value<String> posterPath = const Value.absent(),
-            Value<DateTime> airDate = const Value.absent(),
-            Value<double> vote = const Value.absent(),
-            Value<int> watchStatus = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              SeasonsCompanion(
-            id: id,
-            number: number,
-            seriesid: seriesid,
-            overview: overview,
-            posterPath: posterPath,
-            airDate: airDate,
-            vote: vote,
-            watchStatus: watchStatus,
-            rowid: rowid,
-          ),
-          getInsertCompanionBuilder: ({
-            required int id,
-            required int number,
-            required int seriesid,
-            required String overview,
-            required String posterPath,
-            required DateTime airDate,
-            required double vote,
-            Value<int> watchStatus = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              SeasonsCompanion.insert(
-            id: id,
-            number: number,
-            seriesid: seriesid,
-            overview: overview,
-            posterPath: posterPath,
-            airDate: airDate,
-            vote: vote,
-            watchStatus: watchStatus,
-            rowid: rowid,
-          ),
-        ));
-}
+final class $$SeasonsTableReferences
+    extends BaseReferences<_$AppDatabase, $SeasonsTable, Season> {
+  $$SeasonsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-class $$SeasonsTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $SeasonsTable,
-    Season,
-    $$SeasonsTableFilterComposer,
-    $$SeasonsTableOrderingComposer,
-    $$SeasonsTableProcessedTableManager,
-    $$SeasonsTableInsertCompanionBuilder,
-    $$SeasonsTableUpdateCompanionBuilder> {
-  $$SeasonsTableProcessedTableManager(super.$state);
+  static $SeriesTable _seriesidTable(_$AppDatabase db) => db.series
+      .createAlias($_aliasNameGenerator(db.seasons.seriesid, db.series.id));
+
+  $$SeriesTableProcessedTableManager? get seriesid {
+    if ($_item.seriesid == null) return null;
+    final manager = $$SeriesTableTableManager($_db, $_db.series)
+        .filter((f) => f.id($_item.seriesid!));
+    final item = $_typedResult.readTableOrNull(_seriesidTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static MultiTypedResultKey<$EpisodesTable, List<Episode>> _episodesRefsTable(
+          _$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(db.episodes,
+          aliasName: $_aliasNameGenerator(db.seasons.id, db.episodes.seasonid));
+
+  $$EpisodesTableProcessedTableManager get episodesRefs {
+    final manager = $$EpisodesTableTableManager($_db, $_db.episodes)
+        .filter((f) => f.seasonid.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_episodesRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$SeasonsTableFilterComposer
@@ -4416,6 +4804,11 @@ class $$SeasonsTableFilterComposer
 
   ColumnFilters<String> get posterPath => $state.composableBuilder(
       column: $state.table.posterPath,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get seasonFolder => $state.composableBuilder(
+      column: $state.table.seasonFolder,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 
@@ -4483,6 +4876,11 @@ class $$SeasonsTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 
+  ColumnOrderings<String> get seasonFolder => $state.composableBuilder(
+      column: $state.table.seasonFolder,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
   ColumnOrderings<DateTime> get airDate => $state.composableBuilder(
       column: $state.table.airDate,
       builder: (column, joinBuilders) =>
@@ -4511,7 +4909,139 @@ class $$SeasonsTableOrderingComposer
   }
 }
 
-typedef $$EpisodesTableInsertCompanionBuilder = EpisodesCompanion Function({
+class $$SeasonsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $SeasonsTable,
+    Season,
+    $$SeasonsTableFilterComposer,
+    $$SeasonsTableOrderingComposer,
+    $$SeasonsTableCreateCompanionBuilder,
+    $$SeasonsTableUpdateCompanionBuilder,
+    (Season, $$SeasonsTableReferences),
+    Season,
+    PrefetchHooks Function({bool seriesid, bool episodesRefs})> {
+  $$SeasonsTableTableManager(_$AppDatabase db, $SeasonsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$SeasonsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$SeasonsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> number = const Value.absent(),
+            Value<int> seriesid = const Value.absent(),
+            Value<String> overview = const Value.absent(),
+            Value<String> posterPath = const Value.absent(),
+            Value<String?> seasonFolder = const Value.absent(),
+            Value<DateTime> airDate = const Value.absent(),
+            Value<double> vote = const Value.absent(),
+            Value<int> watchStatus = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SeasonsCompanion(
+            id: id,
+            number: number,
+            seriesid: seriesid,
+            overview: overview,
+            posterPath: posterPath,
+            seasonFolder: seasonFolder,
+            airDate: airDate,
+            vote: vote,
+            watchStatus: watchStatus,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int id,
+            required int number,
+            required int seriesid,
+            required String overview,
+            required String posterPath,
+            Value<String?> seasonFolder = const Value.absent(),
+            required DateTime airDate,
+            required double vote,
+            Value<int> watchStatus = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              SeasonsCompanion.insert(
+            id: id,
+            number: number,
+            seriesid: seriesid,
+            overview: overview,
+            posterPath: posterPath,
+            seasonFolder: seasonFolder,
+            airDate: airDate,
+            vote: vote,
+            watchStatus: watchStatus,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) =>
+                  (e.readTable(table), $$SeasonsTableReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: ({seriesid = false, episodesRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (episodesRefs) db.episodes],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (seriesid) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.seriesid,
+                    referencedTable:
+                        $$SeasonsTableReferences._seriesidTable(db),
+                    referencedColumn:
+                        $$SeasonsTableReferences._seriesidTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (episodesRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable:
+                            $$SeasonsTableReferences._episodesRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$SeasonsTableReferences(db, table, p0)
+                                .episodesRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.seasonid == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$SeasonsTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $SeasonsTable,
+    Season,
+    $$SeasonsTableFilterComposer,
+    $$SeasonsTableOrderingComposer,
+    $$SeasonsTableCreateCompanionBuilder,
+    $$SeasonsTableUpdateCompanionBuilder,
+    (Season, $$SeasonsTableReferences),
+    Season,
+    PrefetchHooks Function({bool seriesid, bool episodesRefs})>;
+typedef $$EpisodesTableCreateCompanionBuilder = EpisodesCompanion Function({
   required int id,
   required int seasonid,
   required int number,
@@ -4542,98 +5072,22 @@ typedef $$EpisodesTableUpdateCompanionBuilder = EpisodesCompanion Function({
   Value<int> rowid,
 });
 
-class $$EpisodesTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $EpisodesTable,
-    Episode,
-    $$EpisodesTableFilterComposer,
-    $$EpisodesTableOrderingComposer,
-    $$EpisodesTableProcessedTableManager,
-    $$EpisodesTableInsertCompanionBuilder,
-    $$EpisodesTableUpdateCompanionBuilder> {
-  $$EpisodesTableTableManager(_$AppDatabase db, $EpisodesTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$EpisodesTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$EpisodesTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$EpisodesTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            Value<int> seasonid = const Value.absent(),
-            Value<int> number = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String> overview = const Value.absent(),
-            Value<String> filePath = const Value.absent(),
-            Value<String> posterPath = const Value.absent(),
-            Value<DateTime> airDate = const Value.absent(),
-            Value<double> vote = const Value.absent(),
-            Value<int> watchedTime = const Value.absent(),
-            Value<int> watchStatus = const Value.absent(),
-            Value<int> runTime = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              EpisodesCompanion(
-            id: id,
-            seasonid: seasonid,
-            number: number,
-            name: name,
-            overview: overview,
-            filePath: filePath,
-            posterPath: posterPath,
-            airDate: airDate,
-            vote: vote,
-            watchedTime: watchedTime,
-            watchStatus: watchStatus,
-            runTime: runTime,
-            rowid: rowid,
-          ),
-          getInsertCompanionBuilder: ({
-            required int id,
-            required int seasonid,
-            required int number,
-            required String name,
-            required String overview,
-            required String filePath,
-            required String posterPath,
-            required DateTime airDate,
-            required double vote,
-            Value<int> watchedTime = const Value.absent(),
-            Value<int> watchStatus = const Value.absent(),
-            required int runTime,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              EpisodesCompanion.insert(
-            id: id,
-            seasonid: seasonid,
-            number: number,
-            name: name,
-            overview: overview,
-            filePath: filePath,
-            posterPath: posterPath,
-            airDate: airDate,
-            vote: vote,
-            watchedTime: watchedTime,
-            watchStatus: watchStatus,
-            runTime: runTime,
-            rowid: rowid,
-          ),
-        ));
-}
+final class $$EpisodesTableReferences
+    extends BaseReferences<_$AppDatabase, $EpisodesTable, Episode> {
+  $$EpisodesTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-class $$EpisodesTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $EpisodesTable,
-    Episode,
-    $$EpisodesTableFilterComposer,
-    $$EpisodesTableOrderingComposer,
-    $$EpisodesTableProcessedTableManager,
-    $$EpisodesTableInsertCompanionBuilder,
-    $$EpisodesTableUpdateCompanionBuilder> {
-  $$EpisodesTableProcessedTableManager(super.$state);
+  static $SeasonsTable _seasonidTable(_$AppDatabase db) => db.seasons
+      .createAlias($_aliasNameGenerator(db.episodes.seasonid, db.seasons.id));
+
+  $$SeasonsTableProcessedTableManager? get seasonid {
+    if ($_item.seasonid == null) return null;
+    final manager = $$SeasonsTableTableManager($_db, $_db.seasons)
+        .filter((f) => f.id($_item.seasonid!));
+    final item = $_typedResult.readTableOrNull(_seasonidTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
 }
 
 class $$EpisodesTableFilterComposer
@@ -4778,7 +5232,138 @@ class $$EpisodesTableOrderingComposer
   }
 }
 
-typedef $$ActorsTableInsertCompanionBuilder = ActorsCompanion Function({
+class $$EpisodesTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $EpisodesTable,
+    Episode,
+    $$EpisodesTableFilterComposer,
+    $$EpisodesTableOrderingComposer,
+    $$EpisodesTableCreateCompanionBuilder,
+    $$EpisodesTableUpdateCompanionBuilder,
+    (Episode, $$EpisodesTableReferences),
+    Episode,
+    PrefetchHooks Function({bool seasonid})> {
+  $$EpisodesTableTableManager(_$AppDatabase db, $EpisodesTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$EpisodesTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$EpisodesTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> seasonid = const Value.absent(),
+            Value<int> number = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> overview = const Value.absent(),
+            Value<String> filePath = const Value.absent(),
+            Value<String> posterPath = const Value.absent(),
+            Value<DateTime> airDate = const Value.absent(),
+            Value<double> vote = const Value.absent(),
+            Value<int> watchedTime = const Value.absent(),
+            Value<int> watchStatus = const Value.absent(),
+            Value<int> runTime = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              EpisodesCompanion(
+            id: id,
+            seasonid: seasonid,
+            number: number,
+            name: name,
+            overview: overview,
+            filePath: filePath,
+            posterPath: posterPath,
+            airDate: airDate,
+            vote: vote,
+            watchedTime: watchedTime,
+            watchStatus: watchStatus,
+            runTime: runTime,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int id,
+            required int seasonid,
+            required int number,
+            required String name,
+            required String overview,
+            required String filePath,
+            required String posterPath,
+            required DateTime airDate,
+            required double vote,
+            Value<int> watchedTime = const Value.absent(),
+            Value<int> watchStatus = const Value.absent(),
+            required int runTime,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              EpisodesCompanion.insert(
+            id: id,
+            seasonid: seasonid,
+            number: number,
+            name: name,
+            overview: overview,
+            filePath: filePath,
+            posterPath: posterPath,
+            airDate: airDate,
+            vote: vote,
+            watchedTime: watchedTime,
+            watchStatus: watchStatus,
+            runTime: runTime,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) =>
+                  (e.readTable(table), $$EpisodesTableReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: ({seasonid = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (seasonid) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.seasonid,
+                    referencedTable:
+                        $$EpisodesTableReferences._seasonidTable(db),
+                    referencedColumn:
+                        $$EpisodesTableReferences._seasonidTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$EpisodesTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $EpisodesTable,
+    Episode,
+    $$EpisodesTableFilterComposer,
+    $$EpisodesTableOrderingComposer,
+    $$EpisodesTableCreateCompanionBuilder,
+    $$EpisodesTableUpdateCompanionBuilder,
+    (Episode, $$EpisodesTableReferences),
+    Episode,
+    PrefetchHooks Function({bool seasonid})>;
+typedef $$ActorsTableCreateCompanionBuilder = ActorsCompanion Function({
   Value<int> id,
   required String name,
   required String profilePath,
@@ -4789,57 +5374,37 @@ typedef $$ActorsTableUpdateCompanionBuilder = ActorsCompanion Function({
   Value<String> profilePath,
 });
 
-class $$ActorsTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $ActorsTable,
-    Actor,
-    $$ActorsTableFilterComposer,
-    $$ActorsTableOrderingComposer,
-    $$ActorsTableProcessedTableManager,
-    $$ActorsTableInsertCompanionBuilder,
-    $$ActorsTableUpdateCompanionBuilder> {
-  $$ActorsTableTableManager(_$AppDatabase db, $ActorsTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$ActorsTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$ActorsTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$ActorsTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String> profilePath = const Value.absent(),
-          }) =>
-              ActorsCompanion(
-            id: id,
-            name: name,
-            profilePath: profilePath,
-          ),
-          getInsertCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            required String name,
-            required String profilePath,
-          }) =>
-              ActorsCompanion.insert(
-            id: id,
-            name: name,
-            profilePath: profilePath,
-          ),
-        ));
-}
+final class $$ActorsTableReferences
+    extends BaseReferences<_$AppDatabase, $ActorsTable, Actor> {
+  $$ActorsTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-class $$ActorsTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $ActorsTable,
-    Actor,
-    $$ActorsTableFilterComposer,
-    $$ActorsTableOrderingComposer,
-    $$ActorsTableProcessedTableManager,
-    $$ActorsTableInsertCompanionBuilder,
-    $$ActorsTableUpdateCompanionBuilder> {
-  $$ActorsTableProcessedTableManager(super.$state);
+  static MultiTypedResultKey<$MovieCastTable, List<MovieCastData>>
+      _movieCastRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+          db.movieCast,
+          aliasName: $_aliasNameGenerator(db.actors.id, db.movieCast.actorId));
+
+  $$MovieCastTableProcessedTableManager get movieCastRefs {
+    final manager = $$MovieCastTableTableManager($_db, $_db.movieCast)
+        .filter((f) => f.actorId.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_movieCastRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$TvCastTable, List<TvCastData>> _tvCastRefsTable(
+          _$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(db.tvCast,
+          aliasName: $_aliasNameGenerator(db.actors.id, db.tvCast.actorId));
+
+  $$TvCastTableProcessedTableManager get tvCastRefs {
+    final manager = $$TvCastTableTableManager($_db, $_db.tvCast)
+        .filter((f) => f.actorId.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_tvCastRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$ActorsTableFilterComposer
@@ -4906,7 +5471,101 @@ class $$ActorsTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$MovieCastTableInsertCompanionBuilder = MovieCastCompanion Function({
+class $$ActorsTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ActorsTable,
+    Actor,
+    $$ActorsTableFilterComposer,
+    $$ActorsTableOrderingComposer,
+    $$ActorsTableCreateCompanionBuilder,
+    $$ActorsTableUpdateCompanionBuilder,
+    (Actor, $$ActorsTableReferences),
+    Actor,
+    PrefetchHooks Function({bool movieCastRefs, bool tvCastRefs})> {
+  $$ActorsTableTableManager(_$AppDatabase db, $ActorsTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$ActorsTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$ActorsTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String> profilePath = const Value.absent(),
+          }) =>
+              ActorsCompanion(
+            id: id,
+            name: name,
+            profilePath: profilePath,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String name,
+            required String profilePath,
+          }) =>
+              ActorsCompanion.insert(
+            id: id,
+            name: name,
+            profilePath: profilePath,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) =>
+                  (e.readTable(table), $$ActorsTableReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: ({movieCastRefs = false, tvCastRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (movieCastRefs) db.movieCast,
+                if (tvCastRefs) db.tvCast
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (movieCastRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable:
+                            $$ActorsTableReferences._movieCastRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$ActorsTableReferences(db, table, p0)
+                                .movieCastRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.actorId == item.id),
+                        typedResults: items),
+                  if (tvCastRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable:
+                            $$ActorsTableReferences._tvCastRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$ActorsTableReferences(db, table, p0).tvCastRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.actorId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$ActorsTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $ActorsTable,
+    Actor,
+    $$ActorsTableFilterComposer,
+    $$ActorsTableOrderingComposer,
+    $$ActorsTableCreateCompanionBuilder,
+    $$ActorsTableUpdateCompanionBuilder,
+    (Actor, $$ActorsTableReferences),
+    Actor,
+    PrefetchHooks Function({bool movieCastRefs, bool tvCastRefs})>;
+typedef $$MovieCastTableCreateCompanionBuilder = MovieCastCompanion Function({
   required int actorId,
   required int movieId,
   required String role,
@@ -4921,66 +5580,36 @@ typedef $$MovieCastTableUpdateCompanionBuilder = MovieCastCompanion Function({
   Value<int> rowid,
 });
 
-class $$MovieCastTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $MovieCastTable,
-    MovieCastData,
-    $$MovieCastTableFilterComposer,
-    $$MovieCastTableOrderingComposer,
-    $$MovieCastTableProcessedTableManager,
-    $$MovieCastTableInsertCompanionBuilder,
-    $$MovieCastTableUpdateCompanionBuilder> {
-  $$MovieCastTableTableManager(_$AppDatabase db, $MovieCastTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$MovieCastTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$MovieCastTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$MovieCastTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> actorId = const Value.absent(),
-            Value<int> movieId = const Value.absent(),
-            Value<String> role = const Value.absent(),
-            Value<String> as = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              MovieCastCompanion(
-            actorId: actorId,
-            movieId: movieId,
-            role: role,
-            as: as,
-            rowid: rowid,
-          ),
-          getInsertCompanionBuilder: ({
-            required int actorId,
-            required int movieId,
-            required String role,
-            required String as,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              MovieCastCompanion.insert(
-            actorId: actorId,
-            movieId: movieId,
-            role: role,
-            as: as,
-            rowid: rowid,
-          ),
-        ));
-}
+final class $$MovieCastTableReferences
+    extends BaseReferences<_$AppDatabase, $MovieCastTable, MovieCastData> {
+  $$MovieCastTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-class $$MovieCastTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $MovieCastTable,
-    MovieCastData,
-    $$MovieCastTableFilterComposer,
-    $$MovieCastTableOrderingComposer,
-    $$MovieCastTableProcessedTableManager,
-    $$MovieCastTableInsertCompanionBuilder,
-    $$MovieCastTableUpdateCompanionBuilder> {
-  $$MovieCastTableProcessedTableManager(super.$state);
+  static $ActorsTable _actorIdTable(_$AppDatabase db) => db.actors
+      .createAlias($_aliasNameGenerator(db.movieCast.actorId, db.actors.id));
+
+  $$ActorsTableProcessedTableManager? get actorId {
+    if ($_item.actorId == null) return null;
+    final manager = $$ActorsTableTableManager($_db, $_db.actors)
+        .filter((f) => f.id($_item.actorId!));
+    final item = $_typedResult.readTableOrNull(_actorIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $MoviesTableTable _movieIdTable(_$AppDatabase db) =>
+      db.moviesTable.createAlias(
+          $_aliasNameGenerator(db.movieCast.movieId, db.moviesTable.id));
+
+  $$MoviesTableTableProcessedTableManager? get movieId {
+    if ($_item.movieId == null) return null;
+    final manager = $$MoviesTableTableTableManager($_db, $_db.moviesTable)
+        .filter((f) => f.id($_item.movieId!));
+    final item = $_typedResult.readTableOrNull(_movieIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
 }
 
 class $$MovieCastTableFilterComposer
@@ -5059,7 +5688,118 @@ class $$MovieCastTableOrderingComposer
   }
 }
 
-typedef $$GenresTableInsertCompanionBuilder = GenresCompanion Function({
+class $$MovieCastTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $MovieCastTable,
+    MovieCastData,
+    $$MovieCastTableFilterComposer,
+    $$MovieCastTableOrderingComposer,
+    $$MovieCastTableCreateCompanionBuilder,
+    $$MovieCastTableUpdateCompanionBuilder,
+    (MovieCastData, $$MovieCastTableReferences),
+    MovieCastData,
+    PrefetchHooks Function({bool actorId, bool movieId})> {
+  $$MovieCastTableTableManager(_$AppDatabase db, $MovieCastTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$MovieCastTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$MovieCastTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> actorId = const Value.absent(),
+            Value<int> movieId = const Value.absent(),
+            Value<String> role = const Value.absent(),
+            Value<String> as = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MovieCastCompanion(
+            actorId: actorId,
+            movieId: movieId,
+            role: role,
+            as: as,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int actorId,
+            required int movieId,
+            required String role,
+            required String as,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MovieCastCompanion.insert(
+            actorId: actorId,
+            movieId: movieId,
+            role: role,
+            as: as,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$MovieCastTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({actorId = false, movieId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (actorId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.actorId,
+                    referencedTable:
+                        $$MovieCastTableReferences._actorIdTable(db),
+                    referencedColumn:
+                        $$MovieCastTableReferences._actorIdTable(db).id,
+                  ) as T;
+                }
+                if (movieId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.movieId,
+                    referencedTable:
+                        $$MovieCastTableReferences._movieIdTable(db),
+                    referencedColumn:
+                        $$MovieCastTableReferences._movieIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$MovieCastTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $MovieCastTable,
+    MovieCastData,
+    $$MovieCastTableFilterComposer,
+    $$MovieCastTableOrderingComposer,
+    $$MovieCastTableCreateCompanionBuilder,
+    $$MovieCastTableUpdateCompanionBuilder,
+    (MovieCastData, $$MovieCastTableReferences),
+    MovieCastData,
+    PrefetchHooks Function({bool actorId, bool movieId})>;
+typedef $$GenresTableCreateCompanionBuilder = GenresCompanion Function({
   Value<int> id,
   required String name,
 });
@@ -5068,53 +5808,38 @@ typedef $$GenresTableUpdateCompanionBuilder = GenresCompanion Function({
   Value<String> name,
 });
 
-class $$GenresTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $GenresTable,
-    Genre,
-    $$GenresTableFilterComposer,
-    $$GenresTableOrderingComposer,
-    $$GenresTableProcessedTableManager,
-    $$GenresTableInsertCompanionBuilder,
-    $$GenresTableUpdateCompanionBuilder> {
-  $$GenresTableTableManager(_$AppDatabase db, $GenresTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$GenresTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$GenresTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$GenresTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-          }) =>
-              GenresCompanion(
-            id: id,
-            name: name,
-          ),
-          getInsertCompanionBuilder: ({
-            Value<int> id = const Value.absent(),
-            required String name,
-          }) =>
-              GenresCompanion.insert(
-            id: id,
-            name: name,
-          ),
-        ));
-}
+final class $$GenresTableReferences
+    extends BaseReferences<_$AppDatabase, $GenresTable, Genre> {
+  $$GenresTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-class $$GenresTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $GenresTable,
-    Genre,
-    $$GenresTableFilterComposer,
-    $$GenresTableOrderingComposer,
-    $$GenresTableProcessedTableManager,
-    $$GenresTableInsertCompanionBuilder,
-    $$GenresTableUpdateCompanionBuilder> {
-  $$GenresTableProcessedTableManager(super.$state);
+  static MultiTypedResultKey<$MovieGenresTable, List<MovieGenre>>
+      _movieGenresRefsTable(_$AppDatabase db) =>
+          MultiTypedResultKey.fromTable(db.movieGenres,
+              aliasName:
+                  $_aliasNameGenerator(db.genres.id, db.movieGenres.genreId));
+
+  $$MovieGenresTableProcessedTableManager get movieGenresRefs {
+    final manager = $$MovieGenresTableTableManager($_db, $_db.movieGenres)
+        .filter((f) => f.genreId.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_movieGenresRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
+
+  static MultiTypedResultKey<$TvGenresTable, List<TvGenre>> _tvGenresRefsTable(
+          _$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(db.tvGenres,
+          aliasName: $_aliasNameGenerator(db.genres.id, db.tvGenres.genreId));
+
+  $$TvGenresTableProcessedTableManager get tvGenresRefs {
+    final manager = $$TvGenresTableTableManager($_db, $_db.tvGenres)
+        .filter((f) => f.genreId.id($_item.id));
+
+    final cache = $_typedResult.readTableOrNull(_tvGenresRefsTable($_db));
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: cache));
+  }
 }
 
 class $$GenresTableFilterComposer
@@ -5171,7 +5896,98 @@ class $$GenresTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $$MovieGenresTableInsertCompanionBuilder = MovieGenresCompanion
+class $$GenresTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $GenresTable,
+    Genre,
+    $$GenresTableFilterComposer,
+    $$GenresTableOrderingComposer,
+    $$GenresTableCreateCompanionBuilder,
+    $$GenresTableUpdateCompanionBuilder,
+    (Genre, $$GenresTableReferences),
+    Genre,
+    PrefetchHooks Function({bool movieGenresRefs, bool tvGenresRefs})> {
+  $$GenresTableTableManager(_$AppDatabase db, $GenresTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$GenresTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$GenresTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> name = const Value.absent(),
+          }) =>
+              GenresCompanion(
+            id: id,
+            name: name,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String name,
+          }) =>
+              GenresCompanion.insert(
+            id: id,
+            name: name,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) =>
+                  (e.readTable(table), $$GenresTableReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: (
+              {movieGenresRefs = false, tvGenresRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (movieGenresRefs) db.movieGenres,
+                if (tvGenresRefs) db.tvGenres
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (movieGenresRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable:
+                            $$GenresTableReferences._movieGenresRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$GenresTableReferences(db, table, p0)
+                                .movieGenresRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.genreId == item.id),
+                        typedResults: items),
+                  if (tvGenresRefs)
+                    await $_getPrefetchedData(
+                        currentTable: table,
+                        referencedTable:
+                            $$GenresTableReferences._tvGenresRefsTable(db),
+                        managerFromTypedResult: (p0) =>
+                            $$GenresTableReferences(db, table, p0).tvGenresRefs,
+                        referencedItemsForCurrentItem: (item,
+                                referencedItems) =>
+                            referencedItems.where((e) => e.genreId == item.id),
+                        typedResults: items)
+                ];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$GenresTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $GenresTable,
+    Genre,
+    $$GenresTableFilterComposer,
+    $$GenresTableOrderingComposer,
+    $$GenresTableCreateCompanionBuilder,
+    $$GenresTableUpdateCompanionBuilder,
+    (Genre, $$GenresTableReferences),
+    Genre,
+    PrefetchHooks Function({bool movieGenresRefs, bool tvGenresRefs})>;
+typedef $$MovieGenresTableCreateCompanionBuilder = MovieGenresCompanion
     Function({
   required int movieId,
   required int genreId,
@@ -5184,58 +6000,36 @@ typedef $$MovieGenresTableUpdateCompanionBuilder = MovieGenresCompanion
   Value<int> rowid,
 });
 
-class $$MovieGenresTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $MovieGenresTable,
-    MovieGenre,
-    $$MovieGenresTableFilterComposer,
-    $$MovieGenresTableOrderingComposer,
-    $$MovieGenresTableProcessedTableManager,
-    $$MovieGenresTableInsertCompanionBuilder,
-    $$MovieGenresTableUpdateCompanionBuilder> {
-  $$MovieGenresTableTableManager(_$AppDatabase db, $MovieGenresTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$MovieGenresTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$MovieGenresTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$MovieGenresTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> movieId = const Value.absent(),
-            Value<int> genreId = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              MovieGenresCompanion(
-            movieId: movieId,
-            genreId: genreId,
-            rowid: rowid,
-          ),
-          getInsertCompanionBuilder: ({
-            required int movieId,
-            required int genreId,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              MovieGenresCompanion.insert(
-            movieId: movieId,
-            genreId: genreId,
-            rowid: rowid,
-          ),
-        ));
-}
+final class $$MovieGenresTableReferences
+    extends BaseReferences<_$AppDatabase, $MovieGenresTable, MovieGenre> {
+  $$MovieGenresTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-class $$MovieGenresTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $MovieGenresTable,
-    MovieGenre,
-    $$MovieGenresTableFilterComposer,
-    $$MovieGenresTableOrderingComposer,
-    $$MovieGenresTableProcessedTableManager,
-    $$MovieGenresTableInsertCompanionBuilder,
-    $$MovieGenresTableUpdateCompanionBuilder> {
-  $$MovieGenresTableProcessedTableManager(super.$state);
+  static $MoviesTableTable _movieIdTable(_$AppDatabase db) =>
+      db.moviesTable.createAlias(
+          $_aliasNameGenerator(db.movieGenres.movieId, db.moviesTable.id));
+
+  $$MoviesTableTableProcessedTableManager? get movieId {
+    if ($_item.movieId == null) return null;
+    final manager = $$MoviesTableTableTableManager($_db, $_db.moviesTable)
+        .filter((f) => f.id($_item.movieId!));
+    final item = $_typedResult.readTableOrNull(_movieIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $GenresTable _genreIdTable(_$AppDatabase db) => db.genres
+      .createAlias($_aliasNameGenerator(db.movieGenres.genreId, db.genres.id));
+
+  $$GenresTableProcessedTableManager? get genreId {
+    if ($_item.genreId == null) return null;
+    final manager = $$GenresTableTableManager($_db, $_db.genres)
+        .filter((f) => f.id($_item.genreId!));
+    final item = $_typedResult.readTableOrNull(_genreIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
 }
 
 class $$MovieGenresTableFilterComposer
@@ -5294,7 +6088,110 @@ class $$MovieGenresTableOrderingComposer
   }
 }
 
-typedef $$TvGenresTableInsertCompanionBuilder = TvGenresCompanion Function({
+class $$MovieGenresTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $MovieGenresTable,
+    MovieGenre,
+    $$MovieGenresTableFilterComposer,
+    $$MovieGenresTableOrderingComposer,
+    $$MovieGenresTableCreateCompanionBuilder,
+    $$MovieGenresTableUpdateCompanionBuilder,
+    (MovieGenre, $$MovieGenresTableReferences),
+    MovieGenre,
+    PrefetchHooks Function({bool movieId, bool genreId})> {
+  $$MovieGenresTableTableManager(_$AppDatabase db, $MovieGenresTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$MovieGenresTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$MovieGenresTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> movieId = const Value.absent(),
+            Value<int> genreId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MovieGenresCompanion(
+            movieId: movieId,
+            genreId: genreId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int movieId,
+            required int genreId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              MovieGenresCompanion.insert(
+            movieId: movieId,
+            genreId: genreId,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (
+                    e.readTable(table),
+                    $$MovieGenresTableReferences(db, table, e)
+                  ))
+              .toList(),
+          prefetchHooksCallback: ({movieId = false, genreId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (movieId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.movieId,
+                    referencedTable:
+                        $$MovieGenresTableReferences._movieIdTable(db),
+                    referencedColumn:
+                        $$MovieGenresTableReferences._movieIdTable(db).id,
+                  ) as T;
+                }
+                if (genreId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.genreId,
+                    referencedTable:
+                        $$MovieGenresTableReferences._genreIdTable(db),
+                    referencedColumn:
+                        $$MovieGenresTableReferences._genreIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$MovieGenresTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $MovieGenresTable,
+    MovieGenre,
+    $$MovieGenresTableFilterComposer,
+    $$MovieGenresTableOrderingComposer,
+    $$MovieGenresTableCreateCompanionBuilder,
+    $$MovieGenresTableUpdateCompanionBuilder,
+    (MovieGenre, $$MovieGenresTableReferences),
+    MovieGenre,
+    PrefetchHooks Function({bool movieId, bool genreId})>;
+typedef $$TvGenresTableCreateCompanionBuilder = TvGenresCompanion Function({
   required int seriesId,
   required int genreId,
   Value<int> rowid,
@@ -5305,58 +6202,35 @@ typedef $$TvGenresTableUpdateCompanionBuilder = TvGenresCompanion Function({
   Value<int> rowid,
 });
 
-class $$TvGenresTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $TvGenresTable,
-    TvGenre,
-    $$TvGenresTableFilterComposer,
-    $$TvGenresTableOrderingComposer,
-    $$TvGenresTableProcessedTableManager,
-    $$TvGenresTableInsertCompanionBuilder,
-    $$TvGenresTableUpdateCompanionBuilder> {
-  $$TvGenresTableTableManager(_$AppDatabase db, $TvGenresTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$TvGenresTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$TvGenresTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $$TvGenresTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> seriesId = const Value.absent(),
-            Value<int> genreId = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              TvGenresCompanion(
-            seriesId: seriesId,
-            genreId: genreId,
-            rowid: rowid,
-          ),
-          getInsertCompanionBuilder: ({
-            required int seriesId,
-            required int genreId,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              TvGenresCompanion.insert(
-            seriesId: seriesId,
-            genreId: genreId,
-            rowid: rowid,
-          ),
-        ));
-}
+final class $$TvGenresTableReferences
+    extends BaseReferences<_$AppDatabase, $TvGenresTable, TvGenre> {
+  $$TvGenresTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-class $$TvGenresTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $TvGenresTable,
-    TvGenre,
-    $$TvGenresTableFilterComposer,
-    $$TvGenresTableOrderingComposer,
-    $$TvGenresTableProcessedTableManager,
-    $$TvGenresTableInsertCompanionBuilder,
-    $$TvGenresTableUpdateCompanionBuilder> {
-  $$TvGenresTableProcessedTableManager(super.$state);
+  static $SeriesTable _seriesIdTable(_$AppDatabase db) => db.series
+      .createAlias($_aliasNameGenerator(db.tvGenres.seriesId, db.series.id));
+
+  $$SeriesTableProcessedTableManager? get seriesId {
+    if ($_item.seriesId == null) return null;
+    final manager = $$SeriesTableTableManager($_db, $_db.series)
+        .filter((f) => f.id($_item.seriesId!));
+    final item = $_typedResult.readTableOrNull(_seriesIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $GenresTable _genreIdTable(_$AppDatabase db) => db.genres
+      .createAlias($_aliasNameGenerator(db.tvGenres.genreId, db.genres.id));
+
+  $$GenresTableProcessedTableManager? get genreId {
+    if ($_item.genreId == null) return null;
+    final manager = $$GenresTableTableManager($_db, $_db.genres)
+        .filter((f) => f.id($_item.genreId!));
+    final item = $_typedResult.readTableOrNull(_genreIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
 }
 
 class $$TvGenresTableFilterComposer
@@ -5415,7 +6289,108 @@ class $$TvGenresTableOrderingComposer
   }
 }
 
-typedef $$TvCastTableInsertCompanionBuilder = TvCastCompanion Function({
+class $$TvGenresTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $TvGenresTable,
+    TvGenre,
+    $$TvGenresTableFilterComposer,
+    $$TvGenresTableOrderingComposer,
+    $$TvGenresTableCreateCompanionBuilder,
+    $$TvGenresTableUpdateCompanionBuilder,
+    (TvGenre, $$TvGenresTableReferences),
+    TvGenre,
+    PrefetchHooks Function({bool seriesId, bool genreId})> {
+  $$TvGenresTableTableManager(_$AppDatabase db, $TvGenresTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TvGenresTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TvGenresTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> seriesId = const Value.absent(),
+            Value<int> genreId = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TvGenresCompanion(
+            seriesId: seriesId,
+            genreId: genreId,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int seriesId,
+            required int genreId,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TvGenresCompanion.insert(
+            seriesId: seriesId,
+            genreId: genreId,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) =>
+                  (e.readTable(table), $$TvGenresTableReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: ({seriesId = false, genreId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (seriesId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.seriesId,
+                    referencedTable:
+                        $$TvGenresTableReferences._seriesIdTable(db),
+                    referencedColumn:
+                        $$TvGenresTableReferences._seriesIdTable(db).id,
+                  ) as T;
+                }
+                if (genreId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.genreId,
+                    referencedTable:
+                        $$TvGenresTableReferences._genreIdTable(db),
+                    referencedColumn:
+                        $$TvGenresTableReferences._genreIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$TvGenresTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $TvGenresTable,
+    TvGenre,
+    $$TvGenresTableFilterComposer,
+    $$TvGenresTableOrderingComposer,
+    $$TvGenresTableCreateCompanionBuilder,
+    $$TvGenresTableUpdateCompanionBuilder,
+    (TvGenre, $$TvGenresTableReferences),
+    TvGenre,
+    PrefetchHooks Function({bool seriesId, bool genreId})>;
+typedef $$TvCastTableCreateCompanionBuilder = TvCastCompanion Function({
   required int actorId,
   required int seriesId,
   required String role,
@@ -5430,65 +6405,35 @@ typedef $$TvCastTableUpdateCompanionBuilder = TvCastCompanion Function({
   Value<int> rowid,
 });
 
-class $$TvCastTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $TvCastTable,
-    TvCastData,
-    $$TvCastTableFilterComposer,
-    $$TvCastTableOrderingComposer,
-    $$TvCastTableProcessedTableManager,
-    $$TvCastTableInsertCompanionBuilder,
-    $$TvCastTableUpdateCompanionBuilder> {
-  $$TvCastTableTableManager(_$AppDatabase db, $TvCastTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$TvCastTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$TvCastTableOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) => $$TvCastTableProcessedTableManager(p),
-          getUpdateCompanionBuilder: ({
-            Value<int> actorId = const Value.absent(),
-            Value<int> seriesId = const Value.absent(),
-            Value<String> role = const Value.absent(),
-            Value<String> as = const Value.absent(),
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              TvCastCompanion(
-            actorId: actorId,
-            seriesId: seriesId,
-            role: role,
-            as: as,
-            rowid: rowid,
-          ),
-          getInsertCompanionBuilder: ({
-            required int actorId,
-            required int seriesId,
-            required String role,
-            required String as,
-            Value<int> rowid = const Value.absent(),
-          }) =>
-              TvCastCompanion.insert(
-            actorId: actorId,
-            seriesId: seriesId,
-            role: role,
-            as: as,
-            rowid: rowid,
-          ),
-        ));
-}
+final class $$TvCastTableReferences
+    extends BaseReferences<_$AppDatabase, $TvCastTable, TvCastData> {
+  $$TvCastTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-class $$TvCastTableProcessedTableManager extends ProcessedTableManager<
-    _$AppDatabase,
-    $TvCastTable,
-    TvCastData,
-    $$TvCastTableFilterComposer,
-    $$TvCastTableOrderingComposer,
-    $$TvCastTableProcessedTableManager,
-    $$TvCastTableInsertCompanionBuilder,
-    $$TvCastTableUpdateCompanionBuilder> {
-  $$TvCastTableProcessedTableManager(super.$state);
+  static $ActorsTable _actorIdTable(_$AppDatabase db) => db.actors
+      .createAlias($_aliasNameGenerator(db.tvCast.actorId, db.actors.id));
+
+  $$ActorsTableProcessedTableManager? get actorId {
+    if ($_item.actorId == null) return null;
+    final manager = $$ActorsTableTableManager($_db, $_db.actors)
+        .filter((f) => f.id($_item.actorId!));
+    final item = $_typedResult.readTableOrNull(_actorIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
+
+  static $SeriesTable _seriesIdTable(_$AppDatabase db) => db.series
+      .createAlias($_aliasNameGenerator(db.tvCast.seriesId, db.series.id));
+
+  $$SeriesTableProcessedTableManager? get seriesId {
+    if ($_item.seriesId == null) return null;
+    final manager = $$SeriesTableTableManager($_db, $_db.series)
+        .filter((f) => f.id($_item.seriesId!));
+    final item = $_typedResult.readTableOrNull(_seriesIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+        manager.$state.copyWith(prefetchedData: [item]));
+  }
 }
 
 class $$TvCastTableFilterComposer
@@ -5567,9 +6512,117 @@ class $$TvCastTableOrderingComposer
   }
 }
 
-class _$AppDatabaseManager {
+class $$TvCastTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $TvCastTable,
+    TvCastData,
+    $$TvCastTableFilterComposer,
+    $$TvCastTableOrderingComposer,
+    $$TvCastTableCreateCompanionBuilder,
+    $$TvCastTableUpdateCompanionBuilder,
+    (TvCastData, $$TvCastTableReferences),
+    TvCastData,
+    PrefetchHooks Function({bool actorId, bool seriesId})> {
+  $$TvCastTableTableManager(_$AppDatabase db, $TvCastTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$TvCastTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$TvCastTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> actorId = const Value.absent(),
+            Value<int> seriesId = const Value.absent(),
+            Value<String> role = const Value.absent(),
+            Value<String> as = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TvCastCompanion(
+            actorId: actorId,
+            seriesId: seriesId,
+            role: role,
+            as: as,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required int actorId,
+            required int seriesId,
+            required String role,
+            required String as,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              TvCastCompanion.insert(
+            actorId: actorId,
+            seriesId: seriesId,
+            role: role,
+            as: as,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) =>
+                  (e.readTable(table), $$TvCastTableReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: ({actorId = false, seriesId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins: <
+                  T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic>>(state) {
+                if (actorId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.actorId,
+                    referencedTable: $$TvCastTableReferences._actorIdTable(db),
+                    referencedColumn:
+                        $$TvCastTableReferences._actorIdTable(db).id,
+                  ) as T;
+                }
+                if (seriesId) {
+                  state = state.withJoin(
+                    currentTable: table,
+                    currentColumn: table.seriesId,
+                    referencedTable: $$TvCastTableReferences._seriesIdTable(db),
+                    referencedColumn:
+                        $$TvCastTableReferences._seriesIdTable(db).id,
+                  ) as T;
+                }
+
+                return state;
+              },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ));
+}
+
+typedef $$TvCastTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $TvCastTable,
+    TvCastData,
+    $$TvCastTableFilterComposer,
+    $$TvCastTableOrderingComposer,
+    $$TvCastTableCreateCompanionBuilder,
+    $$TvCastTableUpdateCompanionBuilder,
+    (TvCastData, $$TvCastTableReferences),
+    TvCastData,
+    PrefetchHooks Function({bool actorId, bool seriesId})>;
+
+class $AppDatabaseManager {
   final _$AppDatabase _db;
-  _$AppDatabaseManager(this._db);
+  $AppDatabaseManager(this._db);
   $$MoviesTableTableTableManager get moviesTable =>
       $$MoviesTableTableTableManager(_db, _db.moviesTable);
   $$SeriesTableTableManager get series =>
