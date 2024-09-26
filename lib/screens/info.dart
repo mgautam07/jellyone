@@ -185,7 +185,7 @@ class _MediaInfoScreenState extends State<MediaInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Info'),
+        title: Center(child: Text(widget.movie.name)),
       ),
       body: Stack(
         children: [

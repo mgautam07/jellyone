@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:path/path.dart' as p;
 import 'package:drift/drift.dart';
 import 'package:drift/isolate.dart';
 import 'package:logger/logger.dart' as l;
@@ -48,7 +49,7 @@ Future<void> updateMedia(List<dynamic> args) async {
           if (name.contains(RegExp(r'mkv|mp4|mov|avi|wmv|mpeg'))) {
             try {
               await addMovieToDB(database, name, envVars['API_KEY']!,
-                  envVars['ACCESS_TOKEN']!, log, file.path);
+                  envVars['ACCESS_TOKEN']!, log, file.path, folder.path);
             } catch (e) {
               log.e(e);
             }
@@ -69,7 +70,7 @@ Future<void> updateMedia(List<dynamic> args) async {
         if (name.contains(RegExp(r'mkv|mp4|mov|avi|wmv|mpeg'))) {
           try {
             await addMovieToDB(database, name, envVars['API_KEY']!,
-                envVars['ACCESS_TOKEN']!, log, folder.path);
+                envVars['ACCESS_TOKEN']!, log, folder.path, null);
           } catch (e) {
             log.e(e);
           }
@@ -98,7 +99,7 @@ Future<void> updateMedia(List<dynamic> args) async {
           if (name.contains(RegExp(r'mkv|mp4|mov|avi|wmv|mpeg'))) {
             try {
               await addEpisodeToDB(database, name, envVars['API_KEY']!,
-                  envVars['ACCESS_TOKEN']!, log, file.path);
+                  envVars['ACCESS_TOKEN']!, log, file.path, folder.path);
             } catch (e) {
               log.e(e);
             }
@@ -111,8 +112,14 @@ Future<void> updateMedia(List<dynamic> args) async {
   await database.close();
 }
 
-Future addMovieToDB(AppDatabase database, String name, String apiKey,
-    String accessToken, l.Logger log, String filePath) async {
+Future addMovieToDB(
+    AppDatabase database,
+    String name,
+    String apiKey,
+    String accessToken,
+    l.Logger log,
+    String filePath,
+    String? subsFolder) async {
   var info = parseName(name);
   final movieExists = await database.getMovieFromName(info['name']!);
   if (movieExists.isNotEmpty || info.isEmpty) {
@@ -158,6 +165,26 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
         DateTime releaseDate = DateTime.parse(imdbInfo['release_date']);
         String nonNullMovieName = info['name'] ?? 'Blah Blah';
         try {
+          String? subtitleFolder = subsFolder;
+          if (subsFolder != null) {
+            String subs = p.join(subsFolder, 'Subs');
+            if (await Directory(subs).exists()) {
+              subtitleFolder = subs;
+            }
+            subs = p.join(subsFolder, 'subs');
+            if (await Directory(subs).exists()) {
+              subtitleFolder = subs;
+            }
+            subs = p.join(subsFolder, 'subtitles');
+            if (await Directory(subs).exists()) {
+              subtitleFolder = subs;
+            }
+            subs = p.join(subsFolder, 'Subtitles');
+            if (await Directory(subs).exists()) {
+              subtitleFolder = subs;
+            }
+          }
+
           await database
               .into($MoviesTableTable(database))
               .insert(MoviesTableCompanion(
@@ -174,6 +201,7 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
                 releaseDate: Value(releaseDate),
                 imdb: Value(imdbInfo['imdb_id']),
                 videoFile: Value(filePath),
+                subtitlesFolder: Value(subtitleFolder),
                 vote: Value(
                     double.parse(imdbInfo['vote_average'].toStringAsFixed(1))),
                 runTime: Value(imdbInfo['runtime']),
@@ -264,8 +292,14 @@ Future addMovieToDB(AppDatabase database, String name, String apiKey,
   }
 }
 
-Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
-    String accessToken, l.Logger log, String filePath) async {
+Future addEpisodeToDB(
+    AppDatabase database,
+    String name,
+    String apiKey,
+    String accessToken,
+    l.Logger log,
+    String filePath,
+    String folderPath) async {
   var info = parseName(name);
   log.i(info);
 
@@ -439,6 +473,7 @@ Future addEpisodeToDB(AppDatabase database, String name, String apiKey,
               overview:
                   Value(s['overview'] == '' ? 'No overview' : s['overview']),
               posterPath: Value(s['poster_path']),
+              seasonFolder: Value(folderPath),
               airDate: Value(DateTime.parse(s['air_date'])),
               vote: Value(double.parse(s['vote_average'].toStringAsFixed(1)))));
           log.i('TV Season: ${info['name']} ${info['season']} inserted');
