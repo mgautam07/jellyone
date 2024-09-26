@@ -25,10 +25,8 @@ class _ShowsScreenState extends State<ShowsScreen> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        child: Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: SizedBox(
-        width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           const SizedBox(
             width: double.infinity,
@@ -95,6 +93,7 @@ class _ShowsScreenState extends State<ShowsScreen> {
                         childAspectRatio: (195 / 310),
                       ),
                       shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
                         return SeriesCard(series: snapshot.data![index]);
@@ -103,6 +102,6 @@ class _ShowsScreenState extends State<ShowsScreen> {
               })
         ]),
       ),
-    ));
+    );
   }
 }
