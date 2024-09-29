@@ -196,7 +196,6 @@ class _MediaInfoScreenState extends State<MediaInfoScreen> {
                 image: DecorationImage(
                   image: FastCachedImageProvider(
                       'https://image.tmdb.org/t/p/original${widget.movie.backdropPath}'),
-                  // image: AssetImage('assets/images/poster_tiou.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),

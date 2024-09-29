@@ -4,7 +4,6 @@ import 'dart:isolate';
 import 'package:jellyone/db/db.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:jellyone/screens/home.dart';
 import 'package:jellyone/screens/movies.dart';
@@ -23,8 +22,6 @@ import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 void main() async {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   Directory dir = await getApplicationSupportDirectory();
-  await dotenv.load(fileName: ".env");
-
   String hiveStorageLocation = p.join(dir.path, 'hive');
   await FastCachedImageConfig.init(
       subDir: hiveStorageLocation, clearCacheAfter: const Duration(days: 60));
@@ -76,13 +73,14 @@ class _MyHomePageState extends State<MyHomePage> {
     final supportDir = await getApplicationSupportDirectory();
     var infoBox = await Hive.openBox('infoBox');
 
-    final envVars = {
-      'MOVIES_DIR': infoBox.get('MOVIES_DIR') ?? dotenv.get('MOVIES_DIR'),
-      'SHOWS_DIR': infoBox.get('SHOWS_DIR') ?? dotenv.get('SHOWS_DIR'),
-      'ACCESS_TOKEN': infoBox.get('ACCESS_TOKEN') ?? dotenv.get('ACCESS_TOKEN'),
-      'API_KEY': infoBox.get('API_KEY') ?? dotenv.get('API_KEY'),
+    var envVars = {
+      'MOVIES_DIR': infoBox.get('MOVIES_DIR'),
+      'SHOWS_DIR': infoBox.get('SHOWS_DIR'),
+      'ACCESS_TOKEN': infoBox.get('ACCESS_TOKEN'),
+      'API_KEY': infoBox.get('API_KEY'),
       'LOG_PATH': supportDir.path
     };
+
     final isolate = await createDBIsolate();
     Isolate.spawn(updateMedia, [envVars, isolate]);
   }
