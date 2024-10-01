@@ -63,7 +63,7 @@ jobs:
           directory: build/linux/x64/release/bundle
 
       - name: Upload artifact Linux zip
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: JellyOne-linux-zip-x86-64
           path: build/linux/x64/release/bundle/JellyOne-*.zip
@@ -83,14 +83,15 @@ jobs:
       - name: Build macOS
         run: flutter build macos --release
 
-      - name: Install create-dmg
-        run: brew install create-dmg
+      # - name: Install create-dmg
+      #   run: brew install create-dmg
 
       - name: Create DMG
-        run: create-dmg --volname JellyOne-macos --icon-size 100 JellyOne-macos.dmg --app-drop-link 600 185 --hide-extension build/macos/Build/Products/Release/JellyOne.app
+        # run: create-dmg --volname JellyOne-macos --icon-size 100 JellyOne-macos.dmg --app-drop-link 600 185 --hide-extension build/macos/Build/Products/Release/JellyOne.app
+        run: hdiutil create -volname JellyOne-macos -srcfolder build/macos/Build/Products/Release/JellyOne.app -ov -format UDZO JellyOne-macos.dmg
 
       - name: Upload artifact macOS DMG
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: JellyOne-macos-dmg
+          name: JellyOne-macos.dmg
           path: JellyOne-macos.dmg
