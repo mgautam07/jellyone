@@ -88,7 +88,7 @@ class EpisodeCard extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 2),
                                   Text(
-                                    episode.vote.toString(),
+                                    episode.vote.toStringAsFixed(1),
                                     style: const TextStyle(
                                         fontSize: 15, color: AppTheme.subText),
                                   ),
