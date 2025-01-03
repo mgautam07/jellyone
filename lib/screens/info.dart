@@ -133,7 +133,7 @@ String getEndTime(int time, int watchedTime) {
   final end = DateTime.now()
       .add(Duration(minutes: (time - (watchedTime / 60).floor())));
   if (end.minute < 10 && end.hour > 9) {
-    return 'Ends at ${end.hour}: 0${end.minute}';
+    return 'Ends at ${end.hour}:0${end.minute}';
   } else if (end.minute > 9 && end.hour < 10) {
     return 'Ends at 0${end.hour}:${end.minute}';
   } else if (end.minute < 10 && end.hour < 10) {

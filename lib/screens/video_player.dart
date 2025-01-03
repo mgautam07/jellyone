@@ -1,8 +1,12 @@
-import 'package:drift/drift.dart';
+import 'dart:math';
+
+import 'package:drift/drift.dart' as d;
 import 'package:flutter/material.dart';
 import 'package:jellyone/db/db.dart';
+import 'package:jellyone/widgets/video_player_controls.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:window_manager/window_manager.dart';
 
 class VideoPlayer extends StatefulWidget {
   final String name;
@@ -22,15 +26,13 @@ class VideoPlayer extends StatefulWidget {
 }
 
 class _VideoPlayerState extends State<VideoPlayer> {
-  // Create a [Player] to control playback.
-  late final Player player = Player(
-    configuration: PlayerConfiguration(
-      // Supply your options:
-      title: widget.name,
-    ),
-  );
+  late final Player player = Player();
 
   late final controller = VideoController(player);
+
+  final ValueNotifier<Duration?> tempPosition = ValueNotifier(null);
+  final ValueNotifier<double> playbackSpeed = ValueNotifier(1.0);
+  final int skipDuration = 10;
 
   @override
   void initState() {
@@ -49,29 +51,140 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   @override
   void dispose() {
+    windowManager.setFullScreen(false);
     final Duration currentTime = player.state.position;
     final database = AppDatabase();
     (database.update(database.moviesTable)
       ..where((tbl) => tbl.id.equals(widget.id))
-      ..write(MoviesTableCompanion(watchedTime: Value(currentTime.inSeconds))));
+      ..write(
+          MoviesTableCompanion(watchedTime: d.Value(currentTime.inSeconds))));
     database.close();
     player.dispose();
     super.dispose();
   }
 
+  Widget _desktopBottomButtonBar(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                const SizedBox(width: 10),
+                IconButton(
+                  onPressed: () async {
+                    int currentPosition = player.state.position.inSeconds;
+                    tempPosition.value =
+                        Duration(seconds: skipDuration - currentPosition);
+                    await player.seek(Duration(
+                        seconds: max(0, currentPosition - skipDuration)));
+                    tempPosition.value = null;
+                  },
+                  icon: const Icon(Icons.fast_rewind, color: Colors.white),
+                  hoverColor: const Color.fromARGB(43, 100, 180, 246),
+                ),
+                CustomeMaterialDesktopPlayOrPauseButton(controller: controller),
+                IconButton(
+                  onPressed: () async {
+                    int currentPosition = player.state.position.inSeconds;
+                    int maxDuration = player.state.duration.inSeconds;
+                    tempPosition.value = Duration(
+                        seconds:
+                            min(maxDuration, currentPosition + skipDuration));
+                    await player.seek(Duration(
+                        seconds:
+                            min(maxDuration, currentPosition + skipDuration)));
+                    tempPosition.value = null;
+                  },
+                  icon: const Icon(Icons.fast_forward),
+                  hoverColor: const Color.fromARGB(43, 100, 180, 246),
+                ),
+                CustomMaterialDesktopVolumeButton(controller: controller),
+                const SizedBox(width: 5),
+                const MaterialDesktopPositionIndicator(
+                    style: TextStyle(
+                        height: 1.0,
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.w400)),
+              ],
+            ),
+            Row(
+              children: [
+                // IconButton(
+                //   onPressed: () => _videoSettingDraggableMenu(context),
+                //   icon: const Icon(
+                //     Icons.video_settings,
+                //     color: Colors.white,
+                //   ),
+                // ),
+                CustomMaterialDesktopChangeAudioButton(
+                  player: player,
+                ),
+                CustomMaterialDesktopCaptionsButton(
+                  player: player,
+                ),
+                CustomMaterialDesktopPlaybackSpeedButton(player: player),
+                // IconButton(
+                //   icon: const Icon(Icons.fit_screen_outlined,
+                //       color: Colors.white),
+                //   onPressed: () async {
+                //     _changeFitLabel(ref);
+                //   },
+                // ),
+                CustomMaterialDesktopFullscreenButton(
+                  controller: controller,
+                ),
+                const SizedBox(width: 10)
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.name),
-          bottomOpacity: 0,
-        ),
-        body: Center(
-          child: SizedBox(
+      // extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: Text(widget.name),
+        centerTitle: true,
+        backgroundColor: Colors.black,
+        bottomOpacity: 0,
+      ),
+      body: Center(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.width * 9.0 / 16.0,
+          // child: Video(controller: controller),
+          child: Video(
+            // subtitleViewConfiguration: SubtitleViewConfiguration(visible: false, style: subtileTextStyle(ref)),
+            controls: (state) => MovieControllerWidget(
+              videoController: controller,
+              // videoStatekey: _key,
+              bottomButtonBarWidget: _desktopBottomButtonBar(context),
+              // seekToWidget: Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 15),
+              //   child: Row(
+              //     children: [
+              //       _seekToWidget(),
+              //     ],
+              //   ),
+              // ),
+              tempDuration: (value) {
+                tempPosition.value = value;
+              },
+            ),
+            controller: controller,
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.width * 9.0 / 16.0,
-            child: Video(controller: controller),
+            // resumeUponEnteringForegroundMode: true,
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
