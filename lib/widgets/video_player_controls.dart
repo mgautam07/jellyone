@@ -339,7 +339,7 @@ class _CustomMaterialDesktopCaptionsButtonState
                   controller.open();
                 }
               },
-              icon: const Icon(Icons.closed_caption_rounded),
+              icon: const Icon(Icons.closed_caption_rounded, size: 25.0),
               hoverColor: const Color.fromARGB(43, 100, 180, 246),
             );
           },
@@ -409,7 +409,7 @@ class _CustomMaterialDesktopChangeAudioButtonState
                   controller.open();
                 }
               },
-              icon: const Icon(Icons.audiotrack_rounded),
+              icon: const Icon(Icons.audiotrack_rounded, size: 25.0),
               hoverColor: const Color.fromARGB(43, 100, 180, 246),
             );
           },
@@ -478,7 +478,7 @@ class _CustomMaterialDesktopsktopPlaybackSpeednState
                   controller.open();
                 }
               },
-              icon: const Icon(Icons.speed_rounded),
+              icon: const Icon(Icons.speed_rounded, size: 25.0),
               hoverColor: const Color.fromARGB(43, 100, 180, 246),
             );
           },
@@ -705,15 +705,18 @@ class CustomMaterialDesktopVolumeButtonState
                     ? const Icon(
                         Icons.volume_off_rounded,
                         key: ValueKey(Icons.volume_off),
+                        size: 25.0,
                       )
                     : volume < 50.0
                         ? const Icon(
                             Icons.volume_down_rounded,
                             key: ValueKey(Icons.volume_down),
+                            size: 25.0,
                           )
                         : const Icon(
                             Icons.volume_up_rounded,
                             key: ValueKey(Icons.volume_up),
+                            size: 25.0,
                           ),
               ),
               hoverColor: const Color.fromARGB(43, 100, 180, 246),
@@ -888,8 +891,8 @@ class _CustomMaterialDesktopFullscreenButtonState
         });
       },
       icon: _isFullscreen
-          ? const Icon(Icons.fullscreen_exit_rounded)
-          : const Icon(Icons.fullscreen_rounded),
+          ? const Icon(Icons.fullscreen_exit_rounded, size: 25.0)
+          : const Icon(Icons.fullscreen_rounded, size: 25.0),
       iconSize: 25,
       hoverColor: const Color.fromARGB(43, 100, 180, 246),
     );

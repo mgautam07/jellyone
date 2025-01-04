@@ -10,16 +10,18 @@ import 'package:window_manager/window_manager.dart';
 
 class VideoPlayer extends StatefulWidget {
   final String name;
-  final String path;
+  final List<String> path;
   final int id;
   final int time;
+  final int startIndex;
 
   const VideoPlayer(
       {super.key,
       required this.id,
       required this.name,
       required this.path,
-      required this.time});
+      required this.time,
+      required this.startIndex});
 
   @override
   State<VideoPlayer> createState() => _VideoPlayerState();
@@ -39,7 +41,13 @@ class _VideoPlayerState extends State<VideoPlayer> {
     WidgetsFlutterBinding.ensureInitialized();
     MediaKit.ensureInitialized();
     super.initState();
-    player.open(Media(widget.path));
+
+    List<Media> items = [];
+    for (var i = 0; i < widget.path.length; i++) {
+      items.add(Media(widget.path[i]));
+    }
+
+    player.open(Playlist(items, index: widget.startIndex));
     player.seek(Duration(seconds: widget.time));
   }
 
@@ -83,6 +91,12 @@ class _VideoPlayerState extends State<VideoPlayer> {
                 const SizedBox(width: 10),
                 IconButton(
                   onPressed: () async {
+                    await player.previous();
+                  },
+                  icon: const Icon(Icons.skip_previous_rounded),
+                ),
+                IconButton(
+                  onPressed: () async {
                     int currentPosition = player.state.position.inSeconds;
                     tempPosition.value =
                         Duration(seconds: skipDuration - currentPosition);
@@ -90,7 +104,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
                         seconds: max(0, currentPosition - skipDuration)));
                     tempPosition.value = null;
                   },
-                  icon: const Icon(Icons.fast_rewind_rounded, size: 25.0),
+                  icon: const Icon(Icons.fast_rewind_rounded),
                   hoverColor: const Color.fromARGB(43, 100, 180, 246),
                 ),
                 CustomeMaterialDesktopPlayOrPauseButton(controller: controller),
@@ -106,8 +120,14 @@ class _VideoPlayerState extends State<VideoPlayer> {
                             min(maxDuration, currentPosition + skipDuration)));
                     tempPosition.value = null;
                   },
-                  icon: const Icon(Icons.fast_forward_rounded, size: 25.0),
+                  icon: const Icon(Icons.fast_forward_rounded),
                   hoverColor: const Color.fromARGB(43, 100, 180, 246),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    await player.next();
+                  },
+                  icon: const Icon(Icons.skip_next_rounded),
                 ),
               ],
             ),

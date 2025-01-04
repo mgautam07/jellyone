@@ -315,7 +315,7 @@ class _MediaInfoScreenState extends State<MediaInfoScreen> {
                                           builder: (context) => VideoPlayer(
                                               id: widget.movie.id,
                                               name: widget.movie.name,
-                                              path: [widget.movie.videoFile],
+                                              path: widget.movie.videoFile,
                                               time: widget.movie.watchedTime)));
                                 },
                                 style: TextButton.styleFrom(

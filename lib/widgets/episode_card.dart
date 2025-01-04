@@ -3,13 +3,19 @@ import 'dart:math';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:jellyone/db/db.dart';
-import 'package:jellyone/screens/video_player.dart';
+import 'package:jellyone/screens/series_player.dart';
 import 'package:jellyone/theme/app_styles.dart';
 import 'package:jellyone/utils/time_functions.dart' as t;
 
 class EpisodeCard extends StatelessWidget {
-  const EpisodeCard({super.key, required this.episode});
+  const EpisodeCard(
+      {super.key,
+      required this.episode,
+      required this.filePathList,
+      required this.startIndex});
   final Episode episode;
+  final List<String> filePathList;
+  final int startIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +31,12 @@ class EpisodeCard extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => VideoPlayer(
-                        id: episode.id,
-                        name: 'name',
-                        path: [episode.filePath],
-                        time: episode.watchedTime)),
+                          id: episode.id,
+                          name: 'name',
+                          path: filePathList,
+                          time: episode.watchedTime,
+                          startIndex: startIndex,
+                        )),
               );
             },
             hoverColor: AppTheme.medium,
