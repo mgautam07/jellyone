@@ -27,6 +27,8 @@ Future<void> updateMedia(List<dynamic> args) async {
   var showsDirectory = Directory(showsFolderPath!);
 
   // database.clearTable();
+  removeMoviesFromDb(database, log);
+  removeSeriesFromDb(database, log);
 
   //iterating movies over directories
   await for (var folder in moviesDirectory.list()) {
@@ -512,3 +514,66 @@ Future addEpisodeToDB(
     }
   }
 }
+
+void removeMoviesFromDb(AppDatabase database, l.Logger log) async {
+  var allMovies = await database.getAllMovies();
+  for (var i = 0; i < allMovies.length; i++) {
+    File file = File(allMovies[i].videoFile);
+    if (file.existsSync()) {
+      log.i("Movie exists - ${allMovies[i].name}");
+    } else {
+      await database.removeMovie(allMovies[i].id);
+      log.w("Movie removed - ${allMovies[i].name}");
+    }
+  }
+}
+
+void removeSeriesFromDb(AppDatabase database, l.Logger log) async {
+  var allSeries = await database.select(database.series).get();
+
+  for (int i = 0; i < allSeries.length; i++) {
+    var seasons = await database.getSeasonsFromSeriesId(allSeries[i].id);
+    int seasonCount = seasons.length;
+
+    for (var j = 0; j < seasons.length; j++) {
+      Directory dir = Directory(seasons[j].seasonFolder);
+      if (dir.existsSync()) {
+        log.i(
+            "Season exists - ${allSeries[i].name} season - ${seasons[j].number}");
+        var episodes = await database.getEpisodesFromSeasonId(seasons[j].id);
+        int episodeCount = episodes.length;
+
+        for (var k = 0; k < episodes.length; k++) {
+          File file = File(episodes[k].filePath);
+          if (file.existsSync()) {
+            log.i("Episode exists - ${episodes[k].number}");
+          } else {
+            await database.removeEpisode(episodes[k].id);
+            log.w("Episode removed - ${episodes[k].number}");
+            episodeCount--;
+          }
+        }
+
+        if (episodeCount == 0) {
+          await database.removeSeason(seasons[j].id);
+          log.w(
+              "Season removed - ${allSeries[i].name} season - ${seasons[j].number}");
+          seasonCount--;
+        }
+      } else {
+        await database.removeSeason(seasons[j].id);
+        log.w(
+            "Season removed - ${allSeries[i].name} season - ${seasons[j].number}");
+        seasonCount--;
+      }
+    }
+
+    if (seasonCount == 0) {
+      await database.removeSeries(allSeries[i].id);
+      log.w("Series removed - ${allSeries[i].name}");
+    }
+  }
+}
+
+// TODO:add vid file to db only if .mkv .mp4 not owrking
+

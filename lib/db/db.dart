@@ -99,6 +99,62 @@ class AppDatabase extends _$AppDatabase {
     return (select(actors)..where((tbl) => tbl.id.equals(id))).get();
   }
 
+  Future<List<Season>> getSeasonsFromSeriesId(int id) {
+    return (select(seasons)..where((s) => s.seriesid.equals(id))).get();
+  }
+
+  Future<List<Episode>> getEpisodesFromSeasonId(int id) {
+    return (select(episodes)..where((s) => s.seasonid.equals(id))).get();
+  }
+
+  Future removeMovie(int id) async {
+    var actorLink =
+        await (select(movieCast)..where((c) => c.movieId.equals(id))).get();
+
+    //Delete actor if not linked with any other movie
+    for (int i = 0; i < actorLink.length; i++) {
+      var cast = await (select(movieCast)
+            ..where((c) => c.actorId.equals(actorLink[i].actorId)))
+          .get();
+      if (cast.length == 1) {
+        await (delete(actors)..where((a) => a.id.equals(actorLink[i].actorId)))
+            .go();
+      }
+    }
+    await (delete(movieCast)..where((c) => c.movieId.equals(id))).go();
+    await (delete(movieGenres)..where((g) => g.movieId.equals(id))).go();
+
+    return (delete(moviesTable)..where((m) => m.id.equals(id))).go();
+  }
+
+  Future removeSeries(int id) async {
+    var actorLink =
+        await (select(tvCast)..where((c) => c.seriesId.equals(id))).get();
+
+    //Delete actor if not linked with any other series
+    for (int i = 0; i < actorLink.length; i++) {
+      var cast = await (select(tvCast)
+            ..where((c) => c.actorId.equals(actorLink[i].actorId)))
+          .get();
+      if (cast.length == 1) {
+        await (delete(actors)..where((a) => a.id.equals(actorLink[i].actorId)))
+            .go();
+      }
+    }
+    await (delete(tvCast)..where((c) => c.seriesId.equals(id))).go();
+    await (delete(tvGenres)..where((g) => g.seriesId.equals(id))).go();
+
+    return (delete(series)..where((s) => s.id.equals(id))).go();
+  }
+
+  Future removeSeason(int id) {
+    return (delete(seasons)..where((s) => s.id.equals(id))).go();
+  }
+
+  Future removeEpisode(int id) {
+    return (delete(episodes)..where((e) => e.id.equals(id))).go();
+  }
+
   void clearTable() async {
     await delete(moviesTable).go();
     await delete(actors).go();
