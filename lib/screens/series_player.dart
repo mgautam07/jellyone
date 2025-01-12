@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:async';
 
 import 'package:drift/drift.dart' as d;
 import 'package:flutter/material.dart';
@@ -10,16 +11,18 @@ import 'package:window_manager/window_manager.dart';
 
 class VideoPlayer extends StatefulWidget {
   final String name;
-  final String path;
-  final int id;
+  final List<String> path;
+  final List<int> episodeIds;
   final int time;
+  final int startIndex;
 
   const VideoPlayer(
       {super.key,
-      required this.id,
       required this.name,
       required this.path,
-      required this.time});
+      required this.episodeIds,
+      required this.time,
+      required this.startIndex});
 
   @override
   State<VideoPlayer> createState() => _VideoPlayerState();
@@ -30,6 +33,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   late final controller = VideoController(player);
 
+  final database = AppDatabase();
   final ValueNotifier<Duration?> tempPosition = ValueNotifier(null);
   final ValueNotifier<double> playbackSpeed = ValueNotifier(1.0);
   final int skipDuration = 10;
@@ -37,32 +41,44 @@ class _VideoPlayerState extends State<VideoPlayer> {
   @override
   void initState() {
     super.initState();
-    player.open(Media(widget.path));
+
+    List<Media> items = [];
+    for (var i = 0; i < widget.path.length; i++) {
+      items.add(Media(widget.path[i]));
+    }
+
+    player.open(Playlist(items, index: widget.startIndex));
     player.seek(Duration(seconds: widget.time));
   }
 
   @override
   void dispose() {
     windowManager.setFullScreen(false);
-    final Duration currentTime = player.state.position;
-    final database = AppDatabase();
-
-    int status = 1;
-    if (player.state.duration.inSeconds - player.state.position.inSeconds >
-        600) {
-      status = 1;
-    } else {
-      status = 2;
-    }
-
-    (database.update(database.moviesTable)
-      ..where((tbl) => tbl.id.equals(widget.id))
-      ..write(MoviesTableCompanion(
-          watchedTime: d.Value(currentTime.inSeconds),
-          watchStatus: d.Value(status))));
+    updateDB();
     database.close();
     player.dispose();
     super.dispose();
+  }
+
+  void updateDB() {
+    int playerTime = player.state.position.inSeconds;
+    int ep = player.state.playlist.index;
+    int dur = player.state.duration.inSeconds;
+    Future.delayed(const Duration(seconds: 4), () async {
+      if (dur - playerTime > 600) {
+        (database.update(database.episodes)
+          ..where((e) => e.id.equals(widget.episodeIds[ep]))
+          ..write(EpisodesCompanion(
+              watchStatus: const d.Value(1),
+              watchedTime: d.Value(playerTime))));
+      } else {
+        (database.update(database.episodes)
+          ..where((e) => e.id.equals(widget.episodeIds[ep]))
+          ..write(EpisodesCompanion(
+              watchStatus: const d.Value(2),
+              watchedTime: d.Value(playerTime))));
+      }
+    });
   }
 
   Widget _desktopBottomButtonBar(BuildContext context) {
@@ -91,6 +107,13 @@ class _VideoPlayerState extends State<VideoPlayer> {
                 const SizedBox(width: 10),
                 IconButton(
                   onPressed: () async {
+                    await player.previous();
+                    updateDB();
+                  },
+                  icon: const Icon(Icons.skip_previous_rounded),
+                ),
+                IconButton(
+                  onPressed: () async {
                     int currentPosition = player.state.position.inSeconds;
                     tempPosition.value =
                         Duration(seconds: skipDuration - currentPosition);
@@ -98,7 +121,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
                         seconds: max(0, currentPosition - skipDuration)));
                     tempPosition.value = null;
                   },
-                  icon: const Icon(Icons.fast_rewind_rounded, size: 25.0),
+                  icon: const Icon(Icons.fast_rewind_rounded),
                   hoverColor: const Color.fromARGB(43, 100, 180, 246),
                 ),
                 CustomeMaterialDesktopPlayOrPauseButton(controller: controller),
@@ -114,8 +137,15 @@ class _VideoPlayerState extends State<VideoPlayer> {
                             min(maxDuration, currentPosition + skipDuration)));
                     tempPosition.value = null;
                   },
-                  icon: const Icon(Icons.fast_forward_rounded, size: 25.0),
+                  icon: const Icon(Icons.fast_forward_rounded),
                   hoverColor: const Color.fromARGB(43, 100, 180, 246),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    await player.next();
+                    updateDB();
+                  },
+                  icon: const Icon(Icons.skip_next_rounded),
                 ),
               ],
             ),

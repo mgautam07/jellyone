@@ -7,7 +7,7 @@ class Seasons extends Table {
   IntColumn get seriesid => integer().references(Series, #id)();
   TextColumn get overview => text()();
   TextColumn get posterPath => text()();
-  TextColumn get seasonFolder => text().nullable()();
+  TextColumn get seasonFolder => text()();
   DateTimeColumn get airDate => dateTime()();
   RealColumn get vote => real()();
   IntColumn get watchStatus => integer().withDefault(const Constant(0))();

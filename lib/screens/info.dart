@@ -133,7 +133,7 @@ String getEndTime(int time, int watchedTime) {
   final end = DateTime.now()
       .add(Duration(minutes: (time - (watchedTime / 60).floor())));
   if (end.minute < 10 && end.hour > 9) {
-    return 'Ends at ${end.hour}: 0${end.minute}';
+    return 'Ends at ${end.hour}:0${end.minute}';
   } else if (end.minute > 9 && end.hour < 10) {
     return 'Ends at 0${end.hour}:${end.minute}';
   } else if (end.minute < 10 && end.hour < 10) {
@@ -163,9 +163,12 @@ class _MediaInfoScreenState extends State<MediaInfoScreen> {
   late Future<List<String>> _writerFuture;
   late Future<List<Map<String, String>>> _castFuture;
 
+  int tempState = 0;
+
   @override
   void initState() {
     super.initState();
+    tempState = widget.movie.watchStatus;
     _genreFuture = getGenres(widget.movie.id);
     _producerFuture = getProducer(widget.movie.id);
     _directorFuture = getDirector(widget.movie.id);
@@ -315,7 +318,7 @@ class _MediaInfoScreenState extends State<MediaInfoScreen> {
                                           builder: (context) => VideoPlayer(
                                               id: widget.movie.id,
                                               name: widget.movie.name,
-                                              path: [widget.movie.videoFile],
+                                              path: widget.movie.videoFile,
                                               time: widget.movie.watchedTime)));
                                 },
                                 style: TextButton.styleFrom(
@@ -327,12 +330,19 @@ class _MediaInfoScreenState extends State<MediaInfoScreen> {
                                 (database.update(database.moviesTable)
                                   ..where(
                                       (tbl) => tbl.id.equals(widget.movie.id))
-                                  ..write(const MoviesTableCompanion(
-                                      watchStatus: d.Value(2))));
+                                  ..write(MoviesTableCompanion(
+                                      watchStatus:
+                                          d.Value(tempState == 2 ? 0 : 2))));
                                 database.close();
+                                setState(() {
+                                  tempState = tempState == 2 ? 0 : 2;
+                                });
                               },
                               style: TextButton.styleFrom(
-                                  shape: const CircleBorder()),
+                                  shape: const CircleBorder(),
+                                  iconColor: tempState == 2
+                                      ? Colors.blue.shade200
+                                      : Colors.red.shade300),
                               child: const Icon(Icons.done),
                             ),
                             TextButton(

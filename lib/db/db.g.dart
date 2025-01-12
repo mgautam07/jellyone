@@ -1497,8 +1497,8 @@ class $SeasonsTable extends Seasons with TableInfo<$SeasonsTable, Season> {
       const VerificationMeta('seasonFolder');
   @override
   late final GeneratedColumn<String> seasonFolder = GeneratedColumn<String>(
-      'season_folder', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+      'season_folder', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _airDateMeta =
       const VerificationMeta('airDate');
   @override
@@ -1576,6 +1576,8 @@ class $SeasonsTable extends Seasons with TableInfo<$SeasonsTable, Season> {
           _seasonFolderMeta,
           seasonFolder.isAcceptableOrUnknown(
               data['season_folder']!, _seasonFolderMeta));
+    } else if (isInserting) {
+      context.missing(_seasonFolderMeta);
     }
     if (data.containsKey('air_date')) {
       context.handle(_airDateMeta,
@@ -1615,7 +1617,7 @@ class $SeasonsTable extends Seasons with TableInfo<$SeasonsTable, Season> {
       posterPath: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}poster_path'])!,
       seasonFolder: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}season_folder']),
+          .read(DriftSqlType.string, data['${effectivePrefix}season_folder'])!,
       airDate: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}air_date'])!,
       vote: attachedDatabase.typeMapping
@@ -1637,7 +1639,7 @@ class Season extends DataClass implements Insertable<Season> {
   final int seriesid;
   final String overview;
   final String posterPath;
-  final String? seasonFolder;
+  final String seasonFolder;
   final DateTime airDate;
   final double vote;
   final int watchStatus;
@@ -1647,7 +1649,7 @@ class Season extends DataClass implements Insertable<Season> {
       required this.seriesid,
       required this.overview,
       required this.posterPath,
-      this.seasonFolder,
+      required this.seasonFolder,
       required this.airDate,
       required this.vote,
       required this.watchStatus});
@@ -1659,9 +1661,7 @@ class Season extends DataClass implements Insertable<Season> {
     map['seriesid'] = Variable<int>(seriesid);
     map['overview'] = Variable<String>(overview);
     map['poster_path'] = Variable<String>(posterPath);
-    if (!nullToAbsent || seasonFolder != null) {
-      map['season_folder'] = Variable<String>(seasonFolder);
-    }
+    map['season_folder'] = Variable<String>(seasonFolder);
     map['air_date'] = Variable<DateTime>(airDate);
     map['vote'] = Variable<double>(vote);
     map['watch_status'] = Variable<int>(watchStatus);
@@ -1675,9 +1675,7 @@ class Season extends DataClass implements Insertable<Season> {
       seriesid: Value(seriesid),
       overview: Value(overview),
       posterPath: Value(posterPath),
-      seasonFolder: seasonFolder == null && nullToAbsent
-          ? const Value.absent()
-          : Value(seasonFolder),
+      seasonFolder: Value(seasonFolder),
       airDate: Value(airDate),
       vote: Value(vote),
       watchStatus: Value(watchStatus),
@@ -1693,7 +1691,7 @@ class Season extends DataClass implements Insertable<Season> {
       seriesid: serializer.fromJson<int>(json['seriesid']),
       overview: serializer.fromJson<String>(json['overview']),
       posterPath: serializer.fromJson<String>(json['posterPath']),
-      seasonFolder: serializer.fromJson<String?>(json['seasonFolder']),
+      seasonFolder: serializer.fromJson<String>(json['seasonFolder']),
       airDate: serializer.fromJson<DateTime>(json['airDate']),
       vote: serializer.fromJson<double>(json['vote']),
       watchStatus: serializer.fromJson<int>(json['watchStatus']),
@@ -1708,7 +1706,7 @@ class Season extends DataClass implements Insertable<Season> {
       'seriesid': serializer.toJson<int>(seriesid),
       'overview': serializer.toJson<String>(overview),
       'posterPath': serializer.toJson<String>(posterPath),
-      'seasonFolder': serializer.toJson<String?>(seasonFolder),
+      'seasonFolder': serializer.toJson<String>(seasonFolder),
       'airDate': serializer.toJson<DateTime>(airDate),
       'vote': serializer.toJson<double>(vote),
       'watchStatus': serializer.toJson<int>(watchStatus),
@@ -1721,7 +1719,7 @@ class Season extends DataClass implements Insertable<Season> {
           int? seriesid,
           String? overview,
           String? posterPath,
-          Value<String?> seasonFolder = const Value.absent(),
+          String? seasonFolder,
           DateTime? airDate,
           double? vote,
           int? watchStatus}) =>
@@ -1731,8 +1729,7 @@ class Season extends DataClass implements Insertable<Season> {
         seriesid: seriesid ?? this.seriesid,
         overview: overview ?? this.overview,
         posterPath: posterPath ?? this.posterPath,
-        seasonFolder:
-            seasonFolder.present ? seasonFolder.value : this.seasonFolder,
+        seasonFolder: seasonFolder ?? this.seasonFolder,
         airDate: airDate ?? this.airDate,
         vote: vote ?? this.vote,
         watchStatus: watchStatus ?? this.watchStatus,
@@ -1795,7 +1792,7 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
   final Value<int> seriesid;
   final Value<String> overview;
   final Value<String> posterPath;
-  final Value<String?> seasonFolder;
+  final Value<String> seasonFolder;
   final Value<DateTime> airDate;
   final Value<double> vote;
   final Value<int> watchStatus;
@@ -1818,7 +1815,7 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
     required int seriesid,
     required String overview,
     required String posterPath,
-    this.seasonFolder = const Value.absent(),
+    required String seasonFolder,
     required DateTime airDate,
     required double vote,
     this.watchStatus = const Value.absent(),
@@ -1828,6 +1825,7 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
         seriesid = Value(seriesid),
         overview = Value(overview),
         posterPath = Value(posterPath),
+        seasonFolder = Value(seasonFolder),
         airDate = Value(airDate),
         vote = Value(vote);
   static Insertable<Season> custom({
@@ -1862,7 +1860,7 @@ class SeasonsCompanion extends UpdateCompanion<Season> {
       Value<int>? seriesid,
       Value<String>? overview,
       Value<String>? posterPath,
-      Value<String?>? seasonFolder,
+      Value<String>? seasonFolder,
       Value<DateTime>? airDate,
       Value<double>? vote,
       Value<int>? watchStatus,
@@ -4733,7 +4731,7 @@ typedef $$SeasonsTableCreateCompanionBuilder = SeasonsCompanion Function({
   required int seriesid,
   required String overview,
   required String posterPath,
-  Value<String?> seasonFolder,
+  required String seasonFolder,
   required DateTime airDate,
   required double vote,
   Value<int> watchStatus,
@@ -4745,7 +4743,7 @@ typedef $$SeasonsTableUpdateCompanionBuilder = SeasonsCompanion Function({
   Value<int> seriesid,
   Value<String> overview,
   Value<String> posterPath,
-  Value<String?> seasonFolder,
+  Value<String> seasonFolder,
   Value<DateTime> airDate,
   Value<double> vote,
   Value<int> watchStatus,
@@ -4934,7 +4932,7 @@ class $$SeasonsTableTableManager extends RootTableManager<
             Value<int> seriesid = const Value.absent(),
             Value<String> overview = const Value.absent(),
             Value<String> posterPath = const Value.absent(),
-            Value<String?> seasonFolder = const Value.absent(),
+            Value<String> seasonFolder = const Value.absent(),
             Value<DateTime> airDate = const Value.absent(),
             Value<double> vote = const Value.absent(),
             Value<int> watchStatus = const Value.absent(),
@@ -4958,7 +4956,7 @@ class $$SeasonsTableTableManager extends RootTableManager<
             required int seriesid,
             required String overview,
             required String posterPath,
-            Value<String?> seasonFolder = const Value.absent(),
+            required String seasonFolder,
             required DateTime airDate,
             required double vote,
             Value<int> watchStatus = const Value.absent(),

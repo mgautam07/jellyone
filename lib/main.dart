@@ -15,8 +15,10 @@ import 'package:jellyone/utils/udpate_media.dart';
 
 import 'package:drift/drift.dart';
 import 'package:path/path.dart' as p;
+import 'package:media_kit/media_kit.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:fast_cached_network_image/fast_cached_network_image.dart';
 
 void main() async {
@@ -26,6 +28,9 @@ void main() async {
   await FastCachedImageConfig.init(
       subDir: hiveStorageLocation, clearCacheAfter: const Duration(days: 60));
   await Hive.initFlutter(hiveStorageLocation);
+  await windowManager.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+  MediaKit.ensureInitialized();
 
   var infoBox = await Hive.openBox('infoBox');
   if (infoBox.get('onboarding') == null) {
