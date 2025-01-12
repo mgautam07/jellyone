@@ -20,6 +20,9 @@ jobs:
           channel: stable
           flutter-version: 3.22.2
 
+      - name: Disable Flutter analytics
+        run: flutter config --no-analytics  
+
       - name: Get Flutter dependencies
         run: flutter pub get
 
@@ -47,6 +50,9 @@ jobs:
           channel: stable
           flutter-version: 3.22.2
 
+      - name: Disable Flutter analytics
+        run: flutter config --no-analytics  
+      
       - name: Install dependencies
         run: |
           sudo apt-get update -y
@@ -79,6 +85,9 @@ jobs:
         with:
           channel: stable
           flutter-version: 3.22.2
+
+      - name: Disable Flutter analytics
+        run: flutter config --no-analytics  
 
       - name: Build macOS
         run: flutter build macos --release
