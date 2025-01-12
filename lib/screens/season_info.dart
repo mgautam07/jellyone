@@ -79,9 +79,11 @@ class _SeasonInfoScreenState extends State<SeasonInfoScreen> {
           } else {
             List<Episode> episodesList = snapshot.data!; // Extract data
             List<String> filePathList = [];
+            List<int> episodeIds = [];
 
             for (Episode episode in episodesList) {
               filePathList.add(episode.filePath);
+              episodeIds.add(episode.id);
             }
 
             return Scaffold(
@@ -258,10 +260,12 @@ class _SeasonInfoScreenState extends State<SeasonInfoScreen> {
                                                 snapshot.data?.length ?? 0,
                                                 (index) {
                                                   return EpisodeCard(
+                                                      name: widget.name,
                                                       episode:
                                                           snapshot.data![index],
                                                       filePathList:
                                                           filePathList,
+                                                      episodeIds: episodeIds,
                                                       startIndex: index);
                                                 },
                                               ),

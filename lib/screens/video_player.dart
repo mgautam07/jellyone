@@ -36,8 +36,6 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   @override
   void initState() {
-    WidgetsFlutterBinding.ensureInitialized();
-    MediaKit.ensureInitialized();
     super.initState();
     player.open(Media(widget.path));
     player.seek(Duration(seconds: widget.time));
@@ -48,10 +46,20 @@ class _VideoPlayerState extends State<VideoPlayer> {
     windowManager.setFullScreen(false);
     final Duration currentTime = player.state.position;
     final database = AppDatabase();
+
+    int status = 1;
+    if (player.state.duration.inSeconds - player.state.position.inSeconds >
+        600) {
+      status = 1;
+    } else {
+      status = 2;
+    }
+
     (database.update(database.moviesTable)
       ..where((tbl) => tbl.id.equals(widget.id))
-      ..write(
-          MoviesTableCompanion(watchedTime: d.Value(currentTime.inSeconds))));
+      ..write(MoviesTableCompanion(
+          watchedTime: d.Value(currentTime.inSeconds),
+          watchStatus: d.Value(status))));
     database.close();
     player.dispose();
     super.dispose();

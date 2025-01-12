@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:async';
 
 import 'package:drift/drift.dart' as d;
 import 'package:flutter/material.dart';
@@ -11,15 +12,15 @@ import 'package:window_manager/window_manager.dart';
 class VideoPlayer extends StatefulWidget {
   final String name;
   final List<String> path;
-  final int id;
+  final List<int> episodeIds;
   final int time;
   final int startIndex;
 
   const VideoPlayer(
       {super.key,
-      required this.id,
       required this.name,
       required this.path,
+      required this.episodeIds,
       required this.time,
       required this.startIndex});
 
@@ -32,14 +33,13 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   late final controller = VideoController(player);
 
+  final database = AppDatabase();
   final ValueNotifier<Duration?> tempPosition = ValueNotifier(null);
   final ValueNotifier<double> playbackSpeed = ValueNotifier(1.0);
   final int skipDuration = 10;
 
   @override
   void initState() {
-    WidgetsFlutterBinding.ensureInitialized();
-    MediaKit.ensureInitialized();
     super.initState();
 
     List<Media> items = [];
@@ -54,15 +54,31 @@ class _VideoPlayerState extends State<VideoPlayer> {
   @override
   void dispose() {
     windowManager.setFullScreen(false);
-    final Duration currentTime = player.state.position;
-    final database = AppDatabase();
-    (database.update(database.moviesTable)
-      ..where((tbl) => tbl.id.equals(widget.id))
-      ..write(
-          MoviesTableCompanion(watchedTime: d.Value(currentTime.inSeconds))));
+    updateDB();
     database.close();
     player.dispose();
     super.dispose();
+  }
+
+  void updateDB() {
+    int playerTime = player.state.position.inSeconds;
+    int ep = player.state.playlist.index;
+    int dur = player.state.duration.inSeconds;
+    Future.delayed(const Duration(seconds: 4), () async {
+      if (dur - playerTime > 600) {
+        (database.update(database.episodes)
+          ..where((e) => e.id.equals(widget.episodeIds[ep]))
+          ..write(EpisodesCompanion(
+              watchStatus: const d.Value(1),
+              watchedTime: d.Value(playerTime))));
+      } else {
+        (database.update(database.episodes)
+          ..where((e) => e.id.equals(widget.episodeIds[ep]))
+          ..write(EpisodesCompanion(
+              watchStatus: const d.Value(2),
+              watchedTime: d.Value(playerTime))));
+      }
+    });
   }
 
   Widget _desktopBottomButtonBar(BuildContext context) {
@@ -92,6 +108,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
                 IconButton(
                   onPressed: () async {
                     await player.previous();
+                    updateDB();
                   },
                   icon: const Icon(Icons.skip_previous_rounded),
                 ),
@@ -126,6 +143,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
                 IconButton(
                   onPressed: () async {
                     await player.next();
+                    updateDB();
                   },
                   icon: const Icon(Icons.skip_next_rounded),
                 ),

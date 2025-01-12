@@ -163,9 +163,12 @@ class _MediaInfoScreenState extends State<MediaInfoScreen> {
   late Future<List<String>> _writerFuture;
   late Future<List<Map<String, String>>> _castFuture;
 
+  int tempState = 0;
+
   @override
   void initState() {
     super.initState();
+    tempState = widget.movie.watchStatus;
     _genreFuture = getGenres(widget.movie.id);
     _producerFuture = getProducer(widget.movie.id);
     _directorFuture = getDirector(widget.movie.id);
@@ -327,12 +330,19 @@ class _MediaInfoScreenState extends State<MediaInfoScreen> {
                                 (database.update(database.moviesTable)
                                   ..where(
                                       (tbl) => tbl.id.equals(widget.movie.id))
-                                  ..write(const MoviesTableCompanion(
-                                      watchStatus: d.Value(2))));
+                                  ..write(MoviesTableCompanion(
+                                      watchStatus:
+                                          d.Value(tempState == 2 ? 0 : 2))));
                                 database.close();
+                                setState(() {
+                                  tempState = tempState == 2 ? 0 : 2;
+                                });
                               },
                               style: TextButton.styleFrom(
-                                  shape: const CircleBorder()),
+                                  shape: const CircleBorder(),
+                                  iconColor: tempState == 2
+                                      ? Colors.blue.shade200
+                                      : Colors.red.shade300),
                               child: const Icon(Icons.done),
                             ),
                             TextButton(

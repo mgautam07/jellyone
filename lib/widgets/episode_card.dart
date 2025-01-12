@@ -10,11 +10,15 @@ import 'package:jellyone/utils/time_functions.dart' as t;
 class EpisodeCard extends StatelessWidget {
   const EpisodeCard(
       {super.key,
+      required this.name,
       required this.episode,
       required this.filePathList,
+      required this.episodeIds,
       required this.startIndex});
   final Episode episode;
   final List<String> filePathList;
+  final List<int> episodeIds;
+  final String name;
   final int startIndex;
 
   @override
@@ -31,9 +35,9 @@ class EpisodeCard extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => VideoPlayer(
-                          id: episode.id,
-                          name: 'name',
+                          name: name,
                           path: filePathList,
+                          episodeIds: episodeIds,
                           time: episode.watchedTime,
                           startIndex: startIndex,
                         )),
