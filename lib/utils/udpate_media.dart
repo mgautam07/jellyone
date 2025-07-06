@@ -56,7 +56,6 @@ Future<void> updateMedia(List<dynamic> args) async {
               log.e(e);
             }
           }
-          break;
         }
       } else {
         List<String> path;
@@ -122,6 +121,11 @@ Future addMovieToDB(
     l.Logger log,
     String filePath,
     String? subsFolder) async {
+
+  if (name.contains("DS4K")) {
+    name = name.replaceFirst("DS4K", "4K");
+  }
+
   var info = parseName(name);
   final movieExists = await database.getMovieFromName(info['name']!);
   if (movieExists.isNotEmpty || info.isEmpty) {
